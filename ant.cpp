@@ -11,7 +11,8 @@ void Ant::draw() {
     // Draw the ant at its current position
     DrawCircle(_position.x, _position.y, 10.0, BLUE);
     // Draw a line to represent the direction
-    DrawLine(_position.x, _position.y, _position.x + 20 * cos(_direction), _position.y + 20 * sin(_direction), raylib::Color::Red());
+    DrawLine(_position.x, _position.y, _position.x + 20 * cos(_direction), _position.y + 20 * sin(_direction),
+             raylib::Color::Red());
     // Draw a label with the ant's position
     std::string text = fmt::format("({:.2f}, {:.2f})", _position.x, _position.y);
     auto textSize = MeasureTextEx(GetFontDefault(), text.c_str(), 20, 1.0f);

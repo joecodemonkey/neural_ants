@@ -1,16 +1,14 @@
 #include "raylib-cpp.hpp"
 #include <fmt/core.h>
 #include <string>
-#include "ant.hpp"
+#include "population.hpp"
 
-int main(void)
-{
+int main(void) {
     int screenWidth = 800;
     int screenHeight = 450;
     int fontSize = 20;
 
-    std::vector<Ant> ants;
-    ants.push_back(Ant(raylib::Vector2(100, 100), 10.0f, 0.0f));
+    Population ants(5);
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     raylib::Window window(screenWidth, screenHeight, "raylib-cpp - basic window");
@@ -24,10 +22,8 @@ int main(void)
 
     SetTargetFPS(60);
 
-    while (!window.ShouldClose())
-    {
-        if (window.IsResized())
-        {
+    while (!window.ShouldClose()) {
+        if (window.IsResized()) {
             screenWidth = window.GetWidth();
             screenHeight = window.GetHeight();
             textX = (screenWidth - textSize.x) / 2;
@@ -39,8 +35,8 @@ int main(void)
 
         window.ClearBackground(RAYWHITE);
 
-        for (Ant& ant: ants) ant.update();
-        for (auto ant: ants) ant.draw();
+        ants.update();
+        ants.draw();
 
         EndDrawing();
     }
