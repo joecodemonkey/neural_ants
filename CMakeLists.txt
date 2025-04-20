@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 3.31)
 project(neural_ants)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+
 include(FetchContent)
+
+FetchContent_Declare(
+        FMT_CXX
+        GIT_REPOSITORY https://github.com/fmtlib/fmt
+        GIT_TAG 11.1.4
+)
 
 FetchContent_Declare(
         raylib
@@ -15,12 +26,9 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp
         GIT_TAG v5.5.0
 )
-
-# Make Raylib available
+FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
 FetchContent_MakeAvailable(raylib-cpp)
 
-set(CMAKE_CXX_STANDARD 23)
-
 add_executable(neural_ants main.cpp)
-target_link_libraries(neural_ants PRIVATE raylib_cpp raylib)
+target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt)

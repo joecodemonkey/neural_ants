@@ -1,9 +1,9 @@
 #include "raylib-cpp.hpp"
-#include <format>
+#include <fmt/core.h>
 #include <string>
 
-int main(void) {
-
+int main(void)
+{
     int screenWidth = 800;
     int screenHeight = 450;
     int fontSize = 20;
@@ -12,7 +12,7 @@ int main(void) {
     raylib::Window window(screenWidth, screenHeight, "raylib-cpp - basic window");
 
 
-    std::string text = std::format("Window Size: {} x {}", screenWidth, screenHeight);
+    std::string text = fmt::format("Window Size: {} x {}", screenWidth, screenHeight);
     auto textSize = MeasureTextEx(GetFontDefault(), text.c_str(), fontSize, 1.0f);
     int textX = (screenWidth - textSize.x) / 2;
     int textY = (screenHeight - textSize.y) / 2;
@@ -29,7 +29,7 @@ int main(void) {
             screenHeight = window.GetHeight();
             textX = (screenWidth - textSize.x) / 2;
             textY = (screenHeight - textSize.y) / 2;
-            text = std::format("Window Size: {} x {}", screenWidth, screenHeight);
+            text = fmt::format("Window Size: {} x {}", screenWidth, screenHeight);
         }
 
         BeginDrawing();
@@ -41,8 +41,5 @@ int main(void) {
         EndDrawing();
     }
 
-    // UnloadTexture() and CloseWindow() are called automatically.
-
     return 0;
-
 }
