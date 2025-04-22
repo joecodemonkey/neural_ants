@@ -48,7 +48,8 @@ protected
     float _speed;
     float _direction;
     bool _dead;
-
-    float _energy = 10.0f;
+    float _energy = 100.0f;
     float _lifeSpan = 0.0f;
+
+    float energy_per_tick();
 };

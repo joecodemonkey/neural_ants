@@ -5,6 +5,11 @@ void Ant::update() {
     // Update the ant's position based on its speed and direction
     _position.x += _speed * cos(_direction) * GetFrameTime();
     _position.y += _speed * sin(_direction) * GetFrameTime();
+
+    _energy -= energy_per_tick() * GetFrameTime();
+    if (_energy <= 0) {
+        _dead = true;
+    }
 }
 
 void Ant::draw() {
@@ -19,4 +24,9 @@ void Ant::draw() {
     int textX = _position.x - textSize.x / 2;
     int textY = _position.y - textSize.y / 2 + 20;
     DrawText(text.c_str(), textX, textY, 20.0, BLACK);
+}
+
+float Ant::energy_per_tick() {
+    // Calculate the energy consumed per tick based on speed and direction
+    return _speed * SIZE * 0.1f; // Example: energy consumption is proportional to speed
 }
