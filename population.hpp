@@ -2,6 +2,7 @@
 
 #include "ant.hpp"
 #include <vector>
+#include <functional>
 
 class Population {
     const int DEFAULT_POPULATION_SIZE = 100;
@@ -9,17 +10,19 @@ class Population {
 public:
     Population() = default;
 
-    Population(int size) : _size(size) {
+    explicit Population(int size) : _size(size) {
     }
 
     ~Population() = default;
 
     void set_size(int size) { _size = size; }
-    int get_size() const { return _size; }
+    [[nodiscard]] int get_size() const { return _size; }
 
     void draw();
 
     void update();
+
+    std::vector<std::reference_wrapper<Ant> > find_touching(const Vector2 &position, float radius);
 
     /* Explicitly obstruct any copying or moving of the Population object so that the compiler
      * will warn us if we try to do so. */
@@ -33,7 +36,7 @@ public:
     Population &operator=(Population &&other) = delete;
 
 protected:
-    Ant birth();
+    static Ant birth();
 
     void smite();
 

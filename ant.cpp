@@ -9,7 +9,7 @@ void Ant::update() {
 
 void Ant::draw() {
     // Draw the ant at its current position
-    DrawCircle(_position.x, _position.y, 10.0, BLUE);
+    DrawCircle(_position.x, _position.y, SIZE / 2, BLUE);
     // Draw a line to represent the direction
     DrawLine(_position.x, _position.y, _position.x + 20 * cos(_direction), _position.y + 20 * sin(_direction),
              raylib::Color::Red());

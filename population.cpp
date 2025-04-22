@@ -60,3 +60,15 @@ void Population::update() {
     // update all ants
     for (Ant &ant: _ants) { ant.update(); }
 }
+
+std::vector<std::reference_wrapper<Ant> > Population::find_touching(const Vector2 &position, float radius) {
+    std::vector<std::reference_wrapper<Ant> > touching_ants;
+    for (Ant &ant: _ants) {
+        const float ant_radius = ant.get_size() / 2.0f;
+        const float distance = Vector2Distance(position, ant.get_position());
+        if (distance < (radius + ant_radius)) {
+            touching_ants.push_back(ant);
+        }
+    }
+    return touching_ants;
+}

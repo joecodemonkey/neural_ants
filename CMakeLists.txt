@@ -30,5 +30,8 @@ FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
 FetchContent_MakeAvailable(raylib-cpp)
 
-add_executable(neural_ants main.cpp ant.cpp population.cpp)
+
+include_directories(ant.hpp population.hpp resources.hpp)
+add_executable(neural_ants main.cpp ant.cpp population.cpp  resources.cpp
+        resources.hpp)
 target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt)
