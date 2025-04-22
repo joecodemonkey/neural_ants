@@ -10,7 +10,7 @@ int main(void) {
     int fontSize = 20;
 
     Population ants(5);
-    Resources resources(10);
+    Resources resources(100);
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     raylib::Window window(screenWidth, screenHeight, "raylib-cpp - basic window");
