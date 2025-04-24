@@ -23,7 +23,7 @@ void Ant::draw() {
     auto textSize = MeasureTextEx(GetFontDefault(), text.c_str(), 20, 1.0f);
     int textX = _position.x - textSize.x / 2;
     int textY = _position.y - textSize.y / 2 + 20;
-    DrawText(text.c_str(), textX, textY, 20.0, BLACK);
+    DrawText(text.c_str(), textX, textY, 10.0, BLACK);
 }
 
 float Ant::energy_per_tick() {

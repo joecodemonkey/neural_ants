@@ -1,33 +1,34 @@
 #include "population.hpp"
 #include "raylib.h"
 #include <algorithm>
+#include <cmath> // Include this for std::ceil
 
 void Population::draw() {
     for (auto &ant: _ants) { ant.draw(); }
 }
 
 void Population::smite() {
-    const int screenWidth = GetScreenWidth();
-    const int screenHeight = GetScreenHeight();
     for (Ant &ant: _ants) {
         const raylib::Vector2 &position = ant.get_position();
-        if (position.x < 0 || position.x > screenWidth ||
-            position.y < 0 || position.y > screenHeight) {
+        if (position.x < 0 || position.x > _worldSize.x ||
+            position.y < 0 || position.y > _worldSize.y) {
             ant.set_dead(true);
         }
     }
 }
 
 Ant Population::birth() {
-    // The new ant will be within 20% of the bounds of the screen
-    auto screenWidth = GetScreenWidth();
-    auto screenHeight = GetScreenHeight();
-    auto x = GetRandomValue(screenWidth * 0.2, screenWidth * 0.8);
-    auto y = GetRandomValue(screenHeight * 0.2, screenHeight * 0.8);
+    // The new ant will be within 20% of the bounds of the world
+    auto x = GetRandomValue(static_cast<int>(std::round(_worldSize.x * 0.2)),
+        static_cast<int>(std::round(_worldSize.x * 0.8)));
+
+    auto y = GetRandomValue(static_cast<int>(std::round(_worldSize.y * 0.2)),
+        static_cast<int>(std::round(_worldSize.y * 0.8)));
 
     // The new ant will have a random speed and direction
     float speed = GetRandomValue(1, 20);
     float direction = GetRandomValue(0, 360);
+
     return Ant(raylib::Vector2(x, y), speed, direction);
 }
 

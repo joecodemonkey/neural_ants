@@ -10,7 +10,7 @@ class Population {
 public:
     Population() = default;
 
-    explicit Population(int size) : _size(size) {
+    explicit Population(int size, raylib::Vector2 worldSize) : _size(size), _worldSize(worldSize) {
     }
 
     ~Population() = default;
@@ -36,12 +36,12 @@ public:
     Population &operator=(Population &&other) = delete;
 
 protected:
-    static Ant birth();
+    Ant birth();
 
     void smite();
-
     void reproduce();
 
     std::vector<Ant> _ants;
+    raylib::Vector2 _worldSize;
     int _size = DEFAULT_POPULATION_SIZE;
 };
