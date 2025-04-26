@@ -29,7 +29,12 @@ Ant Population::birth() {
     float speed = GetRandomValue(1, 20);
     float direction = GetRandomValue(0, 360);
 
-    return Ant(raylib::Vector2(x, y), speed, direction);
+    Ant ant;
+    ant.set_position(raylib::Vector2(x, y));
+    ant.set_speed(speed);
+    ant.set_direction(direction);
+
+    return ant;
 }
 
 void Population::reproduce() {
