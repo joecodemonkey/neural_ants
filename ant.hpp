@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib-cpp.hpp>
 #include <fmt/core.h>
-
+#include "texture_cache.hpp"
 class Ant {
 public:
     Ant() { };
@@ -44,6 +44,11 @@ public:
     void set_position(raylib::Vector2 position) { _position = position; }
 
     [[nodiscard]] float const get_size() const { return SIZE; }
+
+    void set_ant_texture_path(std::string const &path);
+    [[nodiscard]] std::string const &get_ant_texture_path() const { return _antTexturePath; }
+
+    [[nodiscard]] raylib::Vector2 get_size();
        
 protected:
     
@@ -64,6 +69,15 @@ protected:
     // sedintary energy per second is the base rate of energy loss for a stationary ant
     const float SEDINTARY_ENERGY_PER_SECOND = 0.1f;
     
+    // Update methods
     void update_energy();
     void update_position();
+
+    void draw_body();
+    void draw_energy(raylib::Rectangle const &text_rect);
+    raylib::Rectangle draw_coordinates();
+    void draw_direction();
+    
+    std::shared_ptr<raylib::Texture2D> _antTexture;
+    std::string _antTexturePath;
 };

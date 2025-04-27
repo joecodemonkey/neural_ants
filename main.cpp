@@ -29,7 +29,13 @@ int main(void) {
     SetTargetFPS(60);
 
     float adjust = 1.0f;
+
     while (!window.ShouldClose()) {
+
+        // load ant.png and display it in the center of the screen
+        
+    
+
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) camera.offset = Vector2Add(camera.offset, GetMouseDelta());
 
         if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
@@ -86,6 +92,7 @@ int main(void) {
 
         resources.draw();
         ants.draw();
+        
         EndDrawing();
     }
 
