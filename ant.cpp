@@ -39,7 +39,7 @@ void Ant::draw() {
     // Draw a label with the ant's position
     std::string text = fmt::format("({:.2f}, {:.2f})", _position.x, _position.y);
     auto textSize = MeasureTextEx(GetFontDefault(), text.c_str(), 20, 1.0f);
-    int textX = _position.x - textSize.x /2;
+    int textX = _position.x + SIZE * 1.5f - textSize.x / 2;
     int textY = _position.y - textSize.y / 2 + 20;
     DrawText(text.c_str(), textX, textY, 10.0, BLACK);
 
