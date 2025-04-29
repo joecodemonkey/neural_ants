@@ -58,6 +58,7 @@ protected:
     float _speed = 0.0f;
     float _direction = 0.0f;
     bool _dead = false;
+    bool _frozen = false;
     
     // All Ants start with the same amount of energy
     const float STARTING_ENERGY = 100.0f;
@@ -78,6 +79,6 @@ protected:
     raylib::Rectangle draw_coordinates();
     void draw_direction();
     
-    std::shared_ptr<raylib::Texture2D> _antTexture;
+    std::shared_ptr<raylib::Texture>_antTexture;
     std::string _antTexturePath;
 };

@@ -9,7 +9,7 @@
 #include "population.hpp"
 #include "resources.hpp"
 #include <iostream>
-
+#include <fstream>
 int main(void) {
     raylib::Vector2 worldSize = { 1000.0f, 1000.0f };
     raylib::Rectangle worldBounds = { 0, 0, worldSize.x, worldSize.y };
@@ -20,22 +20,28 @@ int main(void) {
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    Population ants(50, worldSize);
+    Population ant_population(50, worldSize);
     Resources resources(100, worldSize);
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     raylib::Window window(worldSize.x, worldSize.y, "raylib-cpp - basic window");
+    ant_population.set_texture_path("./ant.png");
+    // print current directory
+    std::cout << "Current directory: " << GetWorkingDirectory() << std::endl;
+    std::cout << "Texture path: " << ant_population.get_texture_path() << std::endl;
+    // check if the file exists
+    std::ifstream file(ant_population.get_texture_path());
+    if (!file.good()) {
+        std::cout << "File does not exist" << std::endl;
+        return 1;
+    }
 
     SetTargetFPS(60);
 
     float adjust = 1.0f;
 
     while (!window.ShouldClose()) {
-
-        // load ant.png and display it in the center of the screen
-        
-    
-
+       
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) camera.offset = Vector2Add(camera.offset, GetMouseDelta());
 
         if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
@@ -80,8 +86,8 @@ int main(void) {
         if (IsKeyDown('W')) camera.offset.y += 5.0f * adjust;
 
         resources.update();
-        resources.feed_ants(ants);
-        ants.update();
+        resources.feed_ants(ant_population);
+        ant_population.update();
 
         BeginDrawing();
         BeginMode2D(camera);
@@ -91,7 +97,7 @@ int main(void) {
         DrawRectangle(worldBounds.x, worldBounds.y, worldBounds.width, worldBounds.height, raylib::Color::White());
 
         resources.draw();
-        ants.draw();
+        ant_population.draw();
         
         EndDrawing();
     }

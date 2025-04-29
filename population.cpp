@@ -2,7 +2,7 @@
 #include "raylib.h"
 #include <algorithm>
 #include <cmath> // Include this for std::ceil
-
+#include <iostream>
 void Population::draw() {
     for (auto &ant: _ants) { ant.draw(); }
 }
@@ -33,6 +33,9 @@ Ant Population::birth() {
     ant.set_position(raylib::Vector2(x, y));
     ant.set_speed(speed);
     ant.set_direction(direction);
+    if (!_texture_path.empty()) {
+        ant.set_ant_texture_path(_texture_path);
+    }
 
     return ant;
 }
@@ -47,7 +50,7 @@ void Population::reproduce() {
         auto it = std::remove_if(_ants.begin(), _ants.end(), [](const Ant &ant) { return ant.is_dead(); });
         _ants.erase(it, _ants.end());
     }
-
+    
     // rebirth dead ants
     for (auto &ant: _ants) {
         if (ant.is_dead()) {

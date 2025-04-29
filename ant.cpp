@@ -1,25 +1,36 @@
 #include "ant.hpp"
 #include "raylib.h"
+#include <iostream>
 
 void Ant::update()
 {
     if (_dead) return; // he's not dead, he's just resting
 
-    update_energy();
     update_position();
+    update_energy();
+
 }
 
 void Ant::update_position()
 {
-    const auto time = GetFrameTime();
+    const float time = GetFrameTime();
+    if(time == 0.0f) return;
 
-    _position.x += static_cast<int>(std::round(_speed * cos(_direction) * time));
-    _position.y += static_cast<int>(std::round(_speed * sin(_direction) * time));
+    auto old_position = _position;    
+    _position.x += _speed * cos(_direction) * time;
+    _position.y += _speed * sin(_direction) * time;
+    _frozen = _position == old_position;
+    if(_frozen) {
+        std::cout << "Frozen!\n";
+        std::cout << "Position: " << _position.x << ", " << _position.y << std::endl;
+        std::cout << "Old position: " << old_position.x << ", " << old_position.y << std::endl;
+    }
 }
 
 void Ant::update_energy()
 {
     const auto time = GetFrameTime();
+    if(time == 0.0f) return;
 
     // Consume kinetic energy
     _energy -= _speed * 0.1f * SIZE * time;
@@ -37,6 +48,7 @@ void Ant::update_energy()
 
 void Ant::draw()
 {
+    if (_dead) return; // he's not dead, he's just resting
     draw_body();
 
     draw_direction();
@@ -48,13 +60,17 @@ void Ant::draw()
 
 void Ant::draw_body()
 {
-    if (_antTexture)
+    auto color = _frozen ? BLUE : WHITE;
+    if (_frozen) std::cout << "Frozen!\n";
+
+    if (_antTexture != nullptr)
     {
-        DrawTexture(*_antTexture, _position.x, _position.y, WHITE);
+        auto direction = _direction * 180.0f / M_PI;
+        DrawTextureEx(*_antTexture, _position, direction, 1.0f, color);
     }
     else
     {
-        DrawCircle(_position.x, _position.y, SIZE / 2, BLUE);
+        DrawCircle(_position.x, _position.y, SIZE / 2, color);
     }
 }
 
@@ -64,8 +80,8 @@ void Ant::draw_energy(raylib::Rectangle const &text_rect)
 
     float energyPercentage = _energy / STARTING_ENERGY;
     int lineLength = static_cast<int>(std::round(text_rect.width / 2.0f * energyPercentage));
-    const int lineWidth = text_rect.height / 4.0f;
-    const int lineY = text_rect.x + lineWidth * 2;
+    const int lineWidth = static_cast<int>(std::round(text_rect.height / 4.0f));
+    const int lineY = static_cast<int>(std::round(text_rect.y + text_rect.height / 2.0f)   );
 
     raylib::Color lineColor = raylib::Color::Green();
     if (_energy < 25)
@@ -100,9 +116,9 @@ raylib::Vector2 Ant::get_size()
 void Ant::set_ant_texture_path(std::string const &path)
 {
 
-    _antTexture = std::make_shared<raylib::Texture2D>(_antTexturePath);
+    _antTexture = TextureCache::get_instance().get_texture(path);
 
-    if (!_antTexture)
+    if (_antTexture == nullptr || !_antTexture->IsValid())
     {
         throw std::runtime_error("Failed to load ant texture at path: " + path);
     }
