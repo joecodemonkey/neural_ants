@@ -5,7 +5,7 @@
 #include <functional>
 
 class Population {
-    const int DEFAULT_POPULATION_SIZE = 100;
+    const int DEFAULT_POPULATION_SIZE = 1;
 
 public:
     Population() = default;
@@ -35,6 +35,11 @@ public:
 
     Population &operator=(Population &&other) = delete;
 
+    void set_texture_path(std::string const &path) { _texture_path = path; }
+    [[nodiscard]] std::string const &get_texture_path() const { return _texture_path; }
+
+    
+
 protected:
     Ant birth();
 
@@ -44,4 +49,5 @@ protected:
     std::vector<Ant> _ants;
     raylib::Vector2 _worldSize;
     int _size = DEFAULT_POPULATION_SIZE;
+    std::string _texture_path;
 };

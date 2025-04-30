@@ -32,6 +32,6 @@ FetchContent_MakeAvailable(raylib-cpp)
 
 
 include_directories(ant.hpp population.hpp resources.hpp)
-add_executable(neural_ants main.cpp ant.cpp population.cpp  resources.cpp
+add_executable(neural_ants texture_cache.hpp main.cpp ant.cpp population.cpp  resources.cpp
         resources.hpp)
 target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt)
