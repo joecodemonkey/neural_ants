@@ -63,10 +63,10 @@ void Ant::draw_body()
     auto color = _frozen ? BLUE : WHITE;
     if (_frozen) std::cout << "Frozen!\n";
 
-    if (_antTexture != nullptr)
+    if (IsTextureValid(_antTexture))
     {
-        auto direction = _direction * 180.0f / M_PI;
-        DrawTextureEx(*_antTexture, _position, direction, 1.0f, color);
+        auto direction = _direction * 180.0f / M_PI + 90.0f;
+        DrawTextureEx(_antTexture, _position, direction, 1.0f, color);
     }
     else
     {
@@ -106,9 +106,9 @@ raylib::Rectangle Ant::draw_coordinates()
 
 raylib::Vector2 Ant::get_size()
 {
-    if (_antTexture)
+    if (IsTextureValid(_antTexture))
     {
-        return {static_cast<float>(_antTexture->width), static_cast<float>(_antTexture->height)};
+        return {static_cast<float>(_antTexture.width), static_cast<float>(_antTexture.height)};
     }
     return {SIZE, SIZE};
 }
@@ -116,9 +116,9 @@ raylib::Vector2 Ant::get_size()
 void Ant::set_ant_texture_path(std::string const &path)
 {
 
-    _antTexture = TextureCache::get_instance().get_texture(path);
+    _antTexture = LoadTexture(path.c_str());
 
-    if (_antTexture == nullptr || !_antTexture->IsValid())
+    if (!IsTextureValid(_antTexture))
     {
         throw std::runtime_error("Failed to load ant texture at path: " + path);
     }
@@ -128,6 +128,6 @@ void Ant::set_ant_texture_path(std::string const &path)
 
 void Ant::draw_direction()
 {
-    DrawLine(_position.x, _position.y, _position.x + 20 * cos(_direction), _position.y + 20 * sin(_direction),
-             raylib::Color::Red());
+//    DrawLine(_position.x + get_size().x / 2.0f, _position.y + get_size().y / 2.0f, _position.x + get_size().x / 2.0f + 20 * cos(_direction), _position.y + get_size().y / 2.0f + 20 * sin(_direction),
+  //           raylib::Color::Red());
 }

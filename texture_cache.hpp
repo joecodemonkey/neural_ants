@@ -11,9 +11,9 @@ class TextureCache {
             return instance;
         }
 
-        std::shared_ptr<raylib::Texture2D> get_texture(std::string const &path) {
+        raylib::Texture2D & get_texture(std::string const &path) {
             if (_textures.find(path) == _textures.end()) {
-                _textures[path] = std::make_shared<raylib::Texture2D>(LoadTexture(path.c_str()));
+                _textures[path] = LoadTexture(path.c_str());
             }
             return _textures[path];
         }
@@ -24,5 +24,5 @@ class TextureCache {
             TextureCache &operator=(TextureCache const &) = delete;
             ~TextureCache() = default;
             
-            std::unordered_map<std::string, std::shared_ptr<raylib::Texture2D>> _textures;
+            std::unordered_map<std::string, raylib::Texture2D> _textures;
 };

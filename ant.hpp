@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib-cpp.hpp>
+#include <raylib.h>
 #include <fmt/core.h>
 #include "texture_cache.hpp"
 class Ant {
@@ -19,6 +19,16 @@ public:
         return *this;
     }
     
+    Ant(const Ant &other) {
+        _position = other._position;
+        _speed = other._speed;
+        _direction = other._direction;
+        _dead = other._dead;
+        _energy = other._energy;
+        _lifeSpan = other._lifeSpan;
+        _antTexturePath = other._antTexturePath;
+        _antTexture = other._antTexture;
+    }
     ~Ant() = default;
 
     void update();
@@ -79,6 +89,6 @@ protected:
     raylib::Rectangle draw_coordinates();
     void draw_direction();
     
-    std::shared_ptr<raylib::Texture>_antTexture;
+    Texture2D _antTexture;
     std::string _antTexturePath;
 };
