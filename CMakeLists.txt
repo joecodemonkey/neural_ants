@@ -26,12 +26,18 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp
         GIT_TAG v5.5.0
 )
+
+FetchContent_Declare(
+  yaml-cpp
+  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+  GIT_TAG 0.8.0
+)
+
+FetchContent_MakeAvailable(yaml-cpp)
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
 FetchContent_MakeAvailable(raylib-cpp)
 
-
-include_directories(ant.hpp population.hpp resources.hpp)
 add_executable(neural_ants texture_cache.hpp main.cpp ant.cpp population.cpp  resources.cpp
-        resources.hpp)
-target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt)
+        resources.hpp neuron.cpp neural_network.cpp genome.cpp)
+target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt yaml-cpp)
