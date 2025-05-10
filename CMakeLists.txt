@@ -39,5 +39,5 @@ FetchContent_MakeAvailable(raylib)
 FetchContent_MakeAvailable(raylib-cpp)
 
 add_executable(neural_ants texture_cache.hpp main.cpp ant.cpp population.cpp  resources.cpp
-        resources.hpp neuron.cpp neural_network.cpp genome.cpp)
+        resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp)
 target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt yaml-cpp)

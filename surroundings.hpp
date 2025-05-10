@@ -1,6 +1,21 @@
 #pragma once
 #include <vector>
 #include <raylib.h>
+#include "neuron.hpp"
+
+
+/*  Surroundings is a 2D grid of types that are encoded.
+    The types are:
+    - FOOD
+    - EMPTY
+    - WALL
+
+    The top-left corner of the grid is (0,0)
+    The bottom-right corner of the grid is (width-1, height-1)
+    The grid is encoded left to right, top to bottom. 
+    The encoded vector is a flat vector of values between -1 and 1.
+*/
+
 
 class Surroundings {
 
@@ -8,7 +23,6 @@ class Surroundings {
 
     typedef enum Type {
         FOOD,
-        ANT,
         EMPTY,
         WALL
     } Type;
@@ -23,30 +37,25 @@ class Surroundings {
     // move assignment operator
     Surroundings &operator=(Surroundings &&other) = delete;
 
-    void set_dimensions(int width, int height);
-    void set_type(int x, int y, Type type);
-    Vector2 get_dimensions() const;
+    void set_dimensions(size_t width, size_t height);
+    void set_type(size_t x, size_t y, Type type);
 
-    void update();
-    const std::vector<float> &get_encoded_surroundings() const;
+    Vector2 get_dimensions() const;
+    size_t get_width() const;
+    size_t get_height() const;
+    
+    const std::vector<Neuron::Value> &get_encoded_surroundings();
+
+    bool changed() const;
 
     protected:
     
     std::vector<std::vector<Type>> _surroundings_type;
-    std::vector<float> _surroundings_encoded;
+    std::vector<Neuron::Value> _surroundings_encoded;
 
-    float encode_type(Type type) {
-        switch (type) {
-            case FOOD:
-                return 1.0f;            
-            case ANT:
-                return -0.5f;
-            case EMPTY:
-                return 0.0f;
-            case WALL:
-                return -1.0f;
-            default:
-                return 0.0f;  // Default case for safety
-        }
-    }  
+    bool _changed = false;
+
+    static float encode_type(Type type);
+    void update_encoded_surroundings();
+
 };

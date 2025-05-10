@@ -4,20 +4,14 @@
 #include "resources.hpp"
 #include "raylib.h"
 #include "genome.hpp"
-
+#include "eye.hpp"
 #pragma once
 
 
 class Brain {
-    Brain() = default;
+    Brain();
 
-    void update(float delta_time);
-
-    void set_population(Population *population);
-    Population *get_population();
-    
-    void set_resources(Resources *resources);
-    Resources *get_resources();
+    void update(const Population &population, const Resources &resources, const Vecotr2 &position);
     
     float get_speed() const;    
     float get_direction() const;    
@@ -28,31 +22,21 @@ class Brain {
     
     Genome &get_genome();
     const Genome &get_genome() const;
-    void set_genome(const Genome &);
+    void set_genome(const Genome &genome);
 
-    Vector2 get_position() const;
-    void set_position(Vector2 position);
-
-    void set_tile_size(size_t size);
-    size_t get_tile_size() const;
-    void set_tile_window_size(size_t size);
-    size_t get_tile_window_size() const;
+    void set_far_tile_size(size_t size);
+    size_t get_far_tile_size() const;
+    void set_far_tile_window_size(size_t size);
+    size_t get_far_tile_window_size() const;
         
     protected:
 
-    float direction;
-    float speed;
+    float _direction = 0.0f;
+    float _speed = 0.0f;
 
-    void set_food();
-    void set_ants();
-    void set_empty();
-    void set_wall();    
-
-    Population *population = nullptr;
-    Resources *resources = nullptr;
-
-    size_t _tile_size;
-    Surroundings _surroundings;
     Genome _genome;
     Rectangle _bounds;
+  
+    Eye _near_eye;
+    Eye _far_eye;
 };
