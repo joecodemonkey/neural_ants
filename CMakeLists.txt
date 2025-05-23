@@ -4,6 +4,7 @@ project(neural_ants)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
@@ -24,4 +25,8 @@ FetchContent_MakeAvailable(raylib)
 
 add_executable(neural_ants main.cpp ant.cpp population.cpp  resources.cpp
         resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp)
+
 target_link_libraries(neural_ants PRIVATE raylib fmt::fmt)
+target_include_directories(neural_ants PRIVATE 
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
+)

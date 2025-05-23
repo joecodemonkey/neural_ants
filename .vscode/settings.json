@@ -97,6 +97,8 @@
     },
     "C_Cpp.default.cppStandard": "c++23",
     "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true  
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "C_Cpp.codeAnalysis.clangTidy.path": "clang-tidy",
     "C_Cpp.codeAnalysis.runAutomatically": true,
