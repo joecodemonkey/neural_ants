@@ -1,47 +1,56 @@
 #pragma once
 #include <raylib.h>
+
 #include "ant.hpp"
 
 class Food {
-public:
-    Food() : _value(10.0f), _position(0.0f, 0.0f), _eaten(false) {
+ public:
+  Food() : _value(10.0f), _position(0.0f, 0.0f), _eaten(false) {}
+
+  Food(const Vector2& position) : _value(10.0f), _position(position), _eaten(false) {}
+
+  Food& operator=(const Food& other) {
+    if (this != &other) {
+      // Check for self-assignment
+      _position = other._position;
+      _value = other._value;
+      _eaten = other._eaten;
     }
+    return *this;
+  }
 
-    Food(const Vector2 &position) : _value(10.0f), _position(position), _eaten(false) {
-    }
+  bool is_eaten() const {
+    return _eaten;
+  }
 
-    Food &operator=(const Food &other) {
-        if (this != &other) {
-            // Check for self-assignment
-            _position = other._position;
-            _value = other._value;
-            _eaten = other._eaten;
-        }
-        return *this;
-    }
+  void eat(Ant& ant) {
+    if (_eaten)
+      return;
+    _eaten = true;
+    ant.set_energy(ant.get_energy() + _value);
+  }
 
-    bool is_eaten() const { return _eaten; }
+  [[nodiscard]] const Vector2& get_position() const {
+    return _position;
+  }
 
-    void eat(Ant &ant) {
-        if (_eaten) return;
-        _eaten = true;
-        ant.set_energy(ant.get_energy() + _value);
-    }
+  void draw() {
+    if (_eaten)
+      return;
+    DrawCircle(_position.x, _position.y, _size / 2, GREEN);
+  }
 
-    [[nodiscard]] const Vector2 &get_position() const { return _position; }
+  [[nodiscard]] float get_size() const {
+    return _size;
+  }
 
-    void draw() {
-        if (_eaten) return;
-        DrawCircle(_position.x, _position.y, _size / 2, GREEN);
-    }
+  [[nodiscard]] float get_value() const {
+    return _value;
+  }
 
-    [[nodiscard]] float get_size() const { return _size; }
-
-    [[nodiscard]] float get_value() const { return _value; }
-
-protected:
-    float _value;
-    Vector2 _position;
-    bool _eaten;
-    const float _size = 10.0f;
+ protected:
+  float _value;
+  Vector2 _position;
+  bool _eaten;
+  const float _size = 10.0f;
 };
