@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.5)
 project(neural_ants)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -26,12 +26,11 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp
         GIT_TAG v5.5.0
 )
+
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
 FetchContent_MakeAvailable(raylib-cpp)
 
-
-include_directories(ant.hpp population.hpp resources.hpp)
-add_executable(neural_ants main.cpp ant.cpp population.cpp  resources.cpp
-        resources.hpp)
+add_executable(neural_ants texture_cache.hpp main.cpp ant.cpp population.cpp  resources.cpp
+        resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp)
 target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt)

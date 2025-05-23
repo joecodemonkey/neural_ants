@@ -1,7 +1,7 @@
 #pragma once
-#include <raylib-cpp.hpp>
+#include <raylib.h>
 #include <fmt/core.h>
-
+#include "texture_cache.hpp"
 class Ant {
 public:
     Ant() { };
@@ -19,6 +19,16 @@ public:
         return *this;
     }
     
+    Ant(const Ant &other) {
+        _position = other._position;
+        _speed = other._speed;
+        _direction = other._direction;
+        _dead = other._dead;
+        _energy = other._energy;
+        _lifeSpan = other._lifeSpan;
+        _antTexturePath = other._antTexturePath;
+        _antTexture = other._antTexture;
+    }
     ~Ant() = default;
 
     void update();
@@ -44,6 +54,11 @@ public:
     void set_position(raylib::Vector2 position) { _position = position; }
 
     [[nodiscard]] float const get_size() const { return SIZE; }
+
+    void set_ant_texture_path(std::string const &path);
+    [[nodiscard]] std::string const &get_ant_texture_path() const { return _antTexturePath; }
+
+    [[nodiscard]] raylib::Vector2 get_size();
        
 protected:
     
@@ -53,6 +68,7 @@ protected:
     float _speed = 0.0f;
     float _direction = 0.0f;
     bool _dead = false;
+    bool _frozen = false;
     
     // All Ants start with the same amount of energy
     const float STARTING_ENERGY = 100.0f;
@@ -64,6 +80,15 @@ protected:
     // sedintary energy per second is the base rate of energy loss for a stationary ant
     const float SEDINTARY_ENERGY_PER_SECOND = 0.1f;
     
+    // Update methods
     void update_energy();
     void update_position();
+
+    void draw_body();
+    void draw_energy(raylib::Rectangle const &text_rect);
+    raylib::Rectangle draw_coordinates();
+    void draw_direction();
+    
+    Texture2D _antTexture;
+    std::string _antTexturePath;
 };
