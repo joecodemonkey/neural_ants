@@ -1,7 +1,8 @@
 #pragma once
-#include <raylib.h>
+#include "raylib.h"
 #include <fmt/core.h>
-#include "texture_cache.hpp"
+#include <string>
+
 class Ant {
 public:
     Ant() { };
@@ -50,21 +51,21 @@ public:
     
     [[nodiscard]] float get_life_span() const { return _lifeSpan; }
 
-    [[nodiscard]] const raylib::Vector2 &get_position() const { return _position; }
-    void set_position(raylib::Vector2 position) { _position = position; }
+    [[nodiscard]] const Vector2 &get_position() const { return _position; }
+    void set_position(Vector2 position) { _position = position; }
 
     [[nodiscard]] float const get_size() const { return SIZE; }
 
     void set_ant_texture_path(std::string const &path);
     [[nodiscard]] std::string const &get_ant_texture_path() const { return _antTexturePath; }
 
-    [[nodiscard]] raylib::Vector2 get_size();
+    [[nodiscard]] Vector2 get_size();
        
 protected:
     
     const float SIZE = 20.0f;
 
-    raylib::Vector2 _position = {0.0f, 0.0f};
+    Vector2 _position = {0.0f, 0.0f};
     float _speed = 0.0f;
     float _direction = 0.0f;
     bool _dead = false;
@@ -85,8 +86,8 @@ protected:
     void update_position();
 
     void draw_body();
-    void draw_energy(raylib::Rectangle const &text_rect);
-    raylib::Rectangle draw_coordinates();
+    void draw_energy(Rectangle const &text_rect);
+    Rectangle draw_coordinates();
     void draw_direction();
     
     Texture2D _antTexture;

@@ -3,13 +3,15 @@
 #include <algorithm>
 #include <cmath> // Include this for std::ceil
 #include <iostream>
+#include <raymath.h>
+
 void Population::draw() {
     for (auto &ant: _ants) { ant.draw(); }
 }
 
 void Population::smite() {
     for (Ant &ant: _ants) {
-        const raylib::Vector2 &position = ant.get_position();
+        const Vector2 &position = ant.get_position();
         if (position.x < 0 || position.x > _worldSize.x ||
             position.y < 0 || position.y > _worldSize.y) {
             ant.set_dead(true);
@@ -30,7 +32,7 @@ Ant Population::birth() {
     float direction = GetRandomValue(0, 360);
 
     Ant ant;
-    ant.set_position(raylib::Vector2(x, y));
+    ant.set_position(Vector2{(float)x, (float)y});
     ant.set_speed(speed);
     ant.set_direction(direction);
     if (!_texture_path.empty()) {

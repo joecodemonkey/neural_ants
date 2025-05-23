@@ -1,5 +1,6 @@
 #pragma once
 
+#include "raylib.h"
 #include "ant.hpp"
 #include <vector>
 #include <functional>
@@ -10,7 +11,7 @@ class Population {
 public:
     Population() = default;
 
-    explicit Population(int size, raylib::Vector2 worldSize) : _size(size), _worldSize(worldSize) {
+    explicit Population(int size, Vector2 worldSize) : _size(size), _worldSize(worldSize) {
     }
 
     ~Population() = default;
@@ -38,8 +39,6 @@ public:
     void set_texture_path(std::string const &path) { _texture_path = path; }
     [[nodiscard]] std::string const &get_texture_path() const { return _texture_path; }
 
-    
-
 protected:
     Ant birth();
 
@@ -47,7 +46,7 @@ protected:
     void reproduce();
 
     std::vector<Ant> _ants;
-    raylib::Vector2 _worldSize;
+    Vector2 _worldSize;
     int _size = DEFAULT_POPULATION_SIZE;
     std::string _texture_path;
 };

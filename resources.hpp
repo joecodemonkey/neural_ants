@@ -3,13 +3,14 @@
 #include "food.hpp"
 #include <vector>
 #include "population.hpp"
+#include <raylib.h>
 
 class Resources {
 public:
     Resources() : _intended_food_count(100), _worldSize(2000.0f,2000.0f) {
     }
 
-    explicit Resources(int size, const raylib::Vector2 & worldSize) : _intended_food_count(size),
+    explicit Resources(int size, const Vector2 & worldSize) : _intended_food_count(size),
     _worldSize(worldSize) { }
 
     ~Resources() = default;
@@ -27,5 +28,5 @@ protected:
 
     size_t _intended_food_count = 0;
     std::vector<Food> _food;
-    raylib::Vector2 _worldSize;
+    Vector2 _worldSize;
 };

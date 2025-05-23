@@ -29,7 +29,7 @@ Food Resources::new_food() {
     // The new food will be within 20% of the bounds of the screen
     auto x = GetRandomValue(_worldSize.x * 0.2, _worldSize.x * 0.8);
     auto y = GetRandomValue(_worldSize.y * 0.2, _worldSize.y * 0.8);
-    return Food(raylib::Vector2(x, y));
+    return Food(Vector2(x, y));
 }
 
 

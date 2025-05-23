@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib-cpp.hpp>
+#include <raylib.h>
 #include "ant.hpp"
 
 class Food {
@@ -7,7 +7,7 @@ public:
     Food() : _value(10.0f), _position(0.0f, 0.0f), _eaten(false) {
     }
 
-    Food(const raylib::Vector2 &position) : _value(10.0f), _position(position), _eaten(false) {
+    Food(const Vector2 &position) : _value(10.0f), _position(position), _eaten(false) {
     }
 
     Food &operator=(const Food &other) {
@@ -28,7 +28,7 @@ public:
         ant.set_energy(ant.get_energy() + _value);
     }
 
-    [[nodiscard]] const raylib::Vector2 &get_position() const { return _position; }
+    [[nodiscard]] const Vector2 &get_position() const { return _position; }
 
     void draw() {
         if (_eaten) return;
@@ -41,7 +41,7 @@ public:
 
 protected:
     float _value;
-    raylib::Vector2 _position;
+    Vector2 _position;
     bool _eaten;
     const float _size = 10.0f;
 };

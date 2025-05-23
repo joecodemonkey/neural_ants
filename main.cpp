@@ -1,7 +1,8 @@
 #include <iostream>
 #include <ostream>
 
-#include "raylib-cpp.hpp"
+#include <raylib.h>
+#include <raymath.h>
 #include <fmt/core.h>
 #include <string>
 #include <linux/input-event-codes.h>
@@ -10,9 +11,10 @@
 #include "resources.hpp"
 #include <iostream>
 #include <fstream>
+
 int main(void) {
-    raylib::Vector2 worldSize = { 1000.0f, 1000.0f };
-    raylib::Rectangle worldBounds = { 0, 0, worldSize.x, worldSize.y };
+    Vector2 worldSize = { 1000.0f, 1000.0f };
+    Rectangle worldBounds = { 0, 0, worldSize.x, worldSize.y };
 
     Camera2D camera = { 0 };
     camera.target = (Vector2){ 0.0f, 0.0f };
@@ -24,7 +26,7 @@ int main(void) {
     Resources resources(100, worldSize);
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
-    raylib::Window window(worldSize.x, worldSize.y, "raylib-cpp - basic window");
+    InitWindow(worldSize.x, worldSize.y, "raylib - basic window");
     ant_population.set_texture_path("./ant.png");
     // print current directory
     std::cout << "Current directory: " << GetWorkingDirectory() << std::endl;
@@ -40,7 +42,7 @@ int main(void) {
 
     float adjust = 1.0f;
 
-    while (!window.ShouldClose()) {
+    while (!WindowShouldClose()) {
        
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) camera.offset = Vector2Add(camera.offset, GetMouseDelta());
 
@@ -92,9 +94,9 @@ int main(void) {
         BeginDrawing();
         BeginMode2D(camera);
 
-        window.ClearBackground(BLACK);
+        ClearBackground(BLACK);
 
-        DrawRectangle(worldBounds.x, worldBounds.y, worldBounds.width, worldBounds.height, raylib::Color::White());
+        DrawRectangle(worldBounds.x, worldBounds.y, worldBounds.width, worldBounds.height, WHITE);
 
         resources.draw();
         ant_population.draw();
@@ -102,5 +104,6 @@ int main(void) {
         EndDrawing();
     }
 
+    CloseWindow();
     return 0;
 }
