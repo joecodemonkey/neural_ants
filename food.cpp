@@ -61,3 +61,8 @@ auto Food::update_bounds() -> void {
   _bounds.width = _size;
   _bounds.height = _size;
 }
+
+auto Food::reset(const Vector2& position) -> void {
+  _eaten = false;
+  _position = position;
+}

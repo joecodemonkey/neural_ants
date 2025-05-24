@@ -25,6 +25,8 @@ class World {
 
   [[nodiscard]] auto out_of_bounds(const Rectangle& object) const -> bool;
 
+  [[nodiscard]] auto spawn_position(const Vector2& dimensions) const -> Vector2;
+
  protected:
   const Rectangle DEFAULT_BOUNDS = {0.0f, 0.0f, 1000.0f, 1000.0f};
   const float DEFAULT_SPAWN_MARGIN = 0.20F;

@@ -27,12 +27,11 @@ class Resources {
   auto food_in_rect(const Rectangle rect) const -> bool;
 
  protected:
-  auto new_food() -> Food;
+  auto food_position() -> Vector2;
 
   World& _world;
   size_t _food_count;
   std::vector<Food> _food;
 
   const size_t DEFAULT_COUNT = 100;
-  const float BOUNDS_PADDING = 0.20f;
 };

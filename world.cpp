@@ -1,7 +1,5 @@
 #include "world.hpp"
 
-#include <iostream>
-
 #include "population.hpp"
 #include "raylib.h"
 #include "resources.hpp"
@@ -70,4 +68,11 @@ auto World::out_of_bounds(const Rectangle& object) const -> bool {
   return object.x < _bounds.x || object.y < _bounds.y ||
          object.x + object.width > _bounds.x + _bounds.width ||
          object.y + object.height > _bounds.y + _bounds.height;
+}
+
+[[nodiscard]] auto World::spawn_position(const Vector2& dimensions) const -> Vector2 {
+  // given an object of dimensions, randomly generate a point inside of spawn_rect
+  auto x = GetRandomValue(_spawnBounds.x, _spawnBounds.x + _spawnBounds.width - dimensions.x);
+  auto y = GetRandomValue(_spawnBounds.y, _spawnBounds.y + _spawnBounds.height - dimensions.y);
+  return Vector2{static_cast<float>(x), static_cast<float>(y)};
 }
