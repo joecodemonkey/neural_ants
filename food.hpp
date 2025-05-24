@@ -1,47 +1,29 @@
 #pragma once
-#include <raylib-cpp.hpp>
+#include <raylib.h>
+
 #include "ant.hpp"
 
 class Food {
-public:
-    Food() : _value(10.0f), _position(0.0f, 0.0f), _eaten(false) {
-    }
+ public:
+  Food();
+  Food(const Vector2& position);
+  Food& operator=(const Food& other);
 
-    Food(const raylib::Vector2 &position) : _value(10.0f), _position(position), _eaten(false) {
-    }
+  void draw() const;
+  void eat(Ant& ant);
 
-    Food &operator=(const Food &other) {
-        if (this != &other) {
-            // Check for self-assignment
-            _position = other._position;
-            _value = other._value;
-            _eaten = other._eaten;
-        }
-        return *this;
-    }
+  [[nodiscard]] auto get_position() const -> const Vector2&;
+  [[nodiscard]] float get_size() const;
+  [[nodiscard]] float get_value() const;
+  [[nodiscard]] auto is_eaten() const -> bool;
+  [[nodiscard]] auto get_bounds() const -> const Rectangle&;
 
-    bool is_eaten() const { return _eaten; }
+ protected:
+  float _value;
+  Vector2 _position;
+  bool _eaten;
+  const float _size = 10.0f;
+  Rectangle _bounds;
 
-    void eat(Ant &ant) {
-        if (_eaten) return;
-        _eaten = true;
-        ant.set_energy(ant.get_energy() + _value);
-    }
-
-    [[nodiscard]] const raylib::Vector2 &get_position() const { return _position; }
-
-    void draw() {
-        if (_eaten) return;
-        DrawCircle(_position.x, _position.y, _size / 2, GREEN);
-    }
-
-    [[nodiscard]] float get_size() const { return _size; }
-
-    [[nodiscard]] float get_value() const { return _value; }
-
-protected:
-    float _value;
-    raylib::Vector2 _position;
-    bool _eaten;
-    const float _size = 10.0f;
+  void update_rect();
 };

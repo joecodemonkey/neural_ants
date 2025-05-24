@@ -4,7 +4,7 @@ project(neural_ants)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
@@ -20,17 +20,13 @@ FetchContent_Declare(
         GIT_TAG 5.5
 )
 
-# download the RaylibCPP
-FetchContent_Declare(
-        raylib-cpp
-        GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp
-        GIT_TAG v5.5.0
-)
-
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
-FetchContent_MakeAvailable(raylib-cpp)
 
-add_executable(neural_ants texture_cache.hpp main.cpp ant.cpp population.cpp  resources.cpp
-        resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp)
-target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt)
+add_executable(neural_ants main.cpp world.cpp ant.cpp population.cpp  resources.cpp
+        resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp food.cpp)
+
+target_link_libraries(neural_ants PRIVATE raylib fmt::fmt)
+target_include_directories(neural_ants PRIVATE 
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
+)

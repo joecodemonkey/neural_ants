@@ -1,44 +1,63 @@
 #include "resources.hpp"
+
 #include <algorithm>
 
-void Resources::update() {
-    if (_food.size() > _intended_food_count) {
-        // stupidly inefficient, but it works and we don't care about performance right now
-        std::remove_if(_food.begin(), _food.end(), [](const Food &food) { return food.is_eaten(); });
-    }
+#include "food.hpp"
+#include "world.hpp"
 
-    // Add food to the resources
-    while (_food.size() < _intended_food_count) {
-        _food.push_back(new_food());
-    }
-
-    // replace the food that has been eaten,
-    // we should probably do this in a more efficient way
-    for (Food &food: _food) {
-        if (food.is_eaten()) {
-            food = new_food();
-        }
-    }
+Resources::Resources(World& world) : _world(world) {
+  _intended_food_count = DEFAULT_COUNT;
 }
 
-void Resources::draw() {
-    for (auto &food: _food) { food.draw(); }
+void Resources::update(float time) {
+  // TODO: Optimize
+  std::remove_if(_food.begin(), _food.end(), [](const Food& food) { return food.is_eaten(); });
+
+  // Add food to the resources
+  while (_food.size() < _intended_food_count)
+    _food.push_back(new_food());
+
+  feed_ants(_world.get_population());
+}
+
+void Resources::draw() const {
+  for (const auto& food : _food) {
+    food.draw();
+  }
 }
 
 Food Resources::new_food() {
-    // The new food will be within 20% of the bounds of the screen
-    auto x = GetRandomValue(_worldSize.x * 0.2, _worldSize.x * 0.8);
-    auto y = GetRandomValue(_worldSize.y * 0.2, _worldSize.y * 0.8);
-    return Food(raylib::Vector2(x, y));
+  const auto width = _world.get_bounds().width;
+  const auto height = _world.get_bounds().height;
+
+  auto x = GetRandomValue(width * BOUNDS_PADDING, width * (1.0 - BOUNDS_PADDING));
+  auto y = GetRandomValue(height * BOUNDS_PADDING, height * (1.0 - BOUNDS_PADDING));
+  return Food(Vector2(x, y));
 }
 
+void Resources::feed_ants(Population& population) {
+  for (Food& food : _food) {
+    if (food.is_eaten())
+      continue;
 
-void Resources::feed_ants(Population &population) {
-    for (Food &food: _food) {
-        auto ants = population.find_touching(food.get_position(), food.get_size());
-        for (auto &ant: ants) {
-            food.eat(ant.get());
-            break; // Only one ant can eat the food at a time
-        }
+    auto ants = population.find_touching(food.get_position(), food.get_size());
+
+    if (ants.size() == 0)
+      continue;
+
+    for (auto& ant : ants) {
+      food.eat(ant.get());
+      break;  // Only one ant can eat the food at a time
     }
+  }
+}
+
+bool Resources::food_in_rect(const Rectangle rect) const {
+  Rectangle food_rect;
+  for (const Food& food : _food) {
+    if (CheckCollisionRecs(rect, food.get_bounds())) {
+      return true;
+    }
+  }
+  return false;
 }

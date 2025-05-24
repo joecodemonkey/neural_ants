@@ -1,0 +1,5 @@
+Checks: '-*,bugprone-*,performance-*,readability-*,modernize-*'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+FormatStyle: none 
+UseCompilerDefaultHeaders: Yes
