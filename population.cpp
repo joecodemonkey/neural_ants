@@ -4,50 +4,38 @@
 
 #include <algorithm>
 #include <cmath>  // Include this for std::ceil
-#include <iostream>
 
+#include "ant.hpp"
 #include "raylib.h"
+#include "world.hpp"
 
-void Population::draw() {
+Population::Population(World& world) : _world(world), _size(DEFAULT_POPULATION_SIZE) {}
+
+auto Population::set_size(int size) -> void {
+  _size = size;
+}
+
+auto Population::get_size() const -> int {
+  return _size;
+}
+
+auto Population::draw() -> void {
   for (auto& ant : _ants) {
     ant.draw();
   }
 }
 
-void Population::smite() {
-  for (Ant& ant : _ants) {
-    const Vector2& position = ant.get_position();
-    if (position.x < 0 || position.x > _worldSize.x || position.y < 0 ||
-        position.y > _worldSize.y) {
-      ant.set_dead(true);
-    }
-  }
-}
-
-Ant Population::birth() {
-  // The new ant will be within 20% of the bounds of the world
-  auto x = GetRandomValue(static_cast<int>(std::round(_worldSize.x * 0.2)),
-                          static_cast<int>(std::round(_worldSize.x * 0.8)));
-
-  auto y = GetRandomValue(static_cast<int>(std::round(_worldSize.y * 0.2)),
-                          static_cast<int>(std::round(_worldSize.y * 0.8)));
-
-  // The new ant will have a random speed and direction
-  float speed = GetRandomValue(1, 20);
-  float direction = GetRandomValue(0, 360);
-
+auto Population::birth() -> Ant {
   Ant ant;
-  ant.set_position(Vector2{(float)x, (float)y});
-  ant.set_speed(speed);
-  ant.set_direction(direction);
-  if (!_texture_path.empty()) {
-    ant.set_ant_texture_path(_texture_path);
+  if (!_texturePath.empty()) {
+    ant.set_ant_texture_path(_texturePath);
   }
+  ant.reset(_world.spawn_position(ant.get_size()));
 
   return ant;
 }
 
-void Population::reproduce() {
+auto Population::reproduce() -> void {
   // ensure the population vector matches the size of the population
   while (_ants.size() < _size) {
     _ants.push_back(birth());
@@ -65,40 +53,38 @@ void Population::reproduce() {
   // rebirth dead ants
   for (auto& ant : _ants) {
     if (ant.is_dead()) {
-      ant = birth();
+      ant.reset(_world.spawn_position(ant.get_size()));
     }
   }
 }
 
-void Population::update() {
-  // kill off ants that are out of bounds
-  smite();
-
-  // ensure population size is maintained
-  reproduce();
-
+auto Population::update() -> void {
   // update all ants
   for (Ant& ant : _ants) {
     ant.update();
   }
+
+  // ensure population size is maintained
+  reproduce();
 }
 
-std::vector<std::reference_wrapper<Ant> > Population::find_touching(const Vector2& position,
-                                                                    float radius) {
-  std::vector<std::reference_wrapper<Ant> > touching_ants;
+auto Population::find_touching(const Vector2& position, float radius)
+    -> std::vector<std::reference_wrapper<Ant>> {
+  std::vector<std::reference_wrapper<Ant>> touchingAnts;
   for (Ant& ant : _ants) {
-    const float ant_radius = ant.get_size().x / 2.0f;
+    const float antRadius = ant.get_size().x / 2.0f;
     const float distance = Vector2Distance(position, ant.get_position());
-    if (distance < (radius + ant_radius)) {
-      touching_ants.push_back(ant);
+    if (distance < (radius + antRadius)) {
+      touchingAnts.push_back(std::ref(ant));
     }
   }
-  return touching_ants;
+  return touchingAnts;
 }
 
-auto Population::get_world_size() const -> const Vector2& {
-  return _worldSize;
+auto Population::set_texture_path(const std::string& path) -> void {
+  _texturePath = path;
 }
-void Population::set_world_size(const Vector2& world_size) {
-  _worldSize = world_size;
+
+auto Population::get_texture_path() const -> const std::string& {
+  return _texturePath;
 }

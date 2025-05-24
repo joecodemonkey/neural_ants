@@ -4,10 +4,9 @@
 #include "raylib.h"
 #include "resources.hpp"
 
-World::World() : _resources(*this) {
+World::World() : _resources(*this), _population(*this) {
   _bounds = World::DEFAULT_BOUNDS;
   _spawnMargin = DEFAULT_SPAWN_MARGIN;
-  _population.set_world_size({_bounds.width, _bounds.height});
   update_spawn_rect();
 }
 

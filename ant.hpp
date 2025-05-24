@@ -73,9 +73,11 @@ class Ant {
   [[nodiscard]] const Vector2& get_position() const {
     return _position;
   }
-  void set_position(Vector2 position) {
+  void set_position(const Vector2& position) {
     _position = position;
   }
+
+  auto reset(const Vector2& position) -> void;
 
   [[nodiscard]] float const get_size() const {
     return SIZE;

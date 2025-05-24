@@ -1,60 +1,47 @@
 #pragma once
 
+#include <raylib.h>
+
 #include <functional>
+#include <string>
 #include <vector>
 
 #include "ant.hpp"
-#include "raylib.h"
+
+class Ant;
+class World;
 
 class Population {
-  const int DEFAULT_POPULATION_SIZE = 1;
-
  public:
-  Population() = default;
+  Population(World& world);
   ~Population() = default;
 
-  void set_size(int size) {
-    _size = size;
-  }
-  [[nodiscard]] int get_size() const {
-    return _size;
-  }
+  auto set_size(int size) -> void;
+  [[nodiscard]] auto get_size() const -> int;
 
-  auto get_world_size() const -> const Vector2&;
-  void set_world_size(const Vector2& world_size);
+  auto draw() -> void;
+  auto update() -> void;
 
-  void draw();
-
-  void update();
-
-  std::vector<std::reference_wrapper<Ant> > find_touching(const Vector2& position, float radius);
-
-  /* Explicitly obstruct any copying or moving of the Population object so that the compiler
-   * will warn us if we try to do so. */
+  [[nodiscard]] auto find_touching(const Vector2& position, float radius)
+      -> std::vector<std::reference_wrapper<Ant>>;
 
   Population(const Population& other) = delete;
-
   Population& operator=(const Population& other) = delete;
-
   Population(Population&& other) = delete;
-
   Population& operator=(Population&& other) = delete;
 
-  void set_texture_path(std::string const& path) {
-    _texture_path = path;
-  }
-  [[nodiscard]] std::string const& get_texture_path() const {
-    return _texture_path;
-  }
+  auto set_texture_path(const std::string& path) -> void;
+  [[nodiscard]] auto get_texture_path() const -> const std::string&;
 
  protected:
-  Ant birth();
-
-  void smite();
-  void reproduce();
+  [[nodiscard]] auto birth() -> Ant;
+  auto reproduce() -> void;
 
   std::vector<Ant> _ants;
-  Vector2 _worldSize;
-  int _size = DEFAULT_POPULATION_SIZE;
-  std::string _texture_path;
+  World& _world;
+
+  const int DEFAULT_POPULATION_SIZE = 1;
+  int _size;
+
+  std::string _texturePath;
 };
