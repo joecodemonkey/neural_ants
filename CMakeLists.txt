@@ -24,7 +24,7 @@ FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
 
 add_executable(neural_ants main.cpp world.cpp ant.cpp population.cpp  resources.cpp
-        resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp)
+        resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp food.cpp)
 
 target_link_libraries(neural_ants PRIVATE raylib fmt::fmt)
 target_include_directories(neural_ants PRIVATE 

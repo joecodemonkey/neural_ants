@@ -5,8 +5,6 @@
 #include "resources.hpp"
 
 class World {
-  const Rectangle DEFAULT_BOUNDS = {0.0f, 0.0f, 1000.0f, 1000.0f};
-
  public:
   World();
 
@@ -22,6 +20,8 @@ class World {
   void draw();
 
  protected:
+  const Rectangle DEFAULT_BOUNDS = {0.0f, 0.0f, 1000.0f, 1000.0f};
+
   Resources _resources;
   Population _population;
   Rectangle _bounds;

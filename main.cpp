@@ -2,9 +2,6 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include <fstream>
-#include <iostream>
-#include <ostream>
 #include <string>
 
 #include "population.hpp"
@@ -24,7 +21,6 @@ int main(void) {
   world.get_population().set_texture_path("./ant.png");
 
   world.get_resources().set_food_count(100);
-  world.get_resources().set_world_size({world.get_bounds().height, world.get_bounds().width});
 
   SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
   InitWindow(world.get_bounds().width, world.get_bounds().height, "Neural Ants");

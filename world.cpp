@@ -6,8 +6,9 @@
 #include "raylib.h"
 #include "resources.hpp"
 
-World::World() : _bounds(World::DEFAULT_BOUNDS) {
-  _population.set_world_size({World::DEFAULT_BOUNDS.width, World::DEFAULT_BOUNDS.height});
+World::World() : _resources(*this) {
+  _bounds = World::DEFAULT_BOUNDS;
+  _population.set_world_size({_bounds.width, _bounds.height});
 }
 
 auto World::get_bounds() const -> const Rectangle& {
@@ -31,7 +32,7 @@ auto World::get_resources() const -> const Resources& {
 }
 
 void World::update(float time) {
-  _resources.update();
+  _resources.update(time);
   _resources.feed_ants(_population);
   _population.update();
 }

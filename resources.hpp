@@ -1,18 +1,18 @@
 #pragma once
 
-#include <raylib.h>
+class World;
+class Population;
 
 #include <vector>
 
 #include "food.hpp"
-#include "population.hpp"
+#include "raylib.h"
 
 class Resources {
  public:
-  Resources() : _intended_food_count(100), _worldSize(2000.0f, 2000.0f) {}
+  Resources() = delete;
 
-  explicit Resources(int size, const Vector2& worldSize)
-      : _intended_food_count(size), _worldSize(worldSize) {}
+  Resources(World& world);
 
   ~Resources() = default;
 
@@ -20,19 +20,20 @@ class Resources {
     _intended_food_count = size;
   }
 
-  void update();
+  void update(float time);
 
-  void draw();
+  void draw() const;
 
   void feed_ants(Population& population);
-
-  void set_world_size(const Vector2&);
-  [[nodiscard]] auto get_world_size() const -> const Vector2&;
+  bool food_in_rect(const Rectangle rect) const;
 
  protected:
   Food new_food();
 
+  World& _world;
   size_t _intended_food_count = 0;
   std::vector<Food> _food;
-  Vector2 _worldSize;
+
+  const size_t DEFAULT_COUNT = 100;
+  const float BOUNDS_PADDING = 0.20f;
 };
