@@ -1,20 +1,20 @@
 #pragma once
 #include <raylib.h>
 
-#include "ant.hpp"
+class Ant;
 
 class Food {
  public:
   Food();
   Food(const Vector2& position);
-  Food& operator=(const Food& other);
+  auto operator=(const Food& other) -> Food&;
 
-  void draw() const;
-  void eat(Ant& ant);
+  auto draw() const -> void;
+  auto eat(Ant& ant) -> void;
 
   [[nodiscard]] auto get_position() const -> const Vector2&;
-  [[nodiscard]] float get_size() const;
-  [[nodiscard]] float get_value() const;
+  [[nodiscard]] auto get_size() const -> float;
+  [[nodiscard]] auto get_value() const -> float;
   [[nodiscard]] auto is_eaten() const -> bool;
   [[nodiscard]] auto get_bounds() const -> const Rectangle&;
 
@@ -25,5 +25,5 @@ class Food {
   const float _size = 10.0f;
   Rectangle _bounds;
 
-  void update_rect();
+  auto update_bounds() -> void;
 };

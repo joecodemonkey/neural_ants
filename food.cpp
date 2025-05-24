@@ -1,16 +1,17 @@
 #include "food.hpp"
 
+#include "ant.hpp"
 #include "raylib.h"
 
 Food::Food() : _value(10.0f), _position(0.0f, 0.0f), _eaten(false) {
-  update_rect();
+  update_bounds();
 }
 
 Food::Food(const Vector2& position) : _value(10.0f), _position(position), _eaten(false) {
-  update_rect();
+  update_bounds();
 }
 
-Food& Food::operator=(const Food& other) {
+auto Food::operator=(const Food& other) -> Food& {
   if (this != &other) {
     // Check for self-assignment
     _position = other._position;
@@ -21,13 +22,13 @@ Food& Food::operator=(const Food& other) {
   return *this;
 }
 
-void Food::draw() const {
+auto Food::draw() const -> void {
   if (_eaten)
     return;
   DrawCircle(_position.x, _position.y, _size / 2, GREEN);
 }
 
-void Food::eat(Ant& ant) {
+auto Food::eat(Ant& ant) -> void {
   if (_eaten)
     return;
   _eaten = true;
@@ -54,7 +55,7 @@ auto Food::is_eaten() const -> bool {
   return _eaten;
 }
 
-void Food::update_rect() {
+auto Food::update_bounds() -> void {
   _bounds.x = _position.x;
   _bounds.y = _position.y;
   _bounds.width = _size;

@@ -16,22 +16,21 @@ class Resources {
 
   ~Resources() = default;
 
-  void set_food_count(int size) {
-    _intended_food_count = size;
-  }
+  auto get_food_count() const -> int;
+  auto set_food_count(int size) -> void;
 
-  void update(float time);
+  auto update(float time) -> void;
 
-  void draw() const;
+  auto draw() const -> void;
 
-  void feed_ants(Population& population);
-  bool food_in_rect(const Rectangle rect) const;
+  auto feed_ants(Population& population) -> void;
+  auto food_in_rect(const Rectangle rect) const -> bool;
 
  protected:
-  Food new_food();
+  auto new_food() -> Food;
 
   World& _world;
-  size_t _intended_food_count = 0;
+  size_t _food_count;
   std::vector<Food> _food;
 
   const size_t DEFAULT_COUNT = 100;
