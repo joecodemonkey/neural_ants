@@ -23,7 +23,7 @@ class World {
   auto update(float time) -> void;
   auto draw() -> void;
 
-  [[nodiscard]] auto out_of_bounds(const Rectangle& object) const -> bool;
+  [[nodiscard]] auto out_of_bounds(const Vector2& position) const -> bool;
 
   [[nodiscard]] auto spawn_position(const Vector2& dimensions) const -> Vector2;
 

@@ -63,10 +63,8 @@ auto World::draw() -> void {
   _population.draw();
 }
 
-auto World::out_of_bounds(const Rectangle& object) const -> bool {
-  return object.x < _bounds.x || object.y < _bounds.y ||
-         object.x + object.width > _bounds.x + _bounds.width ||
-         object.y + object.height > _bounds.y + _bounds.height;
+auto World::out_of_bounds(const Vector2& position) const -> bool {
+  return !CheckCollisionPointRec(position, _bounds);
 }
 
 [[nodiscard]] auto World::spawn_position(const Vector2& dimensions) const -> Vector2 {

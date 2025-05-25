@@ -49,9 +49,9 @@ class Ant {
 
  protected:
   const float DEFAULT_SCALE = 20.0F;
-  const float STARTING_ENERGY = 100.0F;
+  const float STARTING_ENERGY = 1000.0F;
   // sedintary energy per second is the base rate of energy loss for a stationary ant
-  const float SEDINTARY_ENERGY_PER_SECOND = 0.1F;
+  const float SEDINTARY_ENERGY_PER_SECOND = 1.0F;
   const float MAX_VELOCITY = 30.0f;
   const float LINE_THICKNESS = 2.0F;
 

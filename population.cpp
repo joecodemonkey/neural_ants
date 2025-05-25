@@ -46,6 +46,10 @@ auto Population::reproduce() -> void {
 auto Population::update(float time) -> void {
   // update all ants
   for (Ant& ant : _ants) {
+    if (_world.out_of_bounds(ant.get_position())) {
+      ant.set_dead(true);
+    }
+
     if (ant.is_dead()) {
       ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
     }
