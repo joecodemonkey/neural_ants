@@ -54,6 +54,8 @@ class Ant {
   const float SEDINTARY_ENERGY_PER_SECOND = 1.0F;
   const float MAX_VELOCITY = 30.0f;
   const float LINE_THICKNESS = 2.0F;
+  const float FONT_SIZE = 10.0F;
+  const float FONT_SPACING = 1.0F;
 
   World& _world;
 
@@ -77,8 +79,9 @@ class Ant {
   auto update_radius() -> void;
 
   auto draw_body() -> void;
-  auto draw_energy(Rectangle const& text_rect) const -> void;
-  [[nodiscard]] auto draw_coordinates() const -> Rectangle;
+  auto draw_energy() const -> void;
+  auto draw_coordinates() const -> void;
+  [[nodiscard]] auto get_coordinates_rect() const -> Rectangle;
   auto draw_direction() const -> void;
   auto draw_bounding() const -> void;
 

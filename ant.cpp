@@ -47,8 +47,8 @@ auto Ant::draw() -> void {
 
   draw_direction();
   draw_bounding();
-
-  draw_energy(draw_coordinates());
+  draw_energy();
+  draw_coordinates();
 }
 
 [[nodiscard]] auto Ant::is_dead() const -> bool {
@@ -124,7 +124,8 @@ auto Ant::draw_body() -> void {
   DrawTextureEx(_texture, {_bounds.x, _bounds.y}, get_rotation(), 1.0F, WHITE);
 }
 
-auto Ant::draw_energy(Rectangle const& text_rect) const -> void {
+auto Ant::draw_energy() const -> void {
+  const auto text_rect = get_coordinates_rect();
   const int lineX = static_cast<int>(std::round(text_rect.x));
 
   float energyPercentage = _energy / STARTING_ENERGY;
@@ -132,37 +133,38 @@ auto Ant::draw_energy(Rectangle const& text_rect) const -> void {
     energyPercentage = 1.0F;  // keep the bar from getting too long
   }
 
-  int lineLength = static_cast<int>(std::round(text_rect.width / 2.0F * energyPercentage));
-  const int lineWidth = static_cast<int>(std::round(text_rect.height / 4.0F));
-  const int lineY = static_cast<int>(std::round(text_rect.y + text_rect.height / 2.0F));
+  int lineLength = static_cast<int>(std::round(text_rect.width * energyPercentage));
+  const int lineHeight = static_cast<int>(std::round(text_rect.height));
+  const int lineY = static_cast<int>((text_rect.y));
 
   auto lineColor = GREEN;
-  if (_energy < 25) {
+  if (energyPercentage < 0.25F) {
     lineColor = RED;
-  } else if (_energy < 50) {
+  } else if (energyPercentage < 0.50F) {
     lineColor = ORANGE;
-  } else if (_energy < 75) {
+  } else if (energyPercentage < 0.75F) {
     lineColor = YELLOW;
   }
 
-  DrawRectangle(lineX, lineY, lineLength, lineWidth, lineColor);
+  DrawRectangle(lineX, lineY, lineLength, lineHeight, lineColor);
 }
 
-auto Ant::draw_coordinates() const -> Rectangle {
+auto Ant::get_coordinates_rect() const -> Rectangle {
   const std::string text = fmt::format("({:.2f}, {:.2f})", _position.x, _position.y);
-  const auto FONT_SIZE = 20;
-  const auto FONT_SPACING = 1.0F;
 
   // TODO: CLEAN THIS UP
   Vector2 textSize = MeasureTextEx(GetFontDefault(), text.c_str(), FONT_SIZE, FONT_SPACING);
-  int textX =
-      static_cast<int>(std::roundf(static_cast<float>(_position.x) + 1.5F - (textSize.x / 2.0F)));
-  int textY =
-      static_cast<int>(std::roundf(static_cast<float>(_position.y) - (textSize.y / 2.0f + 20)));
-
-  DrawText(text.c_str(), textX, textY, FONT_SIZE, BLACK);
+  int textX = static_cast<int>((_position.x) + 1.5F - (textSize.x / 2.0F));
+  int textY = static_cast<int>(((_position.y) - (textSize.y / 2.0f + 20)));
 
   return {static_cast<float>(textX), static_cast<float>(textY), textSize.x, textSize.y};
+}
+
+auto Ant::draw_coordinates() const -> void {
+  const std::string text = fmt::format("({:.2f}, {:.2f})", _position.x, _position.y);
+  const auto coordinates_rect = get_coordinates_rect();
+
+  DrawText(text.c_str(), coordinates_rect.x, coordinates_rect.y, FONT_SIZE, BLACK);
 }
 
 [[nodiscard]] auto Ant::get_texture_path() const -> const std::string& {
