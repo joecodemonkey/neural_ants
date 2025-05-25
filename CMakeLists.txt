@@ -31,6 +31,7 @@ FetchContent_MakeAvailable(raylib)
 # Separate C and C++ sources
 set(C_SOURCES
     raylibdrawex.c
+    raylibmathex.c
 )
 
 set(CXX_SOURCES
