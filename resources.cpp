@@ -27,7 +27,7 @@ auto Resources::feed_ants(Population& population) -> void {
       food.reset(_world.spawn_position({Food::DEFAULT_SIZE, Food::DEFAULT_SIZE}));
     }
 
-    auto ants = population.find_touching(food.get_position(), food.get_size());
+    auto ants = population.get_collisions(food.get_position(), food.get_radius());
 
     if (ants.size() == 0)
       continue;
@@ -37,19 +37,6 @@ auto Resources::feed_ants(Population& population) -> void {
       break;  // Only one ant can eat the food at a time
     }
   }
-}
-
-auto Resources::food_in_rect(const Rectangle rect) const -> bool {
-  Rectangle food_rect;
-  for (const Food& food : _food) {
-    if (food.is_eaten()) {
-      continue;
-    }
-    if (CheckCollisionRecs(rect, food.get_bounds())) {
-      return true;
-    }
-  }
-  return false;
 }
 
 auto Resources::get_food_count() const -> int {

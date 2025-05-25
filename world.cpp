@@ -54,7 +54,7 @@ auto World::update_spawn_rect() -> void {
 auto World::update(float time) -> void {
   _resources.update(time);
   _resources.feed_ants(_population);
-  _population.update();
+  _population.update(time);
 }
 
 auto World::draw() -> void {

@@ -1,123 +1,87 @@
 #pragma once
 #include <fmt/core.h>
+#include <raylib.h>
 
-#include <string>
+#include "raymath.h"
 
-#include "raylib.h"
+class World;
 
 class Ant {
  public:
-  Ant() {};
+  Ant(World& world);
 
-  Ant& operator=(const Ant& other) {
-    if (this != &other) {
-      // Check for self-assignment
-      _position = other._position;
-      _speed = other._speed;
-      _direction = other._direction;
-      _dead = other._dead;
-      _energy = other._energy;
-      _lifeSpan = other._lifeSpan;
-    }
-    return *this;
-  }
+  auto operator=(const Ant& other) -> Ant&;
 
-  Ant(const Ant& other) {
-    _position = other._position;
-    _speed = other._speed;
-    _direction = other._direction;
-    _dead = other._dead;
-    _energy = other._energy;
-    _lifeSpan = other._lifeSpan;
-    _antTexturePath = other._antTexturePath;
-    _antTexture = other._antTexture;
-  }
+  Ant(const Ant& other);
+
   ~Ant() = default;
 
-  void update();
+  auto draw() -> void;
 
-  void draw();
+  auto update(float time) -> void;
 
-  [[nodiscard]] float get_direction() const {
-    return _direction;
-  }
-  void set_direction(float direction) {
-    _direction = direction;
-  }
+  [[nodiscard]] auto get_direction() const -> float;
 
-  [[nodiscard]] float get_energy() const {
-    return _energy;
-  }
-  void set_energy(float energy) {
-    _energy = energy;
-  }
+  [[nodiscard]] auto get_energy() const -> float;
+  auto set_energy(float energy) -> void;
 
-  [[nodiscard]] float get_speed() const {
-    return _speed;
-  }
-  void set_speed(float speed) {
-    _speed = speed;
-  }
+  [[nodiscard]] auto get_speed() const -> float;
+  auto set_speed(float speed) -> void;
 
-  [[nodiscard]] bool is_dead() const {
-    return _dead;
-  }
-  void set_dead(bool dead) {
-    _dead = dead;
-  }
+  [[nodiscard]] auto is_dead() const -> bool;
+  auto set_dead(bool dead) -> void;
 
-  [[nodiscard]] float get_life_span() const {
-    return _lifeSpan;
-  }
+  [[nodiscard]] auto get_life_span() const -> float;
 
-  [[nodiscard]] const Vector2& get_position() const {
-    return _position;
-  }
-  void set_position(const Vector2& position) {
-    _position = position;
-  }
+  [[nodiscard]] auto get_position() const -> const Vector2&;
+  auto set_position(const Vector2& position) -> void;
+
+  [[nodiscard]] auto get_scale() const -> float;
+  auto set_scale(float scale) -> void;
+
+  [[nodiscard]] auto get_texture_path() const -> const std::string&;
+  auto set_texture_path(std::string const& path) -> void;
+
+  [[nodiscard]] auto get_bounds() const -> const Rectangle&;
 
   auto reset(const Vector2& position) -> void;
-
-  [[nodiscard]] float const get_size() const {
-    return SIZE;
-  }
-
-  void set_ant_texture_path(std::string const& path);
-  [[nodiscard]] std::string const& get_ant_texture_path() const {
-    return _antTexturePath;
-  }
-
-  [[nodiscard]] Vector2 get_size();
+  auto collides(const Vector2& position, float radius) const -> bool;
 
  protected:
-  const float SIZE = 20.0f;
+  const float DEFAULT_SCALE = 20.0F;
+  const float STARTING_ENERGY = 100.0F;
+  // sedintary energy per second is the base rate of energy loss for a stationary ant
+  const float SEDINTARY_ENERGY_PER_SECOND = 0.1F;
+  const float MAX_VELOCITY = 30.0f;
+  const float LINE_THICKNESS = 2.0F;
 
-  Vector2 _position = {0.0f, 0.0f};
-  float _speed = 0.0f;
-  float _direction = 0.0f;
+  World& _world;
+
+  Vector2 _position = Vector2Zero();
+  Vector2 _velocity = Vector2Zero();
+  Rectangle _bounds = {0.0F, 0.0F, 0.0F, 0.0F};
+  float _radius = 0.0F;
   bool _dead = false;
   bool _frozen = false;
-
-  // All Ants start with the same amount of energy
-  const float STARTING_ENERGY = 100.0f;
-  float _energy = STARTING_ENERGY;
-
-  // Lifespan records the number of seconds the ant has been alive
-  float _lifeSpan = 0.0f;
-
-  // sedintary energy per second is the base rate of energy loss for a stationary ant
-  const float SEDINTARY_ENERGY_PER_SECOND = 0.1f;
-
-  // Update methods
-  void update_energy();
-  void update_position();
-
-  void draw_body();
-  void draw_energy(Rectangle const& text_rect);
-  Rectangle draw_coordinates();
-  void draw_direction();
-
+  float _scale = DEFAULT_SCALE;
   Texture2D _antTexture;
   std::string _antTexturePath;
+  // TODO: Restore this
+  // Brain _brain;
+  float _energy = STARTING_ENERGY;
+  float _lifeSpan = 0.0F;  // time in seconds ant has been alive (measure of fitness)
+
+  // Update methods
+  auto update_energy(float time) -> void;
+  auto update_position(float time) -> void;
+  auto update_bounds() -> void;
+  auto update_radius() -> void;
+
+  auto draw_body() -> void;
+  auto draw_energy(Rectangle const& text_rect) const -> void;
+  [[nodiscard]] auto draw_coordinates() const -> Rectangle;
+  auto draw_direction() const -> void;
+  auto draw_bounding() const -> void;
+
+  [[nodiscard]] auto get_rotation() const -> float;
 };

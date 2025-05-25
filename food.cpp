@@ -26,6 +26,7 @@ auto Food::draw() const -> void {
   if (_eaten)
     return;
   DrawCircle(_position.x, _position.y, _size / 2, GREEN);
+  DrawPixel(_position.x, _position.y, RED);
 }
 
 auto Food::eat(Ant& ant) -> void {
@@ -56,8 +57,8 @@ auto Food::is_eaten() const -> bool {
 }
 
 auto Food::update_bounds() -> void {
-  _bounds.x = _position.x;
-  _bounds.y = _position.y;
+  _bounds.x = _position.x / 2;
+  _bounds.y = _position.y / 2;
   _bounds.width = _size;
   _bounds.height = _size;
 }
@@ -65,4 +66,8 @@ auto Food::update_bounds() -> void {
 auto Food::reset(const Vector2& position) -> void {
   _eaten = false;
   _position = position;
+}
+
+[[nodiscard]] auto Food::get_radius() const -> float {
+  return _size / 2;
 }

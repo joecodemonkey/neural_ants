@@ -20,9 +20,9 @@ class Population {
   [[nodiscard]] auto get_size() const -> int;
 
   auto draw() -> void;
-  auto update() -> void;
+  auto update(float time) -> void;
 
-  [[nodiscard]] auto find_touching(const Vector2& position, float radius)
+  [[nodiscard]] auto get_collisions(const Vector2& position, float radius)
       -> std::vector<std::reference_wrapper<Ant>>;
 
   Population(const Population& other) = delete;
@@ -34,7 +34,6 @@ class Population {
   [[nodiscard]] auto get_texture_path() const -> const std::string&;
 
  protected:
-  [[nodiscard]] auto birth() -> Ant;
   auto reproduce() -> void;
 
   std::vector<Ant> _ants;

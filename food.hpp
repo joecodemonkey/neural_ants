@@ -20,6 +20,7 @@ class Food {
   [[nodiscard]] auto is_eaten() const -> bool;
   auto reset(const Vector2& position) -> void;
   [[nodiscard]] auto get_bounds() const -> const Rectangle&;
+  [[nodiscard]] auto get_radius() const -> float;
 
  protected:
   float _value;
