@@ -64,8 +64,8 @@ class Ant {
   bool _dead = false;
   bool _frozen = false;
   float _scale = DEFAULT_SCALE;
-  Texture2D _antTexture;
-  std::string _antTexturePath;
+  Texture2D _texture;
+  std::string _texturePath;
   // TODO: Restore this
   // Brain _brain;
   float _energy = STARTING_ENERGY;
@@ -73,7 +73,6 @@ class Ant {
 
   // Update methods
   auto update_energy(float time) -> void;
-  auto update_position(float time) -> void;
   auto update_bounds() -> void;
   auto update_radius() -> void;
 
