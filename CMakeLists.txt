@@ -30,28 +30,32 @@ FetchContent_MakeAvailable(raylib)
 
 # Separate C and C++ sources
 set(C_SOURCES
-    raylibdrawex.c
-    raylibmathex.c
+    src/raylibdrawex.c
+    src/raylibmathex.c
 )
 
 set(CXX_SOURCES
-    main.cpp
-    world.cpp
-    ant.cpp
-    population.cpp
-    resources.cpp
-    resources.hpp
-    neuron.cpp
-    neural_network.cpp
-    genome.cpp
-    surroundings.cpp
-    food.cpp
-    brain.cpp
+    src/main.cpp
+    src/game.cpp 
+    src/input.cpp
+    src/world.cpp
+    src/ant.cpp
+    src/population.cpp
+    src/resources.cpp
+    src/neuron.cpp
+    src/neural_network.cpp
+    src/genome.cpp
+    src/surroundings.cpp
+    src/food.cpp
+    src/brain.cpp
 )
 
 add_executable(neural_ants ${C_SOURCES} ${CXX_SOURCES})
 
 target_link_libraries(neural_ants PRIVATE raylib fmt::fmt)
+
+# Add include directories
 target_include_directories(neural_ants PRIVATE 
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
