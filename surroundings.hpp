@@ -1,8 +1,9 @@
 #pragma once
-#include <vector>
 #include <raylib.h>
-#include "neuron.hpp"
 
+#include <vector>
+
+#include "neuron.hpp"
 
 /*  Surroundings is a 2D grid of types that are encoded.
     The types are:
@@ -12,50 +13,41 @@
 
     The top-left corner of the grid is (0,0)
     The bottom-right corner of the grid is (width-1, height-1)
-    The grid is encoded left to right, top to bottom. 
+    The grid is encoded left to right, top to bottom.
     The encoded vector is a flat vector of values between -1 and 1.
 */
 
-
 class Surroundings {
+ public:
+  typedef enum Type { FOOD, EMPTY, WALL } Type;
 
-    public:
+  Surroundings() = default;
+  // copy constructor
+  Surroundings(const Surroundings& other) = default;
+  // move constructor
+  Surroundings(Surroundings&& other) = delete;
+  // copy assignment operator
+  auto operator=(const Surroundings& other) -> Surroundings& = delete;
+  // move assignment operator
+  auto operator=(Surroundings&& other) -> Surroundings& = delete;
 
-    typedef enum Type {
-        FOOD,
-        EMPTY,
-        WALL
-    } Type;
+  auto set_dimensions(size_t width, size_t height) -> void;
+  auto set_type(size_t x, size_t y, Type type) -> void;
 
-    Surroundings() = default;
-    // copy constructor
-    Surroundings(const Surroundings &other) = default;
-    // move constructor
-    Surroundings(Surroundings &&other) = delete;
-    // copy assignment operator
-    Surroundings &operator=(const Surroundings &other) = delete;
-    // move assignment operator
-    Surroundings &operator=(Surroundings &&other) = delete;
+  auto get_dimensions() const -> Vector2;
+  auto get_width() const -> size_t;
+  auto get_height() const -> size_t;
 
-    void set_dimensions(size_t width, size_t height);
-    void set_type(size_t x, size_t y, Type type);
+  auto get_encoded_surroundings() -> const std::vector<Neuron::Value>&;
 
-    Vector2 get_dimensions() const;
-    size_t get_width() const;
-    size_t get_height() const;
-    
-    const std::vector<Neuron::Value> &get_encoded_surroundings();
+  auto changed() const -> bool;
 
-    bool changed() const;
+ protected:
+  std::vector<std::vector<Type>> _surroundingsType;
+  std::vector<Neuron::Value> _surroundingsEncoded;
 
-    protected:
-    
-    std::vector<std::vector<Type>> _surroundings_type;
-    std::vector<Neuron::Value> _surroundings_encoded;
+  bool _changed = false;
 
-    bool _changed = false;
-
-    static float encode_type(Type type);
-    void update_encoded_surroundings();
-
+  static auto encode_type(Type type) -> float;
+  auto update_encoded_surroundings() -> void;
 };

@@ -1,51 +1,43 @@
 #pragma once
-#include <vector>
 #include <cmath>
-#include <random>
-#include <algorithm>
-#include <stdexcept>
-#include <string>
-#include <sstream>
+#include <vector>
 
 class Neuron {
-    public:
-        
-        typedef float Value;
-        typedef std::vector<Value> ValueVector;
+ public:
+  typedef float Value;
+  typedef std::vector<Value> ValueVector;
 
-        Neuron() { }
+  Neuron() {}
 
-        void set_input(size_t idx, Value value);
-        Value get_input(size_t idx) const;
+  auto set_input(size_t idx, Value value) -> void;
+  auto get_input(size_t idx) const -> Value;
 
-        void set_input_weight(size_t idx, Value weight);
-        Value get_input_weight(size_t idx) const;
+  auto set_input_weight(size_t idx, Value weight) -> void;
+  auto get_input_weight(size_t idx) const -> Value;
 
-        void set_bias(double bias);
-        Value get_bias() const;
+  auto set_bias(double bias) -> void;
+  auto get_bias() const -> Value;
 
-        Value get_output();
+  auto get_output() -> Value;
 
-        size_t get_input_count() const;
-        void set_input_count(size_t);   
+  auto get_input_count() const -> size_t;
+  auto set_input_count(size_t) -> void;
 
-        Neuron& operator=(const Neuron& other);
-        Neuron& operator=(Neuron&& other);
-        Neuron(const Neuron& other);
-        Neuron(Neuron&& other);        
+  auto operator=(const Neuron& other) -> Neuron&;
+  auto operator=(Neuron&& other) -> Neuron&;
+  Neuron(const Neuron& other);
+  Neuron(Neuron&& other);
 
-        void randomize();
+  auto randomize() -> void;
 
-    protected:
+ protected:
+  static auto activation_function(Value x) -> Value {
+    return tanh(x);
+  }
 
-        static Value activation_function(Value x) {    
-            return tanh(x);
-        }
-
-        bool _ready = false;
-        Value _value = 0;
-        Value _bias = 0;
-        ValueVector _weights;
-        ValueVector _inputs;
-    
+  bool _ready = false;
+  Value _value = 0;
+  Value _bias = 0;
+  ValueVector _weights;
+  ValueVector _inputs;
 };

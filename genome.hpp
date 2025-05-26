@@ -1,65 +1,65 @@
 #pragma once
-#include <vector>
+#include <algorithm>
 #include <cmath>
 #include <random>
-#include <algorithm>
+#include <sstream>
 #include <stdexcept>
 #include <string>
-#include <sstream>
+#include <vector>
+
 #include "neural_network.hpp"
 
-class Genome {  
+class Genome {
+ public:
+  // Default constructor
+  Genome();
 
-public:
-    // Default constructor
-    Genome();
-    
-    // Copy constructor
-    Genome(const Genome& other);
-    
-    // Move constructor
-    Genome(Genome&& other) noexcept;
-    
-    // Copy assignment
-    Genome& operator=(const Genome& other);
-    
-    // Move assignment
-    Genome& operator=(Genome&& other) noexcept;
+  // Copy constructor
+  Genome(const Genome& other);
 
-    Genome breed_with(const Genome &other, double mutation_rate = 0.1);
+  // Move constructor
+  Genome(Genome&& other) noexcept;
 
-    NeuralNetwork &get_network();
+  // Copy assignment
+  auto operator=(const Genome& other) -> Genome&;
 
-    void mutate(double mutation_rate = 0.1);
-    void randomize();       
+  // Move assignment
+  auto operator=(Genome&& other) noexcept -> Genome&;
 
-    void set_layer_count(size_t count);
-    size_t get_layer_count() const;
+  auto breed_with(const Genome& other, double mutationRate = 0.1) -> Genome;
 
-    void set_hidden_layer_neuron_count(size_t count);
-    size_t get_hidden_layer_neuron_count() const;
+  auto get_network() -> NeuralNetwork&;
 
-    void set_input_count(size_t input_count);
-    size_t get_input_count() const;
+  auto mutate(double mutationRate = 0.1) -> void;
+  auto randomize() -> void;
 
-    void set_output_count(size_t output_count);
-    size_t get_output_count() const;
+  auto set_layer_count(size_t count) -> void;
+  auto get_layer_count() const -> size_t;
 
-    void validate_compatible(const Genome &other) const;
+  auto set_hidden_layer_neuron_count(size_t count) -> void;
+  auto get_hidden_layer_neuron_count() const -> size_t;
 
-protected:
-    static void breed_layer(const NeuralNetwork::Layer& parent1, 
-                            const NeuralNetwork::Layer& parent2,
-                            NeuralNetwork::Layer& child);
+  auto set_input_count(size_t inputCount) -> void;
+  auto get_input_count() const -> size_t;
 
-    void create_network();
+  auto set_output_count(size_t outputCount) -> void;
+  auto get_output_count() const -> size_t;
 
-    NeuralNetwork _network;
-    bool _ready = false;
-    
-    // Configuration settings
-    size_t _input_count = 8;
-    size_t _output_count = 3;
-    size_t _layer_count = 1;
-    size_t _neuron_count = 5;
+  auto validate_compatible(const Genome& other) const -> void;
+
+ protected:
+  static auto breed_layer(const NeuralNetwork::Layer& parent1,
+                          const NeuralNetwork::Layer& parent2,
+                          NeuralNetwork::Layer& child) -> void;
+
+  auto create_network() -> void;
+
+  NeuralNetwork _network;
+  bool _ready = false;
+
+  // Configuration settings
+  size_t _inputCount = 8;
+  size_t _outputCount = 3;
+  size_t _layerCount = 1;
+  size_t _neuronCount = 5;
 };

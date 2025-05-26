@@ -1,57 +1,54 @@
 #pragma once
-#include <vector>
+#include <algorithm>
 #include <cmath>
 #include <random>
-#include <algorithm>
+#include <sstream>
 #include <stdexcept>
 #include <string>
-#include <sstream>
-#include "neuron.hpp"
+#include <vector>
 
+#include "neuron.hpp"
 
 // A fully connected neural network
 class NeuralNetwork {
+ public:
+  typedef std::vector<Neuron> Layer;
+  typedef std::vector<Neuron::Value> ValueVector;
 
-public:
+  NeuralNetwork() = default;
 
-    typedef std::vector<Neuron> Layer;
-    typedef std::vector<Neuron::Value> ValueVector;
+  auto set_input(const ValueVector& input) -> void;
+  auto set_input(size_t idx, Neuron::Value value) -> void;
 
-    NeuralNetwork() = default;
-    
-    void set_input(const ValueVector &input);
-    void set_input(size_t idx, Neuron::Value value);
-    
-    const NeuralNetwork::ValueVector & get_inputs() const;
-        
-    Neuron::Value get_input(size_t idx) const;
+  auto get_inputs() const -> const ValueVector&;
 
-    const ValueVector & get_outputs();
-    Neuron::Value get_output(size_t idx);
+  auto get_input(size_t idx) const -> Neuron::Value;
 
-    void set_input_layer_count(size_t count);
-    size_t get_input_layer_count() const;
+  auto get_outputs() -> const ValueVector&;
+  auto get_output(size_t idx) -> Neuron::Value;
 
-    void set_output_layer_count(size_t count);
-    size_t get_output_layer_count() const;
+  auto set_input_layer_count(size_t count) -> void;
+  auto get_input_layer_count() const -> size_t;
 
-    Layer & get_layer(size_t idx);
-    const Layer & get_layer(size_t idx) const;
+  auto set_output_layer_count(size_t count) -> void;
+  auto get_output_layer_count() const -> size_t;
 
-    void set_hidden_layer_count(size_t count);
-    size_t get_hidden_layer_count() const;
-    
-    Layer & get_output_layer();
-    const Layer & get_output_layer() const;
+  auto get_layer(size_t idx) -> Layer&;
+  auto get_layer(size_t idx) const -> const Layer&;
 
-    void randomize();
+  auto set_hidden_layer_count(size_t count) -> void;
+  auto get_hidden_layer_count() const -> size_t;
 
-    protected: 
-    
-    std::vector<Layer> _layers;   
-    Layer _output_layer;
-    ValueVector _inputs;
-    ValueVector _outputs;
+  auto get_output_layer() -> Layer&;
+  auto get_output_layer() const -> const Layer&;
 
-    bool _ready;
+  auto randomize() -> void;
+
+ protected:
+  std::vector<Layer> _layers;
+  Layer _output_layer;
+  ValueVector _inputs;
+  ValueVector _outputs;
+
+  bool _ready;
 };
