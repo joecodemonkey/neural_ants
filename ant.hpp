@@ -2,12 +2,15 @@
 #include <fmt/core.h>
 #include <raylib.h>
 
+#include "brain.hpp"
 #include "raymath.h"
 
 class World;
 
 class Ant {
  public:
+  const float MAX_VELOCITY = 30.0f;
+
   Ant(World& world);
 
   auto operator=(const Ant& other) -> Ant&;
@@ -47,17 +50,20 @@ class Ant {
   auto reset(const Vector2& position) -> void;
   auto collides(const Vector2& position, float radius) const -> bool;
 
+  auto set_velocity(const Vector2 velocity) -> void;
+  auto get_velocity() const -> const Vector2&;
+
  protected:
   const float DEFAULT_SCALE = 20.0F;
   const float STARTING_ENERGY = 1000.0F;
   // sedintary energy per second is the base rate of energy loss for a stationary ant
   const float SEDINTARY_ENERGY_PER_SECOND = 1.0F;
-  const float MAX_VELOCITY = 30.0f;
   const float LINE_THICKNESS = 2.0F;
   const float FONT_SIZE = 10.0F;
   const float FONT_SPACING = 1.0F;
 
   World& _world;
+  Brain _brain;
 
   Vector2 _position = Vector2Zero();
   Vector2 _velocity = Vector2Zero();

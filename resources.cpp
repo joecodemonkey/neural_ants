@@ -1,6 +1,7 @@
 #include "resources.hpp"
 
 #include "food.hpp"
+#include "raylib.h"
 #include "world.hpp"
 
 Resources::Resources(World& world) : _world(world) {
@@ -45,4 +46,13 @@ auto Resources::get_food_count() const -> int {
 
 auto Resources::set_food_count(int size) -> void {
   _food_count = size;
+}
+
+auto Resources::food_in_rect(const Rectangle& rect) const -> bool {
+  for (const Food& food : _food) {
+    if (CheckCollisionCircleRec(food.get_position(), food.get_radius(), rect)) {
+      return true;
+    }
+  }
+  return false;
 }

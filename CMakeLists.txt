@@ -46,6 +46,7 @@ set(CXX_SOURCES
     genome.cpp
     surroundings.cpp
     food.cpp
+    brain.cpp
 )
 
 add_executable(neural_ants ${C_SOURCES} ${CXX_SOURCES})

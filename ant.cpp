@@ -1,5 +1,6 @@
 #include "ant.hpp"
 
+#include "brain.hpp"
 #include "population.hpp"
 #include "raylib.h"
 #include "raylibdrawex.h"
@@ -8,7 +9,7 @@
 #include "resources.hpp"
 #include "world.hpp"
 
-Ant::Ant(World& world) : _world(world) {}
+Ant::Ant(World& world) : _world(world), _brain(*this, world) {}
 
 auto Ant::operator=(const Ant& other) -> Ant& {
   if (this != &other) {
@@ -26,7 +27,7 @@ auto Ant::operator=(const Ant& other) -> Ant& {
   return *this;
 }
 
-Ant::Ant(const Ant& other) : _world(other._world) {
+Ant::Ant(const Ant& other) : _world(other._world), _brain(*this, other._world) {
   _position = other._position;
   _velocity = other._velocity;
   _dead = other._dead;
@@ -92,6 +93,7 @@ auto Ant::update(float time) -> void {
   if (_dead) {
     return;  // he's not dead, he's just resting
   }
+  _brain.update(time);
 
   _lifeSpan += time;
   _position = Vector2Add(_position, Vector2Scale(_velocity, time));
@@ -236,4 +238,12 @@ auto Ant::update_radius() -> void {
 
 auto Ant::collides(const Vector2& position, float radius) const -> bool {
   return CheckCollisionCircles(position, radius, _position, _radius);
+}
+
+auto Ant::set_velocity(const Vector2 velocity) -> void {
+  _velocity = velocity;
+  update_bounds();
+}
+auto Ant::get_velocity() const -> const Vector2& {
+  return _velocity;
 }

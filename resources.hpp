@@ -24,6 +24,7 @@ class Resources {
   auto draw() const -> void;
 
   auto feed_ants(Population& population) -> void;
+  auto food_in_rect(const Rectangle& rect) const -> bool;
 
  protected:
   auto food_position() -> Vector2;
