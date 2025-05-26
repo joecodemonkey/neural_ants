@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
-project(neural_ants)
+project(neural_ants LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Add debug flags
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
 
 include(FetchContent)
 
@@ -20,17 +25,37 @@ FetchContent_Declare(
         GIT_TAG 5.5
 )
 
-# download the RaylibCPP
-FetchContent_Declare(
-        raylib-cpp
-        GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp
-        GIT_TAG v5.5.0
-)
-
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
-FetchContent_MakeAvailable(raylib-cpp)
 
-add_executable(neural_ants texture_cache.hpp main.cpp ant.cpp population.cpp  resources.cpp
-        resources.hpp neuron.cpp neural_network.cpp genome.cpp surroundings.cpp)
-target_link_libraries(neural_ants PRIVATE raylib_cpp raylib fmt::fmt)
+# Separate C and C++ sources
+set(C_SOURCES
+    src/raylibdrawex.c
+    src/raylibmathex.c
+)
+
+set(CXX_SOURCES
+    src/main.cpp
+    src/game.cpp 
+    src/input.cpp
+    src/world.cpp
+    src/ant.cpp
+    src/population.cpp
+    src/resources.cpp
+    src/neuron.cpp
+    src/neural_network.cpp
+    src/genome.cpp
+    src/surroundings.cpp
+    src/food.cpp
+    src/brain.cpp
+)
+
+add_executable(neural_ants ${C_SOURCES} ${CXX_SOURCES})
+
+target_link_libraries(neural_ants PRIVATE raylib fmt::fmt)
+
+# Add include directories
+target_include_directories(neural_ants PRIVATE 
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
