@@ -83,11 +83,11 @@ target_include_directories(neural_ants PRIVATE
 # Test configuration
 enable_testing()
 
+# Find all test files recursively
+file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
+
 # Create test executable
-add_executable(neural_ants_tests
-    tests/main_test.cpp
-    tests/surroundings_test.cpp
-)
+add_executable(neural_ants_tests ${TEST_SOURCES})
 
 # Link test executable with Catch2
 target_link_libraries(neural_ants_tests PRIVATE

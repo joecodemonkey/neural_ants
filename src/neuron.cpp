@@ -104,3 +104,11 @@ auto Neuron::randomize() -> void {
   _value = dist(gen);
   _ready = false;
 }
+
+auto Neuron::get_inputs() const -> const ValueVector& {
+  return _inputs;
+}
+
+auto Neuron::get_inputs() -> ValueVector& {
+  return _inputs;
+}
