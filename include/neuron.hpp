@@ -38,6 +38,7 @@ class Neuron {
   }
 
   bool _ready = false;
+
   Value _value = 0;
   Value _bias = 0;
   ValueVector _weights;

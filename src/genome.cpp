@@ -4,13 +4,10 @@
 #include <random>
 
 auto Genome::create_network() -> void {
-  _network.set_input_layer_count(_inputCount);
-  _network.set_output_layer_count(_outputCount);
+  _network.set_input_count(_inputCount);
+  _network.set_output_neuron_count(_outputCount);
   _network.set_hidden_layer_count(_layerCount);
-
-  for (size_t i = 0; i < _layerCount; ++i) {
-    _network.get_layer(i).resize(_neuronCount);
-  }
+  _network.set_hidden_layer_neuron_count(_neuronCount);
 
   _ready = true;
 }
@@ -113,15 +110,18 @@ auto Genome::breed_with(const Genome& other, double mutationRate) -> Genome {
 
   // Breed hidden layers
   for (size_t layerIdx = 0; layerIdx < get_layer_count(); ++layerIdx) {
-    breed_layer(_network.get_layer(layerIdx),
-                other._network.get_layer(layerIdx),
-                child._network.get_layer(layerIdx));
+    /* TODO: FIX THIS
+    breed_layer(_network.get_hidden_layer(layerIdx),
+                other._network.get_hidden_layer(layerIdx),
+                child._network.get_hidden_layer(layerIdx));
+*/
   }
-
-  // Breed output layer
-  breed_layer(_network.get_output_layer(),
-              other._network.get_output_layer(),
-              child._network.get_output_layer());
+  /*
+    // Breed output layer
+    breed_layer(_network.get_output_layer(),
+                other._network.get_output_layer(),
+                child._network.get_output_layer());
+  */
 
   // Apply mutations
   child.mutate(mutationRate);
@@ -137,6 +137,7 @@ auto Genome::mutate(double mutationRate) -> void {
 
   // Mutate hidden layers
   for (size_t layerIdx = 0; layerIdx < get_layer_count(); ++layerIdx) {
+    /* TODO FIX THIS
     auto& layer = _network.get_layer(layerIdx);
     for (auto& neuron : layer) {
       // Mutate weights
@@ -153,6 +154,7 @@ auto Genome::mutate(double mutationRate) -> void {
         neuron.set_bias(currentBias + gaussian(gen));
       }
     }
+*/
   }
 
   // Mutate output layer
@@ -161,14 +163,16 @@ auto Genome::mutate(double mutationRate) -> void {
     for (size_t weightIdx = 0; weightIdx < neuron.get_input_count(); ++weightIdx) {
       if (dis(gen) < mutationRate) {
         double currentWeight = neuron.get_input_weight(weightIdx);
-        neuron.set_input_weight(weightIdx, currentWeight + gaussian(gen));
+        // TODO: FIX THIS
+        // neuron.set_input_weight(weightIdx, currentWeight + gaussian(gen));
       }
     }
 
     // Mutate bias
     if (dis(gen) < mutationRate) {
       double currentBias = neuron.get_bias();
-      neuron.set_bias(currentBias + gaussian(gen));
+      // TODO: FIX THIS
+      // neuron.set_bias(currentBias + gaussian(gen));
     }
   }
 }
