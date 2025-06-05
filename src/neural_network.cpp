@@ -64,7 +64,9 @@ auto NeuralNetwork::set_input_values(const ValueVector& input) -> void {
 
 auto NeuralNetwork::set_input_count(size_t count) -> void {
   _inputsValues.resize(count, 0.0f);
-  configure_hidden_layer(0);
+  if (_hiddenLayers.size() > 0) {
+    configure_hidden_layer(0);
+  }
   _ready = false;
 }
 

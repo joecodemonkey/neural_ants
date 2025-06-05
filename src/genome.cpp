@@ -1,46 +1,25 @@
 #include "genome.hpp"
 
-#include <algorithm>
-#include <random>
+#include <stdexcept>
 
-auto Genome::create_network() -> void {
-  _network.set_input_count(_inputCount);
-  _network.set_output_neuron_count(_outputCount);
-  _network.set_hidden_layer_count(_layerCount);
-  _network.set_hidden_layer_neuron_count(_neuronCount);
-
-  _ready = true;
-}
+#include "neural_network.hpp"
+#include "neuron.hpp"
 
 Genome::Genome() {}
 
 // Copy constructor
 Genome::Genome(const Genome& other)
-    : _network(other._network),
-      _ready(other._ready),
-      _inputCount(other._inputCount),
-      _outputCount(other._outputCount),
-      _layerCount(other._layerCount),
-      _neuronCount(other._neuronCount) {}
+    : _network(other._network), _mutationRate(other._mutationRate) {}
 
 // Move constructor
 Genome::Genome(Genome&& other) noexcept
-    : _network(std::move(other._network)),
-      _ready(other._ready),
-      _inputCount(other._inputCount),
-      _outputCount(other._outputCount),
-      _layerCount(other._layerCount),
-      _neuronCount(other._neuronCount) {}
+    : _network(std::move(other._network)), _mutationRate(other._mutationRate) {}
 
 // Copy assignment
 auto Genome::operator=(const Genome& other) -> Genome& {
   if (this != &other) {
     _network = other._network;
-    _ready = other._ready;
-    _inputCount = other._inputCount;
-    _outputCount = other._outputCount;
-    _layerCount = other._layerCount;
-    _neuronCount = other._neuronCount;
+    _mutationRate = other._mutationRate;
   }
   return *this;
 }
@@ -49,29 +28,18 @@ auto Genome::operator=(const Genome& other) -> Genome& {
 auto Genome::operator=(Genome&& other) noexcept -> Genome& {
   if (this != &other) {
     _network = std::move(other._network);
-    _ready = other._ready;
-    _inputCount = other._inputCount;
-    _outputCount = other._outputCount;
-    _layerCount = other._layerCount;
-    _neuronCount = other._neuronCount;
+    _mutationRate = other._mutationRate;
   }
   return *this;
 }
 
 auto Genome::get_network() -> NeuralNetwork& {
-  if (!_ready) {
-    create_network();
-  }
   return _network;
 }
 
 auto Genome::breed_layer(const NeuralNetwork::Layer& parent1,
                          const NeuralNetwork::Layer& parent2,
                          NeuralNetwork::Layer& child) -> void {
-  static std::random_device rd;
-  static std::mt19937 gen(rd());
-  static std::uniform_real_distribution<double> dis(0.0, 1.0);
-
   for (size_t neuronIdx = 0; neuronIdx < parent1.size(); ++neuronIdx) {
     const Neuron& parent1Neuron = parent1[neuronIdx];
     const Neuron& parent2Neuron = parent2[neuronIdx];
@@ -80,7 +48,7 @@ auto Genome::breed_layer(const NeuralNetwork::Layer& parent1,
     // Randomly select weights from either parent
     for (size_t weightIdx = 0; weightIdx < parent1Neuron.get_input_count(); ++weightIdx) {
       Neuron::Value value = 0.0f;
-      if (dis(gen) < 0.5) {
+      if (_rng.coin_flip()) {
         value = parent1Neuron.get_input_weight(weightIdx);
       } else {
         value = parent2Neuron.get_input_weight(weightIdx);
@@ -89,7 +57,7 @@ auto Genome::breed_layer(const NeuralNetwork::Layer& parent1,
     }
 
     // Randomly select bias from either parent
-    if (dis(gen) < 0.5) {
+    if (_rng.coin_flip()) {
       childNeuron.set_bias(parent1Neuron.get_bias());
     } else {
       childNeuron.set_bias(parent2Neuron.get_bias());
@@ -97,83 +65,50 @@ auto Genome::breed_layer(const NeuralNetwork::Layer& parent1,
   }
 }
 
-auto Genome::breed_with(const Genome& other, double mutationRate) -> Genome {
-  validate_compatible(other);
+auto Genome::mutate_neuron(Neuron& neuron) {
+  if (should_mutate()) {
+    neuron.set_bias(neuron.get_bias() + mutation_amount());
+  }
+  for (size_t index = 0; index < neuron.get_input_count(); ++index) {
+    if (should_mutate()) {
+      neuron.set_input_weight(index, neuron.get_input_weight(index) + mutation_amount());
+    }
+  }
+}
 
-  Genome child;
+auto Genome::mutate_layer(NeuralNetwork::Layer& layer) {
+  for (Neuron& neuron : layer) {
+    mutate_neuron(neuron);
+  }
+}
 
-  // Ensure child has same structure as parents
-  child.set_input_count(get_input_count());
-  child.set_output_count(get_output_count());
-  child.set_layer_count(get_layer_count());
-  child.set_hidden_layer_neuron_count(get_hidden_layer_neuron_count());
+auto Genome::breed_with(const Genome& other) -> Genome {
+  Genome child = other;
 
   // Breed hidden layers
-  for (size_t layerIdx = 0; layerIdx < get_layer_count(); ++layerIdx) {
-    /* TODO: FIX THIS
-    breed_layer(_network.get_hidden_layer(layerIdx),
-                other._network.get_hidden_layer(layerIdx),
-                child._network.get_hidden_layer(layerIdx));
-*/
+  for (size_t layerIdx = 0; layerIdx < _network.get_hidden_layer_count(); ++layerIdx) {
+    auto layer = child._network.get_hidden_layer(layerIdx);
+    breed_layer(
+        _network.get_hidden_layer(layerIdx), other._network.get_hidden_layer(layerIdx), layer);
+    child._network.set_hidden_layer(layerIdx, layer);
   }
-  /*
-    // Breed output layer
-    breed_layer(_network.get_output_layer(),
-                other._network.get_output_layer(),
-                child._network.get_output_layer());
-  */
+
+  auto layer = child._network.get_output_layer();
+  breed_layer(_network.get_output_layer(), other._network.get_output_layer(), layer);
+  child._network.set_output_layer(layer);
 
   // Apply mutations
-  child.mutate(mutationRate);
+  child.mutate();
 
   return child;
 }
 
-auto Genome::mutate(double mutationRate) -> void {
-  static std::random_device rd;
-  static std::mt19937 gen(rd());
-  static std::uniform_real_distribution<double> dis(0.0, 1.0);
-  static std::normal_distribution<double> gaussian(0.0, 0.1);  // Small mutations
-
+auto Genome::mutate() -> void {
   // Mutate hidden layers
-  for (size_t layerIdx = 0; layerIdx < get_layer_count(); ++layerIdx) {
-    /* TODO FIX THIS
-    auto& layer = _network.get_layer(layerIdx);
-    for (auto& neuron : layer) {
-      // Mutate weights
-      for (size_t weightIdx = 0; weightIdx < neuron.get_input_count(); ++weightIdx) {
-        if (dis(gen) < mutationRate) {
-          double currentWeight = neuron.get_input_weight(weightIdx);
-          neuron.set_input_weight(weightIdx, currentWeight + gaussian(gen));
-        }
-      }
-
-      // Mutate bias
-      if (dis(gen) < mutationRate) {
-        double currentBias = neuron.get_bias();
-        neuron.set_bias(currentBias + gaussian(gen));
-      }
-    }
-*/
-  }
-
-  // Mutate output layer
-  for (auto& neuron : _network.get_output_layer()) {
-    // Mutate weights
-    for (size_t weightIdx = 0; weightIdx < neuron.get_input_count(); ++weightIdx) {
-      if (dis(gen) < mutationRate) {
-        double currentWeight = neuron.get_input_weight(weightIdx);
-        // TODO: FIX THIS
-        // neuron.set_input_weight(weightIdx, currentWeight + gaussian(gen));
-      }
-    }
-
-    // Mutate bias
-    if (dis(gen) < mutationRate) {
-      double currentBias = neuron.get_bias();
-      // TODO: FIX THIS
-      // neuron.set_bias(currentBias + gaussian(gen));
-    }
+  for (size_t layerIdx = 0; layerIdx < _network.get_hidden_layer_count(); ++layerIdx) {
+    auto layer = _network.get_hidden_layer(layerIdx);
+    mutate_layer(layer);
+    _network.set_hidden_layer(layerIdx, layer);
   }
 }
 
@@ -181,57 +116,16 @@ auto Genome::randomize() -> void {
   _network.randomize();
 }
 
-auto Genome::set_layer_count(size_t count) -> void {
-  _layerCount = count;
-  _ready = false;
+auto Genome::should_mutate() -> bool {
+  return (_mutationRate < _rng.normal(0.0F, 1.0F));
+}
+auto Genome::mutation_amount() -> double {
+  return _rng.normal(0.0F, 0.1F);
 }
 
-auto Genome::get_layer_count() const -> size_t {
-  return _layerCount;
+auto Genome::set_mutation_rate(double mutationRate) -> void {
+  _mutationRate = mutationRate;
 }
-
-auto Genome::set_hidden_layer_neuron_count(size_t count) -> void {
-  _neuronCount = count;
-  _ready = false;
-}
-
-auto Genome::get_hidden_layer_neuron_count() const -> size_t {
-  return _neuronCount;
-}
-
-auto Genome::set_input_count(size_t inputCount) -> void {
-  _inputCount = inputCount;
-  _ready = false;
-}
-
-auto Genome::get_input_count() const -> size_t {
-  return _inputCount;
-}
-
-auto Genome::set_output_count(size_t outputCount) -> void {
-  _outputCount = outputCount;
-  _ready = false;
-}
-
-auto Genome::get_output_count() const -> size_t {
-  return _outputCount;
-}
-
-auto Genome::validate_compatible(const Genome& other) const -> void {
-  // Check if all network dimensions match
-  if (_inputCount != other._inputCount) {
-    throw std::invalid_argument("Input layer sizes do not match");
-  }
-
-  if (_outputCount != other._outputCount) {
-    throw std::invalid_argument("Output layer sizes do not match");
-  }
-
-  if (_layerCount != other._layerCount) {
-    throw std::invalid_argument("Hidden layer counts do not match");
-  }
-
-  if (_neuronCount != other._neuronCount) {
-    throw std::invalid_argument("Hidden layer sizes do not match");
-  }
+auto Genome::get_mutation_rate() const -> double {
+  return _mutationRate;
 }

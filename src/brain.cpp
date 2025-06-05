@@ -23,10 +23,10 @@ Brain::Brain(Ant& ant, World& world) : _ant(ant), _world(world) {
       (NEAR_TILES_COUNT * NEAR_TILES_COUNT) + (FAR_TILES_COUNT * FAR_TILES_COUNT);
 
   _surroundings_encoded.resize(TOTAL_TILES);
-  _genome.set_input_count(TOTAL_TILES);
-  _genome.set_output_count(2);
-  _genome.set_hidden_layer_neuron_count(TOTAL_TILES);
-  _genome.set_layer_count(3);
+  _genome.get_network().set_input_count(TOTAL_TILES);
+  _genome.get_network().set_output_neuron_count(2);
+  _genome.get_network().set_hidden_layer_neuron_count(TOTAL_TILES);
+  _genome.get_network().set_hidden_layer_count(3);
   _genome.randomize();
 }
 
