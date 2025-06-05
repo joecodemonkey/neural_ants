@@ -28,10 +28,11 @@ TEST_CASE("Neuron initialization and basic operations", "[neuron]") {
   }
 
   SECTION("Setting inputs using bulk setter and getter for outputs") {
-    Neuron::ValueVector& inputs = neuron.get_inputs();
     neuron.set_input_count(2);
+    Neuron::ValueVector inputs = neuron.get_inputs();
     inputs.at(0) = 0.125F;
     inputs.at(1) = -0.125f;
+    neuron.set_inputs(inputs);
 
     const Neuron::ValueVector& const_inputs = neuron.get_inputs();
 

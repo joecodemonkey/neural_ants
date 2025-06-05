@@ -20,28 +20,23 @@ class NeuralNetwork {
   NeuralNetwork(NeuralNetwork&& other) noexcept;
   auto operator=(NeuralNetwork&& other) noexcept -> NeuralNetwork&;
 
-  auto set_input_values(const ValueVector& input) -> void;
-  auto set_input_value(size_t idx, Neuron::Value value) -> void;
-
   auto set_input_count(size_t count) -> void;
   auto get_input_count() const -> size_t;
 
+  auto set_input_values(const ValueVector& input) -> void;
   auto get_input_values() const -> const ValueVector&;
-  auto get_input_values() -> ValueVector&;
-  auto get_input_value(size_t idx) const -> Neuron::Value;
-
-  auto get_output_value(size_t idx) -> Neuron::Value;
-  auto get_output_values() const -> ValueVector;
 
   auto set_output_neuron_count(size_t count) -> void;
   auto get_output_neuron_count() const -> size_t;
+  auto get_output_values() const -> ValueVector;
 
   auto get_output_layer() const -> const Layer&;
+  auto set_output_layer(const Layer& layer) -> void;
 
   auto set_hidden_layer_count(size_t count) -> void;
   auto get_hidden_layer_count() const -> size_t;
-
   auto get_hidden_layer(size_t idx) const -> const Layer&;
+  auto set_hidden_layer(size_t idx, const Layer& layer) -> void;
 
   auto set_hidden_layer_neuron_count(size_t count) -> void;
   auto get_hidden_layer_neuron_count() const -> size_t;
@@ -49,6 +44,10 @@ class NeuralNetwork {
   auto randomize() -> void;
 
  protected:
+  auto configure_output_layer() -> void;
+  auto configure_hidden_layers() -> void;
+  auto get_hidden_layer_weight_count(size_t layer_idx) -> size_t;
+  auto configure_hidden_layer(size_t idx) -> void;
   auto get_hidden_layer_values(size_t layerIndex) -> ValueVector;
   auto compute() -> void;
   auto validate() -> void;

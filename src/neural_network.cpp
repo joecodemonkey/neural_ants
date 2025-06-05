@@ -11,6 +11,7 @@ NeuralNetwork::NeuralNetwork() {
   set_hidden_layer_neuron_count(DEFAULT_HIDDEN_LAYER_NEURON_COUNT);
   set_hidden_layer_count(DEFAULT_HIDDEN_LAYER_COUNT);
   set_output_neuron_count(DEFAULT_OUTPUT_NEURON_COUNT);
+  _validated = true;
 }
 // Copy constructor
 NeuralNetwork::NeuralNetwork(const NeuralNetwork& other)
@@ -18,7 +19,8 @@ NeuralNetwork::NeuralNetwork(const NeuralNetwork& other)
       _outputLayer(other._outputLayer),
       _inputsValues(other._inputsValues),
       _ready(other._ready),
-      _hiddenLayerNeuronCount(other._hiddenLayerNeuronCount) {}
+      _hiddenLayerNeuronCount(other._hiddenLayerNeuronCount),
+      _validated(other._validated) {}
 
 // Copy assignment
 auto NeuralNetwork::operator=(const NeuralNetwork& other) -> NeuralNetwork& {
@@ -26,7 +28,9 @@ auto NeuralNetwork::operator=(const NeuralNetwork& other) -> NeuralNetwork& {
     _hiddenLayers = other._hiddenLayers;
     _outputLayer = other._outputLayer;
     _inputsValues = other._inputsValues;
-    _ready = other._ready, _hiddenLayerNeuronCount = other._hiddenLayerNeuronCount;
+    _ready = other._ready;
+    _validated = other._validated;
+    _hiddenLayerNeuronCount = other._hiddenLayerNeuronCount;
   }
   return *this;
 }
@@ -37,6 +41,7 @@ NeuralNetwork::NeuralNetwork(NeuralNetwork&& other) noexcept
       _outputLayer(std::move(other._outputLayer)),
       _inputsValues(std::move(other._inputsValues)),
       _ready(other._ready),
+      _validated(other._validated),
       _hiddenLayerNeuronCount(other._hiddenLayerNeuronCount) {}
 
 // Move assignment
@@ -47,6 +52,7 @@ auto NeuralNetwork::operator=(NeuralNetwork&& other) noexcept -> NeuralNetwork& 
     _inputsValues = std::move(other._inputsValues);
     _ready = other._ready;
     _hiddenLayerNeuronCount = other._hiddenLayerNeuronCount;
+    _validated = other._validated;
   }
   return *this;
 }
@@ -56,13 +62,9 @@ auto NeuralNetwork::set_input_values(const ValueVector& input) -> void {
   _ready = false;
 }
 
-auto NeuralNetwork::set_input_value(size_t idx, Neuron::Value value) -> void {
-  _inputsValues.at(idx) = value;
-  _ready = false;
-}
-
 auto NeuralNetwork::set_input_count(size_t count) -> void {
   _inputsValues.resize(count, 0.0f);
+  configure_hidden_layer(0);
   _ready = false;
 }
 
@@ -74,30 +76,19 @@ auto NeuralNetwork::get_input_values() const -> const ValueVector& {
   return _inputsValues;
 }
 
-auto NeuralNetwork::get_input_values() -> ValueVector& {
-  _ready = false;  // assume we are updating
-  return _inputsValues;
-}
-
-auto NeuralNetwork::get_input_value(size_t idx) const -> Neuron::Value {
-  return _inputsValues.at(idx);
-}
-
-auto NeuralNetwork::get_output_value(size_t idx) -> Neuron::Value {
-  compute();
-  return _outputValues.at(idx);
-}
-
 auto NeuralNetwork::get_output_layer() const -> const Layer& {
   return _outputLayer;
 }
 
-auto NeuralNetwork::set_output_neuron_count(size_t count) -> void {
-  _outputLayer.resize(count);
+auto NeuralNetwork::configure_output_layer() -> void {
   for (Neuron& neuron : _outputLayer) {
     neuron.set_input_count(_hiddenLayerNeuronCount);
   }
+}
 
+auto NeuralNetwork::set_output_neuron_count(size_t count) -> void {
+  _outputLayer.resize(count);
+  configure_output_layer();
   _ready = false;
 }
 
@@ -109,8 +100,28 @@ auto NeuralNetwork::get_hidden_layer(size_t idx) const -> const Layer& {
   return _hiddenLayers.at(idx);
 }
 
+auto NeuralNetwork::get_hidden_layer_weight_count(size_t layerIndex) -> size_t {
+  if (layerIndex == 0) {
+    return _inputsValues.size();
+  }
+
+  return _hiddenLayerNeuronCount;
+}
+
+auto NeuralNetwork::configure_hidden_layer(size_t idx) -> void {
+  for (Neuron& neuron : _hiddenLayers.at(idx)) {
+    neuron.set_input_count(_hiddenLayerNeuronCount);
+  }
+}
+auto NeuralNetwork::configure_hidden_layers() -> void {
+  for (size_t layerIndex = 0; layerIndex < _hiddenLayers.size(); ++layerIndex) {
+    configure_hidden_layer(layerIndex);
+  }
+}
+
 auto NeuralNetwork::set_hidden_layer_count(size_t count) -> void {
   _hiddenLayers.resize(count);
+  configure_hidden_layers();
   _ready = false;
 }
 
@@ -120,15 +131,8 @@ auto NeuralNetwork::get_hidden_layer_count() const -> size_t {
 
 auto NeuralNetwork::set_hidden_layer_neuron_count(size_t count) -> void {
   _hiddenLayerNeuronCount = count;
-  for (auto& layer : _hiddenLayers) {
-    layer.resize(count);
-    for (auto& neuron : layer) {
-      neuron.set_input_count(count);
-    }
-  }
-  for (auto& neuron : _outputLayer) {
-    neuron.set_input_count(count);
-  }
+  configure_hidden_layers();
+  configure_output_layer();
   _ready = false;
 }
 
@@ -170,7 +174,7 @@ auto NeuralNetwork::get_hidden_layer_values(size_t layerIndex) -> ValueVector {
   }
 
   for (auto& neuron : layer) {
-    neuron.get_inputs() = inputs;
+    neuron.set_inputs(inputs);
     valueVector.push_back(neuron.get_output());
   }
 
@@ -194,7 +198,7 @@ auto NeuralNetwork::compute() -> void {
   _outputValues.reserve(_outputLayer.size());
 
   for (Neuron& neuron : _outputLayer) {
-    neuron.get_inputs() = inputs;
+    neuron.set_inputs(inputs);
     _outputValues.push_back(neuron.get_output());
   }
   _ready = true;
@@ -247,4 +251,30 @@ auto NeuralNetwork::validate() -> void {
     }
   }
   _validated = true;
+}
+
+auto NeuralNetwork::get_output_values() const -> ValueVector {
+  if (!_ready) {
+    const_cast<NeuralNetwork*>(this)->compute();
+  }
+  return _outputValues;
+}
+
+auto NeuralNetwork::set_output_layer(const Layer& layer) -> void {
+  _outputLayer = layer;
+  configure_output_layer();
+  _ready = false;
+}
+
+auto NeuralNetwork::set_hidden_layer(size_t idx, const Layer& layer) -> void {
+  if (idx >= _hiddenLayers.size()) {
+    throw std::runtime_error("Hidden layer index out of bounds");
+  }
+  if (layer.size() != get_hidden_layer_weight_count(idx)) {
+    throw std::runtime_error("Hidden layer " + std::to_string(idx) + " size mismatch - expected " +
+                             std::to_string(get_hidden_layer_weight_count(idx)) + " but got " +
+                             std::to_string(layer.size()));
+  }
+  _hiddenLayers[idx] = layer;
+  _ready = false;
 }

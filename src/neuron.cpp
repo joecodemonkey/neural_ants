@@ -1,6 +1,7 @@
 #include "neuron.hpp"
 
 #include <random>
+#include <stdexcept>
 
 auto Neuron::set_input(size_t idx, Value value) -> void {
   _inputs.at(idx) = value;
@@ -109,6 +110,10 @@ auto Neuron::get_inputs() const -> const ValueVector& {
   return _inputs;
 }
 
-auto Neuron::get_inputs() -> ValueVector& {
-  return _inputs;
+auto Neuron::set_inputs(const ValueVector& inputs) -> void {
+  if (inputs.size() != _inputs.size()) {
+    throw std::runtime_error("Input size mismatch: expected " + std::to_string(_inputs.size()) +
+                             " but got " + std::to_string(inputs.size()));
+  }
+  _inputs = inputs;
 }
