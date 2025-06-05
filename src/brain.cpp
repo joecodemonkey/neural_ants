@@ -23,10 +23,10 @@ Brain::Brain(Ant& ant, World& world) : _ant(ant), _world(world) {
       (NEAR_TILES_COUNT * NEAR_TILES_COUNT) + (FAR_TILES_COUNT * FAR_TILES_COUNT);
 
   _surroundings_encoded.resize(TOTAL_TILES);
-  _genome.set_input_count(TOTAL_TILES);
-  _genome.set_output_count(2);
-  _genome.set_hidden_layer_neuron_count(TOTAL_TILES);
-  _genome.set_layer_count(3);
+  _genome.get_network().set_input_count(TOTAL_TILES);
+  _genome.get_network().set_output_neuron_count(2);
+  _genome.get_network().set_hidden_layer_neuron_count(TOTAL_TILES);
+  _genome.get_network().set_hidden_layer_count(3);
   _genome.randomize();
 }
 
@@ -48,9 +48,9 @@ auto Brain::update(float time) -> void {
     const auto& far = _far.get_encoded_surroundings();
     std::ranges::copy(far, _surroundings_encoded.begin() + near.size());
 
-    _genome.get_network().set_input(_surroundings_encoded);
-
-    const auto& outputs = _genome.get_network().get_outputs();
+    _genome.get_network().set_input_values(_surroundings_encoded);
+    // TODO: FIX THIS
+    /* const auto& outputs = _genome.get_network().get_outputs();
     if (outputs.empty()) {
       throw std::runtime_error("Neural network outputs are empty");
     }
@@ -63,6 +63,7 @@ auto Brain::update(float time) -> void {
     velocity.y = outputs[1] * _ant.MAX_VELOCITY;
     // TODO: Renable this
     //  _ant.set_velocity(velocity);
+*/
   }
 }
 

@@ -21,12 +21,15 @@ auto Surroundings::set_type(size_t x, size_t y, Type type) -> void {
   if (y < 0 || y >= _surroundingsType.size() || x < 0 || x >= _surroundingsType[0].size()) {
     throw std::out_of_range("Index out of range");
   }
+  bool changed = (_surroundingsType[x][y] != type);
+  if (!changed) {
+    return;
+  }
+
+  _changed = true;
 
   // Set the type and mark as changed
   _surroundingsType[y][x] = type;
-
-  if (_changed)
-    return;
 
   // Update the encoded vector with this single change
   // to avoid re-encoding the entire vector
