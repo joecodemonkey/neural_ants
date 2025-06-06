@@ -84,7 +84,11 @@ auto NeuralNetwork::get_output_layer() const -> const Layer& {
 
 auto NeuralNetwork::configure_output_layer() -> void {
   for (Neuron& neuron : _outputLayer) {
-    neuron.set_input_count(_hiddenLayerNeuronCount);
+    if (_hiddenLayers.empty()) {
+      neuron.set_input_count(get_input_count());
+    } else {
+      neuron.set_input_count(_hiddenLayerNeuronCount);
+    }
   }
 }
 
@@ -111,8 +115,14 @@ auto NeuralNetwork::get_hidden_layer_weight_count(size_t layerIndex) -> size_t {
 }
 
 auto NeuralNetwork::configure_hidden_layer(size_t idx) -> void {
-  for (Neuron& neuron : _hiddenLayers.at(idx)) {
-    neuron.set_input_count(_hiddenLayerNeuronCount);
+  Layer& layer = _hiddenLayers.at(idx);
+  layer.resize(_hiddenLayerNeuronCount);
+  for (Neuron& neuron : layer) {
+    if (idx == 0) {
+      neuron.set_input_count(_inputsValues.size());
+    } else {
+      neuron.set_input_count(_hiddenLayerNeuronCount);
+    }
   }
 }
 auto NeuralNetwork::configure_hidden_layers() -> void {
