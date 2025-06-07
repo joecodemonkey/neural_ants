@@ -7,6 +7,7 @@
 #include <cmath>  // Include this for std::ceil
 
 #include "ant.hpp"
+#include "genome.hpp"
 #include "world.hpp"
 
 Population::Population(World& world) : _world(world), _size(DEFAULT_POPULATION_SIZE) {}
@@ -28,7 +29,9 @@ auto Population::draw() -> void {
 auto Population::reproduce() -> void {
   // ensure the population vector matches the size of the population
   while (_ants.size() < _size) {
-    Ant ant(_world);
+    Genome genome;
+    genome.randomize();
+    Ant ant(_world, genome);
     if (!_texturePath.empty()) {
       ant.set_texture_path(_texturePath);
     }

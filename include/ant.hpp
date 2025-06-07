@@ -6,12 +6,13 @@
 #include "raymath.h"
 
 class World;
+class Genome;
 
 class Ant {
  public:
   const float MAX_VELOCITY = 30.0f;
 
-  Ant(World& world);
+  Ant(World& world, const Genome& genome);
 
   auto operator=(const Ant& other) -> Ant&;
 
@@ -64,6 +65,7 @@ class Ant {
 
   World& _world;
   Brain _brain;
+  Genome _genome;
 
   Vector2 _position = Vector2Zero();
   Vector2 _velocity = Vector2Zero();

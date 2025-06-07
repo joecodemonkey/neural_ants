@@ -33,7 +33,7 @@ auto Genome::operator=(Genome&& other) noexcept -> Genome& {
   return *this;
 }
 
-auto Genome::get_network() -> NeuralNetwork& {
+auto Genome::get_network() const -> const NeuralNetwork& {
   return _network;
 }
 

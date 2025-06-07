@@ -24,7 +24,7 @@ class Genome {
 
   auto breed_with(const Genome& other) -> Genome;
 
-  auto get_network() -> NeuralNetwork&;
+  auto get_network() const -> const NeuralNetwork&;
 
   auto mutate() -> void;
   auto randomize() -> void;

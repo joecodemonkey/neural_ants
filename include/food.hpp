@@ -1,6 +1,8 @@
 #pragma once
 #include <raylib.h>
 
+#include "surroundings.hpp"
+
 class Ant;
 
 class Food {
