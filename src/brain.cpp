@@ -15,15 +15,14 @@ Brain::Brain(World& world, const NeuralNetwork& neuralNetwork)
   _far.set_dimensions(FAR_TILES_COUNT, FAR_TILES_COUNT);
 }
 
-auto Brain::update(float time, Vector2 position) -> void {
+auto Brain::update(float time, Vector2 position) -> Vector2 {
   _last_update += time;
-  if (_last_update < UPDATE_FREQUENCY) {
-    return;
-  }
-  _last_update -= UPDATE_FREQUENCY;
+  if (_last_update >= UPDATE_FREQUENCY) {
+    _last_update -= UPDATE_FREQUENCY;
 
-  update_surroundings(_near, NEAR_TILES_SIZE, position);
-  update_surroundings(_far, FAR_TILES_SIZE, position);
+    update_surroundings(_near, NEAR_TILES_SIZE, position);
+    update_surroundings(_far, FAR_TILES_SIZE, position);
+  }
 
   // Only update the network inputs if the surroundings have changed
   if (_near.changed() || _far.changed()) {
@@ -36,22 +35,20 @@ auto Brain::update(float time, Vector2 position) -> void {
     std::ranges::copy(far, _surroundings_encoded.begin() + near.size());
 
     _neuralNetwork.set_input_values(_surroundings_encoded);
-    // TODO: FIX THIS
-    /* const auto& outputs = _genome.get_network().get_outputs();
-    if (outputs.empty()) {
-      throw std::runtime_error("Neural network outputs are empty");
-    }
-
-    if (outputs.size() != 2) {
-      throw std::runtime_error("Neural network outputs are not 2");
-    }
-    Vector2 velocity;
-    velocity.x = outputs[0] * _ant.MAX_VELOCITY;
-    velocity.y = outputs[1] * _ant.MAX_VELOCITY;
-    // TODO: Renable this
-    //  _ant.set_velocity(velocity);
-*/
   }
+  // TODO: FIX THIS
+  const auto& outputs = _neuralNetwork.get_output_values();
+  if (outputs.empty()) {
+    throw std::runtime_error("Neural network outputs are empty");
+  }
+
+  if (outputs.size() != 2) {
+    throw std::runtime_error("Neural network outputs are not 2");
+  }
+  Vector2 velocity;
+  velocity.x = outputs[0] * Ant::MAX_VELOCITY;
+  velocity.y = outputs[1] * Ant::MAX_VELOCITY;
+  return velocity;
 }
 
 auto Brain::update_surroundings(Surroundings& surr, const size_t tile_size, Vector2 position)

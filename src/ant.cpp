@@ -119,7 +119,7 @@ auto Ant::update(float time) -> void {
   if (_dead) {
     return;  // he's not dead, he's just resting
   }
-  _brain.update(time, _position);
+  _velocity = _brain.update(time, _position);
 
   _lifeSpan += time;
   _position = Vector2Add(_position, Vector2Scale(_velocity, time));

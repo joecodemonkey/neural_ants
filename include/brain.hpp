@@ -16,8 +16,7 @@ class Brain {
   Brain(const Brain& other) = default;
   auto operator=(const Brain& other) -> Brain& = default;
 
-  auto update(float time, Vector2 position) -> void;
-  auto get_velocity() -> Vector2;
+  auto update(float time, Vector2 position) -> Vector2;
 
  protected:
   auto update_surroundings(Surroundings& surr, const size_t tile_size, Vector2 position) -> void;

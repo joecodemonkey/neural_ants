@@ -10,7 +10,7 @@ class Genome;
 
 class Ant {
  public:
-  const float MAX_VELOCITY = 30.0f;
+  static constexpr float MAX_VELOCITY = 30.0f;
 
   Ant(World& world, const Genome& genome);
 
