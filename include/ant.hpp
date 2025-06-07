@@ -18,7 +18,7 @@ class Ant {
 
   Ant(const Ant& other);
 
-  ~Ant() = default;
+  ~Ant();
 
   auto draw() -> void;
 

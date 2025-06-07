@@ -28,9 +28,11 @@ auto Brain::update(float time, Vector2 position) -> void {
   // Only update the network inputs if the surroundings have changed
   if (_near.changed() || _far.changed()) {
     const auto& near = _near.get_encoded_surroundings();
-    std::ranges::copy(near, _surroundings_encoded.begin());
 
     const auto& far = _far.get_encoded_surroundings();
+    _surroundings_encoded.resize(_near.get_encoded_surroundings().size() +
+                                 _far.get_encoded_surroundings().size());
+    std::ranges::copy(near, _surroundings_encoded.begin());
     std::ranges::copy(far, _surroundings_encoded.begin() + near.size());
 
     _neuralNetwork.set_input_values(_surroundings_encoded);

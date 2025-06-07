@@ -13,6 +13,8 @@ class Brain {
  public:
   Brain(World& world, const NeuralNetwork& neuralNetwork);
   Brain() = delete;
+  Brain(const Brain& other) = default;
+  auto operator=(const Brain& other) -> Brain& = default;
 
   auto update(float time, Vector2 position) -> void;
   auto get_velocity() -> Vector2;
