@@ -37,12 +37,6 @@ auto Brain::update(float time, Vector2 position) -> Vector2 {
     std::ranges::copy(near, _surroundings_encoded.begin());
     std::ranges::copy(far, _surroundings_encoded.begin() + near.size());
 
-    std::cout << "----------------\n";
-    for (auto c : _surroundings_encoded)
-      fprintf(stdout, "\[%g\]", c);
-
-    std::cout << "\n----------------\n";
-    fflush(stdout);
     _neuralNetwork.set_input_values(_surroundings_encoded);
   }
 
@@ -57,7 +51,6 @@ auto Brain::update(float time, Vector2 position) -> Vector2 {
   Vector2 velocity;
   velocity.x = outputs[0] * Ant::MAX_VELOCITY;
   velocity.y = outputs[1] * Ant::MAX_VELOCITY;
-  std::cerr << velocity.x << "-" << velocity.y << std::endl;
   return velocity;
 }
 
