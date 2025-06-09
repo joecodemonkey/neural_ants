@@ -45,7 +45,7 @@ class Population {
   const int DEFAULT_POPULATION_SIZE = 1;
   int _size;
 
-  static constexpr size_t TARGET_PANGENOME_SIZE = 10;
+  static constexpr size_t TARGET_PANGENOME_SIZE = 100;
   bool _textureLoaded = false;
 
   std::string _texturePath;
