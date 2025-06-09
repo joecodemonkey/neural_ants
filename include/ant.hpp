@@ -54,7 +54,11 @@ class Ant {
   auto set_velocity(const Vector2 velocity) -> void;
   auto get_velocity() const -> const Vector2&;
 
+  auto get_genome() const -> Genome;
+
  protected:
+  auto create_ant() -> Ant;
+
   const float DEFAULT_SCALE = 20.0F;
   const float STARTING_ENERGY = 1000.0F;
   // sedintary energy per second is the base rate of energy loss for a stationary ant

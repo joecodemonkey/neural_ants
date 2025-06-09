@@ -9,17 +9,20 @@ Genome::Genome() {}
 
 // Copy constructor
 Genome::Genome(const Genome& other)
-    : _network(other._network), _mutationRate(other._mutationRate) {}
+    : _network(other._network), _mutationRate(other._mutationRate), _fitness(other._fitness) {}
 
 // Move constructor
 Genome::Genome(Genome&& other) noexcept
-    : _network(std::move(other._network)), _mutationRate(other._mutationRate) {}
+    : _network(std::move(other._network)),
+      _mutationRate(other._mutationRate),
+      _fitness(other._fitness) {}
 
 // Copy assignment
 auto Genome::operator=(const Genome& other) -> Genome& {
   if (this != &other) {
     _network = other._network;
     _mutationRate = other._mutationRate;
+    _fitness = other._fitness;
   }
   return *this;
 }
@@ -29,6 +32,7 @@ auto Genome::operator=(Genome&& other) noexcept -> Genome& {
   if (this != &other) {
     _network = std::move(other._network);
     _mutationRate = other._mutationRate;
+    _fitness = other._fitness;
   }
   return *this;
 }
@@ -128,4 +132,12 @@ auto Genome::set_mutation_rate(double mutationRate) -> void {
 }
 auto Genome::get_mutation_rate() const -> double {
   return _mutationRate;
+}
+
+auto Genome::get_fitness() const -> double {
+  return _fitness;
+}
+
+auto Genome::set_fitness(double fitness) -> void {
+  _fitness = fitness;
 }

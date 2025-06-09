@@ -31,6 +31,8 @@ class Genome {
 
   auto set_mutation_rate(double mutationRate) -> void;
   auto get_mutation_rate() const -> double;
+  auto get_fitness() const -> double;
+  auto set_fitness(double fitness) -> void;
 
  protected:
   auto breed_layer(const NeuralNetwork::Layer& parent1,
@@ -44,5 +46,6 @@ class Genome {
 
   NeuralNetwork _network;
   double _mutationRate = 0.1F;
+  double _fitness;
   RandomGenerator _rng;
 };

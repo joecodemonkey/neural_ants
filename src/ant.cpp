@@ -241,6 +241,7 @@ auto Ant::reset(const Vector2& position) -> void {
   _position = position;
   _energy = STARTING_ENERGY;
   _dead = false;
+  _lifeSpan = 0.0F;
 }
 
 auto Ant::get_bounds() const -> const Rectangle& {
@@ -276,3 +277,7 @@ auto Ant::get_velocity() const -> const Vector2& {
 }
 
 Ant::~Ant() {}
+
+auto Ant::get_genome() const -> Genome {
+  return _genome;
+}

@@ -7,9 +7,11 @@
 #include <vector>
 
 #include "ant.hpp"
+#include "genome.hpp"
 
 class Ant;
 class World;
+class Pangenome;
 
 class Population {
  public:
@@ -35,6 +37,7 @@ class Population {
 
  protected:
   auto reproduce() -> void;
+  auto create_ant() -> Ant;
 
   std::vector<Ant> _ants;
   World& _world;
@@ -42,5 +45,8 @@ class Population {
   const int DEFAULT_POPULATION_SIZE = 1;
   int _size;
 
+  static constexpr size_t TARGET_PANGENOME_SIZE = 10;
+
   std::string _texturePath;
+  std::vector<Genome> _pangenome;
 };
