@@ -1,10 +1,13 @@
 #include "brain.hpp"
 
 #include <algorithm>
+#include <cstdio>
+#include <iostream>
 
 #include "ant.hpp"
 #include "neural_network.hpp"
 #include "raylib.h"
+#include "raylibmathex.h"
 #include "resources.hpp"
 #include "surroundings.hpp"
 #include "world.hpp"
@@ -34,9 +37,15 @@ auto Brain::update(float time, Vector2 position) -> Vector2 {
     std::ranges::copy(near, _surroundings_encoded.begin());
     std::ranges::copy(far, _surroundings_encoded.begin() + near.size());
 
+    std::cout << "----------------\n";
+    for (auto c : _surroundings_encoded)
+      fprintf(stdout, "\[%g\]", c);
+
+    std::cout << "\n----------------\n";
+    fflush(stdout);
     _neuralNetwork.set_input_values(_surroundings_encoded);
   }
-  // TODO: FIX THIS
+
   const auto& outputs = _neuralNetwork.get_output_values();
   if (outputs.empty()) {
     throw std::runtime_error("Neural network outputs are empty");
@@ -48,6 +57,7 @@ auto Brain::update(float time, Vector2 position) -> Vector2 {
   Vector2 velocity;
   velocity.x = outputs[0] * Ant::MAX_VELOCITY;
   velocity.y = outputs[1] * Ant::MAX_VELOCITY;
+  std::cerr << velocity.x << "-" << velocity.y << std::endl;
   return velocity;
 }
 
@@ -57,16 +67,18 @@ auto Brain::update_surroundings(Surroundings& surr, const size_t tile_size, Vect
   Rectangle rect;
   rect.height = tile_size;
   rect.width = tile_size;
-  for (size_t x = 0; x < surr.get_width(); ++x) {
-    long long x_rel = x - center;
+  rect.x = position.x;
+  rect.y = position.y;
+  for (float x = 0; x < surr.get_width(); ++x) {
+    float x_rel = x - center;
 
-    for (size_t y = 0; y < surr.get_height(); ++y) {
+    for (float y = 0; y < surr.get_height(); ++y) {
       // calculate the aabb for this tile
-      long long y_rel = y - center;
+      float y_rel = y - center;
       rect.x = position.x + x_rel * tile_size;
       rect.y = position.y + y_rel * tile_size;
 
-      if (CheckCollisionRecs(rect, _world.get_bounds())) {
+      if (!IsRectContained(rect, _world.get_bounds())) {
         surr.set_type(x, y, Surroundings::WALL);
       } else if (_world.get_resources().food_in_rect(rect)) {
         surr.set_type(x, y, Surroundings::FOOD);

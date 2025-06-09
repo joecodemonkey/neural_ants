@@ -10,6 +10,9 @@ extern "C" {
 // adjust a rectangle's position given rotation so that position is now its center
 Rectangle RotateRect(Rectangle rectangle, Vector2 position, float rotation);
 
+// check if a rect (inner) is within a rect (outer)
+bool IsRectContained(Rectangle inner, Rectangle outer);
+
 #ifdef __cplusplus
 }
 #endif

@@ -265,9 +265,9 @@ auto NeuralNetwork::validate() -> void {
   _validated = true;
 }
 
-auto NeuralNetwork::get_output_values() const -> ValueVector {
+auto NeuralNetwork::get_output_values() -> ValueVector {
   if (!_ready) {
-    const_cast<NeuralNetwork*>(this)->compute();
+    this->compute();
   }
   return _outputValues;
 }

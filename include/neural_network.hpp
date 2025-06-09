@@ -28,7 +28,7 @@ class NeuralNetwork {
 
   auto set_output_neuron_count(size_t count) -> void;
   auto get_output_neuron_count() const -> size_t;
-  auto get_output_values() const -> ValueVector;
+  auto get_output_values() -> ValueVector;
 
   auto get_output_layer() const -> const Layer&;
   auto set_output_layer(const Layer& layer) -> void;

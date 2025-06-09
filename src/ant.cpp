@@ -1,5 +1,7 @@
 #include "ant.hpp"
 
+#include <iostream>
+
 #include "brain.hpp"
 #include "genome.hpp"
 #include "population.hpp"
@@ -120,7 +122,7 @@ auto Ant::update(float time) -> void {
     return;  // he's not dead, he's just resting
   }
   _velocity = _brain.update(time, _position);
-
+  std::cout << "ANt posittion -> " << _position.x << ", " << _position.y << "\n";
   _lifeSpan += time;
   _position = Vector2Add(_position, Vector2Scale(_velocity, time));
   update_bounds();
