@@ -11,6 +11,8 @@ class Neuron {
 
   auto set_input(size_t idx, Value value) -> void;
   auto get_input(size_t idx) const -> Value;
+  auto get_inputs() const -> const ValueVector&;
+  auto set_inputs(const ValueVector& inputs) -> void;
 
   auto set_input_weight(size_t idx, Value weight) -> void;
   auto get_input_weight(size_t idx) const -> Value;
@@ -35,7 +37,6 @@ class Neuron {
     return tanh(x);
   }
 
-  bool _ready = false;
   Value _value = 0;
   Value _bias = 0;
   ValueVector _weights;

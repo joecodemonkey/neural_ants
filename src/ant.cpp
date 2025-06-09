@@ -1,6 +1,9 @@
 #include "ant.hpp"
 
+#include <iostream>
+
 #include "brain.hpp"
+#include "genome.hpp"
 #include "population.hpp"
 #include "raylib.h"
 #include "raylibdrawex.h"
@@ -9,7 +12,8 @@
 #include "resources.hpp"
 #include "world.hpp"
 
-Ant::Ant(World& world) : _world(world), _brain(*this, world) {}
+Ant::Ant(World& world, const Genome& genome)
+    : _world(world), _brain(world, genome.get_network()), _genome(genome) {}
 
 auto Ant::operator=(const Ant& other) -> Ant& {
   if (this != &other) {
@@ -20,23 +24,47 @@ auto Ant::operator=(const Ant& other) -> Ant& {
     _energy = other._energy;
     _lifeSpan = other._lifeSpan;
     _texturePath = other._texturePath;
-    _texture = other._texture;
     _radius = other._radius;
     _bounds = other._bounds;
+    _scale = other._scale;
+    _genome = other._genome;
+
+    // Destroy and reconstruct brain
+    _brain.~Brain();
+    new (&_brain) Brain(_world, _genome.get_network());
+
+    // Only copy texture if the path is not empty
+    if (!_texturePath.empty()) {
+      _texture = LoadTexture(_texturePath.c_str());
+      if (!IsTextureValid(_texture)) {
+        throw std::runtime_error("Failed to load ant texture at path: " + _texturePath);
+      }
+    }
   }
   return *this;
 }
 
-Ant::Ant(const Ant& other) : _world(other._world), _brain(*this, other._world) {
+Ant::Ant(const Ant& other)
+    : _world(other._world),
+      _genome(other._genome),
+      _brain(other._world, other._genome.get_network()) {
   _position = other._position;
   _velocity = other._velocity;
   _dead = other._dead;
   _energy = other._energy;
   _lifeSpan = other._lifeSpan;
   _texturePath = other._texturePath;
-  _texture = other._texture;
   _radius = other._radius;
   _bounds = other._bounds;
+  _scale = other._scale;
+
+  // Only copy texture if the path is not empty
+  if (!_texturePath.empty()) {
+    _texture = LoadTexture(_texturePath.c_str());
+    if (!IsTextureValid(_texture)) {
+      throw std::runtime_error("Failed to load ant texture at path: " + _texturePath);
+    }
+  }
 }
 
 auto Ant::draw() -> void {
@@ -93,8 +121,7 @@ auto Ant::update(float time) -> void {
   if (_dead) {
     return;  // he's not dead, he's just resting
   }
-  _brain.update(time);
-
+  _velocity = _brain.update(time, _position);
   _lifeSpan += time;
   _position = Vector2Add(_position, Vector2Scale(_velocity, time));
   update_bounds();
@@ -247,3 +274,5 @@ auto Ant::set_velocity(const Vector2 velocity) -> void {
 auto Ant::get_velocity() const -> const Vector2& {
   return _velocity;
 }
+
+Ant::~Ant() {}

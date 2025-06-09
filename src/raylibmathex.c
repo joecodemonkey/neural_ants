@@ -29,3 +29,11 @@ Rectangle RotateRect(Rectangle rectangle, Vector2 position, float rotation) {
   new_rect.height = rectangle.height;
   return new_rect;
 }
+
+
+bool IsRectContained(Rectangle inner, Rectangle outer) {
+    return (inner.x >= outer.x) &&
+           (inner.y >= outer.y) &&
+           (inner.x + inner.width <= outer.x + outer.width) &&
+           (inner.y + inner.height <= outer.y + outer.height);
+}

@@ -1,10 +1,4 @@
 #pragma once
-#include <algorithm>
-#include <cmath>
-#include <random>
-#include <sstream>
-#include <stdexcept>
-#include <string>
 #include <vector>
 
 #include "neuron.hpp"
@@ -15,40 +9,63 @@ class NeuralNetwork {
   typedef std::vector<Neuron> Layer;
   typedef std::vector<Neuron::Value> ValueVector;
 
-  NeuralNetwork() = default;
+  NeuralNetwork();
+  virtual ~NeuralNetwork() = default;
 
-  auto set_input(const ValueVector& input) -> void;
-  auto set_input(size_t idx, Neuron::Value value) -> void;
+  // Copy operations
+  NeuralNetwork(const NeuralNetwork& other);
+  auto operator=(const NeuralNetwork& other) -> NeuralNetwork&;
 
-  auto get_inputs() const -> const ValueVector&;
+  // Move operations
+  NeuralNetwork(NeuralNetwork&& other) noexcept;
+  auto operator=(NeuralNetwork&& other) noexcept -> NeuralNetwork&;
 
-  auto get_input(size_t idx) const -> Neuron::Value;
+  auto set_input_count(size_t count) -> void;
+  auto get_input_count() const -> size_t;
 
-  auto get_outputs() -> const ValueVector&;
-  auto get_output(size_t idx) -> Neuron::Value;
+  auto set_input_values(const ValueVector& input) -> void;
+  auto get_input_values() const -> const ValueVector&;
 
-  auto set_input_layer_count(size_t count) -> void;
-  auto get_input_layer_count() const -> size_t;
+  auto set_output_neuron_count(size_t count) -> void;
+  auto get_output_neuron_count() const -> size_t;
+  auto get_output_values() -> ValueVector;
 
-  auto set_output_layer_count(size_t count) -> void;
-  auto get_output_layer_count() const -> size_t;
-
-  auto get_layer(size_t idx) -> Layer&;
-  auto get_layer(size_t idx) const -> const Layer&;
+  auto get_output_layer() const -> const Layer&;
+  auto set_output_layer(const Layer& layer) -> void;
 
   auto set_hidden_layer_count(size_t count) -> void;
   auto get_hidden_layer_count() const -> size_t;
+  auto get_hidden_layer(size_t idx) const -> const Layer&;
+  auto set_hidden_layer(size_t idx, const Layer& layer) -> void;
 
-  auto get_output_layer() -> Layer&;
-  auto get_output_layer() const -> const Layer&;
+  auto set_hidden_layer_neuron_count(size_t count) -> void;
+  auto get_hidden_layer_neuron_count() const -> size_t;
 
   auto randomize() -> void;
 
  protected:
-  std::vector<Layer> _layers;
-  Layer _output_layer;
-  ValueVector _inputs;
-  ValueVector _outputs;
+  auto configure_output_layer() -> void;
+  auto configure_hidden_layers() -> void;
+  auto get_hidden_layer_weight_count(size_t layer_idx) -> size_t;
+  auto configure_hidden_layer(size_t idx) -> void;
+  auto get_hidden_layer_values(size_t layerIndex) -> ValueVector;
+  auto compute() -> void;
+  auto validate() -> void;
 
-  bool _ready;
+  const size_t DEFAULT_HIDDEN_LAYER_COUNT = 3;
+  const size_t DEFAULT_HIDDEN_LAYER_NEURON_COUNT = 50;
+  const size_t DEFAULT_INPUT_COUNT = 50;
+  const size_t DEFAULT_OUTPUT_NEURON_COUNT = 2;
+
+  std::vector<Layer> _hiddenLayers;
+  Layer _outputLayer;
+  ValueVector _inputsValues;
+  ValueVector _outputValues;
+  bool _validated = false;
+
+  size_t _hiddenLayerNeuronCount;
+
+  // ready is set to false when inputs change and is set back to true
+  // when the output is retrieved and all upstream data gets recalculated
+  bool _ready = false;
 };

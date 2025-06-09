@@ -110,5 +110,7 @@
     "C_Cpp.clang_format_fallbackStyle": "Google",
     "[cpp]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
-    }
+    },
+    "debug.toolBarLocation": "docked",
+    "debug.toolBar.visible": true
 }

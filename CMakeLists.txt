@@ -25,8 +25,15 @@ FetchContent_Declare(
         GIT_TAG 5.5
 )
 
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v3.8.1
+)
+
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
+FetchContent_MakeAvailable(Catch2)
 
 # Separate C and C++ sources
 set(C_SOURCES
@@ -50,12 +57,52 @@ set(CXX_SOURCES
     src/brain.cpp
 )
 
-add_executable(neural_ants ${C_SOURCES} ${CXX_SOURCES})
+# Create library target
+add_library(neural_ants_lib STATIC
+    ${C_SOURCES}
+    ${CXX_SOURCES}
+)
 
-target_link_libraries(neural_ants PRIVATE raylib fmt::fmt)
+target_link_libraries(neural_ants_lib PRIVATE raylib fmt::fmt)
 
 # Add include directories
-target_include_directories(neural_ants PRIVATE 
+target_include_directories(neural_ants_lib PRIVATE 
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+# Create main executable
+add_executable(neural_ants src/main.cpp)
+target_link_libraries(neural_ants PRIVATE neural_ants_lib)
+target_include_directories(neural_ants PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/fmt_cxx-src/include
+)
+
+# Test configuration
+enable_testing()
+
+# Find all test files recursively
+file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
+
+# Create test executable
+add_executable(neural_ants_tests ${TEST_SOURCES})
+
+# Link test executable with Catch2
+target_link_libraries(neural_ants_tests PRIVATE
+    Catch2::Catch2WithMain
+    neural_ants_lib
+)
+
+# Include directories for tests
+target_include_directories(neural_ants_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
+)
+
+# Register tests with CTest
+include(CTest)
+include(Catch)
+catch_discover_tests(neural_ants_tests)
