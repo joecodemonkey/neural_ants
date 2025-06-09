@@ -46,7 +46,9 @@ class Population {
   int _size;
 
   static constexpr size_t TARGET_PANGENOME_SIZE = 10;
+  bool _textureLoaded = false;
 
   std::string _texturePath;
   std::vector<Genome> _pangenome;
+  Texture2D _texture;
 };

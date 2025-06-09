@@ -23,23 +23,15 @@ auto Ant::operator=(const Ant& other) -> Ant& {
     _dead = other._dead;
     _energy = other._energy;
     _lifeSpan = other._lifeSpan;
-    _texturePath = other._texturePath;
     _radius = other._radius;
     _bounds = other._bounds;
     _scale = other._scale;
     _genome = other._genome;
+    _texture = other._texture;
 
     // Destroy and reconstruct brain
     _brain.~Brain();
     new (&_brain) Brain(_world, _genome.get_network());
-
-    // Only copy texture if the path is not empty
-    if (!_texturePath.empty()) {
-      _texture = LoadTexture(_texturePath.c_str());
-      if (!IsTextureValid(_texture)) {
-        throw std::runtime_error("Failed to load ant texture at path: " + _texturePath);
-      }
-    }
   }
   return *this;
 }
@@ -53,18 +45,10 @@ Ant::Ant(const Ant& other)
   _dead = other._dead;
   _energy = other._energy;
   _lifeSpan = other._lifeSpan;
-  _texturePath = other._texturePath;
+  _texture = other._texture;
   _radius = other._radius;
   _bounds = other._bounds;
   _scale = other._scale;
-
-  // Only copy texture if the path is not empty
-  if (!_texturePath.empty()) {
-    _texture = LoadTexture(_texturePath.c_str());
-    if (!IsTextureValid(_texture)) {
-      throw std::runtime_error("Failed to load ant texture at path: " + _texturePath);
-    }
-  }
 }
 
 auto Ant::draw() -> void {
@@ -196,10 +180,19 @@ auto Ant::draw_coordinates() const -> void {
   DrawText(text.c_str(), coordinates_rect.x, coordinates_rect.y, FONT_SIZE, BLACK);
 }
 
-[[nodiscard]] auto Ant::get_texture_path() const -> const std::string& {
-  return _texturePath;
-}
+//[[nodiscard]] auto Ant::get_texture_path() const -> const std::string& {
+//  return _texturePath;
+//}
 
+auto Ant::set_texture(Texture2D texture) -> void {
+  if (!IsTextureValid(texture)) {
+    throw std::runtime_error("Invalid Texture passed to ant.");
+  }
+  _texture = texture;
+  update_bounds();
+  update_radius();
+}
+/*
 auto Ant::set_texture_path(std::string const& path) -> void {
   _texture = LoadTexture(path.c_str());
 
@@ -211,6 +204,7 @@ auto Ant::set_texture_path(std::string const& path) -> void {
   update_bounds();
   update_radius();
 }
+*/
 
 auto Ant::draw_direction() const -> void {
   const auto rotation = get_rotation();

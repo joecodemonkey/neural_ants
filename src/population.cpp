@@ -65,7 +65,7 @@ auto Population::create_ant() -> Ant {
     Genome child = parentA.breed_with(parentB);
     Ant ant(_world, child);
     if (!_texturePath.empty()) {
-      ant.set_texture_path(_texturePath);
+      ant.set_texture(_texture);
     }
     ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
     return ant;
@@ -75,13 +75,21 @@ auto Population::create_ant() -> Ant {
   genome.randomize();
   Ant ant(_world, genome);
   if (!_texturePath.empty()) {
-    ant.set_texture_path(_texturePath);
+    ant.set_texture(_texture);
   }
   ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
   return ant;
 }
 
 auto Population::update(float time) -> void {
+  if (_textureLoaded == false && !_texturePath.empty()) {
+    _texture = LoadTexture(_texturePath.c_str());
+    _textureLoaded = true;
+
+    if (!IsTextureValid(_texture)) {
+      throw std::runtime_error("Failed to load ant texture at path: " + _texturePath);
+    }
+  }
   // update all ants
   for (Ant& ant : _ants) {
     if (_world.out_of_bounds(ant.get_position())) {
