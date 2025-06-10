@@ -43,8 +43,10 @@ class Ant {
   [[nodiscard]] auto get_scale() const -> float;
   auto set_scale(float scale) -> void;
 
-  [[nodiscard]] auto get_texture_path() const -> const std::string&;
-  auto set_texture_path(std::string const& path) -> void;
+  //[[nodiscard]] auto get_texture_path() const -> const std::string&;
+  // auto set_texture_path(std::string const& path) -> void;
+
+  auto set_texture(Texture2D texture) -> void;
 
   [[nodiscard]] auto get_bounds() const -> const Rectangle&;
 
@@ -54,7 +56,11 @@ class Ant {
   auto set_velocity(const Vector2 velocity) -> void;
   auto get_velocity() const -> const Vector2&;
 
+  auto get_genome() const -> Genome;
+
  protected:
+  auto create_ant() -> Ant;
+
   const float DEFAULT_SCALE = 20.0F;
   const float STARTING_ENERGY = 1000.0F;
   // sedintary energy per second is the base rate of energy loss for a stationary ant
@@ -75,9 +81,6 @@ class Ant {
   bool _frozen = false;
   float _scale = DEFAULT_SCALE;
   Texture2D _texture;
-  std::string _texturePath;
-  // TODO: Restore this
-  // Brain _brain;
   float _energy = STARTING_ENERGY;
   float _lifeSpan = 0.0F;  // time in seconds ant has been alive (measure of fitness)
 
