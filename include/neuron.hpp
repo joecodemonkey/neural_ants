@@ -37,6 +37,8 @@ class Neuron {
     return tanh(x);
   }
 
+  auto calculate() -> void;
+
   Value _value = 0;
   Value _bias = 0;
   ValueVector _weights;
