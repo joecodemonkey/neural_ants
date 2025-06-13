@@ -165,7 +165,6 @@ auto Ant::draw_energy() const -> void {
 auto Ant::get_coordinates_rect() const -> Rectangle {
   const std::string text = fmt::format("({:.2f}, {:.2f})", _position.x, _position.y);
 
-  // TODO: CLEAN THIS UP
   Vector2 textSize = MeasureTextEx(GetFontDefault(), text.c_str(), FONT_SIZE, FONT_SPACING);
   int textX = static_cast<int>((_position.x) + 1.5F - (textSize.x / 2.0F));
   int textY = static_cast<int>(((_position.y) - (textSize.y / 2.0f + 20)));
@@ -180,10 +179,6 @@ auto Ant::draw_coordinates() const -> void {
   DrawText(text.c_str(), coordinates_rect.x, coordinates_rect.y, FONT_SIZE, BLACK);
 }
 
-//[[nodiscard]] auto Ant::get_texture_path() const -> const std::string& {
-//  return _texturePath;
-//}
-
 auto Ant::set_texture(Texture2D texture) -> void {
   if (!IsTextureValid(texture)) {
     throw std::runtime_error("Invalid Texture passed to ant.");
@@ -192,19 +187,6 @@ auto Ant::set_texture(Texture2D texture) -> void {
   update_bounds();
   update_radius();
 }
-/*
-auto Ant::set_texture_path(std::string const& path) -> void {
-  _texture = LoadTexture(path.c_str());
-
-  if (!IsTextureValid(_texture)) {
-    throw std::runtime_error("Failed to load ant texture at path: " + path);
-  }
-
-  _texturePath = path;
-  update_bounds();
-  update_radius();
-}
-*/
 
 auto Ant::draw_direction() const -> void {
   const auto rotation = get_rotation();
@@ -226,16 +208,15 @@ auto Ant::draw_bounding() const -> void {
 }
 
 auto Ant::reset(const Vector2& position) -> void {
-  // Generate random x and y components
   float x = GetRandomValue(-100, 100);
   float y = GetRandomValue(-100, 100);
-  // Normalize and scale to random magnitude up to MAX_VELOCITY
   float magnitude = GetRandomValue(0, static_cast<int>(MAX_VELOCITY));
   _velocity = Vector2Scale(Vector2Normalize({x, y}), magnitude);
   _position = position;
   _energy = STARTING_ENERGY;
   _dead = false;
   _lifeSpan = 0.0F;
+  _genome.set_fitness(0.0F);
 }
 
 auto Ant::get_bounds() const -> const Rectangle& {
