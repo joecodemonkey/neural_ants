@@ -128,6 +128,19 @@ file(GLOB_RECURSE BENCHMARK_SOURCES "tests/benchmark/*.cpp")
 # Create benchmark executable
 add_executable(neural_ants_benchmarks ${BENCHMARK_SOURCES})
 
+# Set release mode and optimization flags for benchmarks
+set_target_properties(neural_ants_benchmarks PROPERTIES
+    CMAKE_BUILD_TYPE Release
+)
+
+# Set high optimization flags for benchmarks
+target_compile_options(neural_ants_benchmarks PRIVATE
+    -O3
+    -march=native
+    -ffast-math
+    ${PARALLEL_FLAGS}
+)
+
 # Link benchmark executable with Catch2
 target_link_libraries(neural_ants_benchmarks PRIVATE
     Catch2::Catch2WithMain
