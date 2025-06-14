@@ -112,14 +112,32 @@ auto Neuron::set_inputs(const ValueVector& inputs) -> void {
   calculate();
 }
 
+auto Neuron::enable_threads() -> void {
+  _threaded = true;
+}
+
+auto Neuron::disable_threads() -> void {
+  _threaded = false;
+}
+
 auto Neuron::calculate() -> void {
-  double _value = std::transform_reduce(std::execution::par,
-                                        _inputs.begin(),
-                                        _inputs.end(),
-                                        _weights.begin(),
-                                        0.0,
-                                        std::plus<double>{},
-                                        std::multiplies<double>{});
+  double _value;
+  if (_threaded) {
+    _value = std::transform_reduce(std::execution::par,
+                                   _inputs.begin(),
+                                   _inputs.end(),
+                                   _weights.begin(),
+                                   0.0,
+                                   std::plus<double>{},
+                                   std::multiplies<double>{});
+  } else {
+    _value = std::transform_reduce(_inputs.begin(),
+                                   _inputs.end(),
+                                   _weights.begin(),
+                                   0.0,
+                                   std::plus<double>{},
+                                   std::multiplies<double>{});
+  }
 
   _value = activation_function(_bias + _value);
 }

@@ -93,14 +93,14 @@ target_include_directories(neural_ants PRIVATE
 # Test configuration
 enable_testing()
 
-# Find all test files recursively
-file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
+# Find all unit test files recursively
+file(GLOB_RECURSE UNIT_TEST_SOURCES "tests/unit/*.cpp")
 
-# Create test executable
-add_executable(neural_ants_tests ${TEST_SOURCES})
+# Create unit test executable
+add_executable(neural_ants_unit_tests ${UNIT_TEST_SOURCES})
 
-# Link test executable with Catch2
-target_link_libraries(neural_ants_tests PRIVATE
+# Link unit test executable with Catch2
+target_link_libraries(neural_ants_unit_tests PRIVATE
     Catch2::Catch2WithMain
     neural_ants_lib
     raylib
@@ -110,14 +110,41 @@ target_link_libraries(neural_ants_tests PRIVATE
     pthread
 )
 
-# Include directories for tests
-target_include_directories(neural_ants_tests PRIVATE
+# Include directories for unit tests
+target_include_directories(neural_ants_unit_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
 )
 
-# Register tests with CTest
+# Register unit tests with CTest
 include(CTest)
 include(Catch)
-catch_discover_tests(neural_ants_tests)
+catch_discover_tests(neural_ants_unit_tests)
+
+# Benchmark configuration
+file(GLOB_RECURSE BENCHMARK_SOURCES "tests/benchmark/*.cpp")
+
+# Create benchmark executable
+add_executable(neural_ants_benchmarks ${BENCHMARK_SOURCES})
+
+# Link benchmark executable with Catch2
+target_link_libraries(neural_ants_benchmarks PRIVATE
+    Catch2::Catch2WithMain
+    neural_ants_lib
+    raylib
+    fmt::fmt
+    TBB::tbb
+    OpenMP::OpenMP_CXX
+    pthread
+)
+
+# Include directories for benchmarks
+target_include_directories(neural_ants_benchmarks PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
+)
+
+# Register benchmarks with CTest
+catch_discover_tests(neural_ants_benchmarks)

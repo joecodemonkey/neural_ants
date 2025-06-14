@@ -42,6 +42,8 @@ class NeuralNetwork {
   auto get_hidden_layer_neuron_count() const -> size_t;
 
   auto randomize() -> void;
+  auto enable_threads() -> void;
+  auto disable_threads() -> void;
 
  protected:
   auto configure_output_layer() -> void;
@@ -62,6 +64,7 @@ class NeuralNetwork {
   ValueVector _inputsValues;
   ValueVector _outputValues;
   bool _validated = false;
+  bool _threaded = false;
 
   size_t _hiddenLayerNeuronCount;
 
