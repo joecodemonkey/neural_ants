@@ -16,22 +16,7 @@ auto NeuronBenchmarkBase::reset() -> void {
   generate_random_inputs();
 }
 
-auto NeuronBenchmarkBase::run() -> void {
-  auto start = std::chrono::high_resolution_clock::now();
+auto NeuronBenchmarkBase::derived_run() -> void {
   _neuron.set_inputs(_inputs);
   _neuron.get_output();
-  auto stop = std::chrono::high_resolution_clock::now();
-  _duration += std::chrono::duration<double>(stop - start);
-}
-
-auto NeuronBenchmarkBase::get_duration() -> std::chrono::microseconds {
-  return std::chrono::duration_cast<std::chrono::microseconds>(_duration);
-}
-
-auto NeuronBenchmarkBase::set_name(const std::string& name) -> void {
-  _name = name;
-}
-
-auto NeuronBenchmarkBase::display() -> void {
-  std::cout << _name << ": " << get_duration() << "\n";
 }

@@ -7,6 +7,9 @@
 
 class ThreadedNeuronBenchmark : public NeuronBenchmarkBase {
  public:
+  ThreadedNeuronBenchmark() = default;
+  ThreadedNeuronBenchmark(const std::string& name) : NeuronBenchmarkBase(name) {};
+
   void setup() {
     _neuron.enable_threads();
   }

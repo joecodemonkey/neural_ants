@@ -7,6 +7,8 @@
 
 class NonThreadedNeuronBenchmark : public NeuronBenchmarkBase {
  public:
+  NonThreadedNeuronBenchmark() = default;
+  NonThreadedNeuronBenchmark(const std::string& name) : NeuronBenchmarkBase(name) {};
   void setup() {
     _neuron.disable_threads();
   }
