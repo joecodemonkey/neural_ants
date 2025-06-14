@@ -131,7 +131,8 @@ auto Neuron::calculate() -> void {
                                    std::plus<double>{},
                                    std::multiplies<double>{});
   } else {
-    _value = std::transform_reduce(_inputs.begin(),
+    _value = std::transform_reduce(std::execution::seq,
+                                   _inputs.begin(),
                                    _inputs.end(),
                                    _weights.begin(),
                                    0.0,

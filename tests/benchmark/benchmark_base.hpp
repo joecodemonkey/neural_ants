@@ -13,6 +13,7 @@ class BenchmarkBase {
   BenchmarkBase(const std::string& name) : _name((name)) {};
   virtual auto reset() -> void = 0;
   auto get_duration() -> std::chrono::microseconds;
+  auto get_duration_ms() -> std::chrono::milliseconds;
   auto display() -> void;
   auto set_name(const std::string& name) -> void;
   auto run() -> void;
