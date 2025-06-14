@@ -1,10 +1,19 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(neural_ants LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Enable parallel algorithms and OpenMP
+find_package(OpenMP REQUIRED)
+list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu/cmake/TBB")
+find_package(TBB REQUIRED)
+
+# Enable parallel algorithms
+set(PARALLEL_FLAGS "-D_GLIBCXX_PARALLEL -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 # Add debug flags
 set(CMAKE_BUILD_TYPE Debug)
@@ -62,8 +71,8 @@ add_library(neural_ants_lib STATIC
     ${C_SOURCES}
     ${CXX_SOURCES}
 )
-
-target_link_libraries(neural_ants_lib PRIVATE raylib fmt::fmt)
+target_compile_options(neural_ants_lib PRIVATE ${PARALLEL_FLAGS})
+target_link_libraries(neural_ants_lib PRIVATE raylib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread)
 
 # Add include directories
 target_include_directories(neural_ants_lib PRIVATE 
@@ -73,7 +82,8 @@ target_include_directories(neural_ants_lib PRIVATE
 
 # Create main executable
 add_executable(neural_ants src/main.cpp)
-target_link_libraries(neural_ants PRIVATE neural_ants_lib)
+target_compile_options(neural_ants PRIVATE ${PARALLEL_FLAGS})
+target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread)
 target_include_directories(neural_ants PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
@@ -93,6 +103,11 @@ add_executable(neural_ants_tests ${TEST_SOURCES})
 target_link_libraries(neural_ants_tests PRIVATE
     Catch2::Catch2WithMain
     neural_ants_lib
+    raylib
+    fmt::fmt
+    TBB::tbb
+    OpenMP::OpenMP_CXX
+    pthread
 )
 
 # Include directories for tests

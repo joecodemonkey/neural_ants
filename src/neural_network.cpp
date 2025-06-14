@@ -1,5 +1,7 @@
 #include "neural_network.hpp"
 
+#include <algorithm>
+#include <execution>
 #include <random>
 #include <stdexcept>
 
@@ -185,10 +187,13 @@ auto NeuralNetwork::get_hidden_layer_values(size_t layerIndex) -> ValueVector {
     inputs = get_hidden_layer_values(layerIndex - 1);
   }
 
-  for (auto& neuron : layer) {
+  std::for_each(std::execution::par, std::begin(layer), std::end(layer), [&](Neuron& neuron) {
     neuron.set_inputs(inputs);
+  });
+
+  std::for_each(std::execution::seq, std::begin(layer), std::end(layer), [&](Neuron& neuron) {
     valueVector.push_back(neuron.get_output());
-  }
+  });
 
   return valueVector;
 }
