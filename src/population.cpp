@@ -5,6 +5,8 @@
 
 #include <algorithm>
 #include <cmath>  // Include this for std::ceil
+#include <iostream>
+#include <vector>
 
 #include "ant.hpp"
 #include "genome.hpp"
@@ -29,15 +31,7 @@ auto Population::draw() -> void {
 auto Population::reproduce() -> void {
   // ensure the population vector matches the size of the population
   while (_ants.size() < _size) {
-    Genome genome;
-    genome.randomize();
-    Ant ant(_world, genome);
-    if (!_texturePath.empty()) {
-      ant.set_texture_path(_texturePath);
-    }
-    ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
-
-    _ants.push_back(ant);
+    _ants.push_back(create_ant());
   }
 
   while (_ants.size() > _size) {
@@ -46,7 +40,56 @@ auto Population::reproduce() -> void {
   }
 }
 
+auto Population::create_ant() -> Ant {
+  if (_pangenome.size() > TARGET_PANGENOME_SIZE) {
+    std::sort(_pangenome.begin(), _pangenome.end(), [](const Genome& a, const Genome& b) {
+      return a.get_fitness() > b.get_fitness();
+    });
+
+    // print mean genome fitness
+    double totalFitness = 0.0;
+    for (const auto& genome : _pangenome) {
+      totalFitness += genome.get_fitness();
+    }
+    double meanFitness = totalFitness / _pangenome.size();
+    std::cerr << "Mean genome fitness: " << meanFitness << std::endl;
+    Genome parentA = _pangenome.back();  // take 1 fit
+    _pangenome.pop_back();
+    Genome parentB = _pangenome.back();  // take 1 fit
+    _pangenome.pop_back();
+    std::sort(_pangenome.begin(), _pangenome.end(), [](const Genome& a, const Genome& b) {
+      return a.get_fitness() > b.get_fitness();
+    });
+    _pangenome.pop_back();  // drop 1 less fit
+    _pangenome.pop_back();  // drop 1 less fit
+    Genome child = parentA.breed_with(parentB);
+    Ant ant(_world, child);
+    if (!_texturePath.empty()) {
+      ant.set_texture(_texture);
+    }
+    ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
+    return ant;
+  }
+  Genome genome;
+  genome.set_fitness(0.0F);
+  genome.randomize();
+  Ant ant(_world, genome);
+  if (!_texturePath.empty()) {
+    ant.set_texture(_texture);
+  }
+  ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
+  return ant;
+}
+
 auto Population::update(float time) -> void {
+  if (_textureLoaded == false && !_texturePath.empty()) {
+    _texture = LoadTexture(_texturePath.c_str());
+    _textureLoaded = true;
+
+    if (!IsTextureValid(_texture)) {
+      throw std::runtime_error("Failed to load ant texture at path: " + _texturePath);
+    }
+  }
   // update all ants
   for (Ant& ant : _ants) {
     if (_world.out_of_bounds(ant.get_position())) {
@@ -54,9 +97,13 @@ auto Population::update(float time) -> void {
     }
 
     if (ant.is_dead()) {
-      ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
+      auto genome = ant.get_genome();
+      genome.set_fitness(ant.get_life_span());
+      _pangenome.push_back(genome);
+      ant = create_ant();
+    } else {
+      ant.update(time);
     }
-    ant.update(time);
   }
 
   // ensure population size is maintained

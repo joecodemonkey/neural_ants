@@ -32,13 +32,19 @@ class Neuron {
 
   auto randomize() -> void;
 
+  auto enable_threads() -> void;
+  auto disable_threads() -> void;
+
  protected:
   static auto activation_function(Value x) -> Value {
     return tanh(x);
   }
 
+  auto calculate() -> void;
+
   Value _value = 0;
   Value _bias = 0;
   ValueVector _weights;
   ValueVector _inputs;
+  bool _threaded = false;
 };

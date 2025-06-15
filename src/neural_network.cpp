@@ -1,5 +1,7 @@
 #include "neural_network.hpp"
 
+#include <algorithm>
+#include <execution>
 #include <random>
 #include <stdexcept>
 
@@ -185,10 +187,18 @@ auto NeuralNetwork::get_hidden_layer_values(size_t layerIndex) -> ValueVector {
     inputs = get_hidden_layer_values(layerIndex - 1);
   }
 
-  for (auto& neuron : layer) {
-    neuron.set_inputs(inputs);
-    valueVector.push_back(neuron.get_output());
+  if (_threaded) {
+    std::for_each(std::execution::par, std::begin(layer), std::end(layer), [&](Neuron& neuron) {
+      neuron.set_inputs(inputs);
+    });
+  } else {
+    std::for_each(
+        std::begin(layer), std::end(layer), [&](Neuron& neuron) { neuron.set_inputs(inputs); });
   }
+
+  std::for_each(std::execution::seq, std::begin(layer), std::end(layer), [&](Neuron& neuron) {
+    valueVector.push_back(neuron.get_output());
+  });
 
   return valueVector;
 }
@@ -289,4 +299,36 @@ auto NeuralNetwork::set_hidden_layer(size_t idx, const Layer& layer) -> void {
   }
   _hiddenLayers[idx] = layer;
   _ready = false;
+}
+
+auto NeuralNetwork::enable_threads() -> void {
+  _threaded = true;
+
+  // Enable threading for all neurons in hidden layers
+  for (auto& layer : _hiddenLayers) {
+    for (auto& neuron : layer) {
+      neuron.enable_threads();
+    }
+  }
+
+  // Enable threading for output layer neurons
+  for (auto& neuron : _outputLayer) {
+    neuron.enable_threads();
+  }
+}
+
+auto NeuralNetwork::disable_threads() -> void {
+  _threaded = false;
+
+  // Disable threading for all neurons in hidden layers
+  for (auto& layer : _hiddenLayers) {
+    for (auto& neuron : layer) {
+      neuron.disable_threads();
+    }
+  }
+
+  // Disable threading for output layer neurons
+  for (auto& neuron : _outputLayer) {
+    neuron.disable_threads();
+  }
 }

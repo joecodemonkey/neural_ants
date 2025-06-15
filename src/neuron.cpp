@@ -1,10 +1,15 @@
 #include "neuron.hpp"
 
+#include <algorithm>
+#include <execution>
+#include <numeric>
 #include <random>
+#include <ranges>
 #include <stdexcept>
 
 auto Neuron::set_input(size_t idx, Value value) -> void {
   _inputs.at(idx) = value;
+  calculate();
 }
 
 auto Neuron::get_input(size_t idx) const -> Value {
@@ -28,7 +33,6 @@ auto Neuron::get_bias() const -> Value {
 }
 
 auto Neuron::get_output() -> Value {
-  // Calculate weighted sum
   _value = _bias;
   for (size_t i = 0; i < _inputs.size(); ++i) {
     _value += _inputs.at(i) * _weights.at(i);
@@ -105,4 +109,36 @@ auto Neuron::set_inputs(const ValueVector& inputs) -> void {
                              " but got " + std::to_string(inputs.size()));
   }
   _inputs = inputs;
+  calculate();
+}
+
+auto Neuron::enable_threads() -> void {
+  _threaded = true;
+}
+
+auto Neuron::disable_threads() -> void {
+  _threaded = false;
+}
+
+auto Neuron::calculate() -> void {
+  double _value;
+  if (_threaded) {
+    _value = std::transform_reduce(std::execution::par,
+                                   _inputs.begin(),
+                                   _inputs.end(),
+                                   _weights.begin(),
+                                   0.0,
+                                   std::plus<double>{},
+                                   std::multiplies<double>{});
+  } else {
+    _value = std::transform_reduce(std::execution::seq,
+                                   _inputs.begin(),
+                                   _inputs.end(),
+                                   _weights.begin(),
+                                   0.0,
+                                   std::plus<double>{},
+                                   std::multiplies<double>{});
+  }
+
+  _value = activation_function(_bias + _value);
 }
