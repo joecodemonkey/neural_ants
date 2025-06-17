@@ -4,6 +4,7 @@
 #include <raymath.h>
 
 #include "input.hpp"
+#include "ui.hpp"
 #include "world.hpp"
 
 class Game {
@@ -24,4 +25,5 @@ class Game {
   Input _input;
   float _cameraSpeed;
   int _fps = DEFAULT_FPS;
+  UI _ui;
 };

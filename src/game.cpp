@@ -23,6 +23,7 @@ auto Game::run() -> void {
     _world.update(time);
     ClearBackground(BLACK);
     _world.draw();
+    _ui.update(time);
     EndDrawing();
   }
 

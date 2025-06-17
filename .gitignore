@@ -3,3 +3,5 @@ cmake-build-debug/
 build/
 .cache/
 Testing/
+tasks.md
+imgui.ini
