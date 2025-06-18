@@ -19,12 +19,15 @@ auto Game::run() -> void {
     BeginDrawing();
     BeginMode2D(_camera);
     const float time = GetFrameTime();
-    _input.update(time);
-    _world.update(time);
+    if (!_ui.get_settings_maximized()) {
+      _input.update(time);
+      _world.update(time);
+    }
     ClearBackground(BLACK);
     _world.draw();
     EndMode2D();
     _ui.update(time);
+    _ui.draw();
     EndDrawing();
   }
 
