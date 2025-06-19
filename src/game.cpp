@@ -26,8 +26,7 @@ auto Game::run() -> void {
     ClearBackground(BLACK);
     _world.draw();
     EndMode2D();
-    _ui.update(time);
-    _ui.draw();
+    _ui.draw(time);
     EndDrawing();
   }
 
