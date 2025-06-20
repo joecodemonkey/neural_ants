@@ -24,6 +24,6 @@ class UI {
   float _deltaTime;
 
   Texture2D _gearTexture, _saveButtonTexture, _closeButtonTexture;
-  Texture2D _deleteTexture, _loadTexture, _progressTexture;
+  Texture2D _deleteTexture, _loadTexture, _progressTexture, _exitTexture;
   const ImVec4 _buttonColor, _buttonHoverColor, _activeButtonColor;
 };

@@ -1,11 +1,31 @@
+#include <imgui.h>
+#include <raylib.h>
 #include <rlImGui.h>
 
 #include <algorithm>
 #include <cstdint>
 #include <ui.hpp>
 
-#include "imgui.h"
-#include "raylib.h"
+bool GroupedImageButton(const char* id,
+                        const char* label,
+                        ImTextureID textureID,
+                        ImVec2 imageSize) {
+  ImGui::BeginGroup();
+
+  bool clicked = ImGui::ImageButton(id, textureID, imageSize);
+
+  // Center text under button
+  ImVec2 textSize = ImGui::CalcTextSize(label);
+  float textOffset = (imageSize.x - textSize.x) * 0.5f;
+  if (textOffset > 0) {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + textOffset);
+  }
+  ImGui::Text("%s", label);
+
+  ImGui::EndGroup();
+
+  return clicked;
+}
 
 UI::UI()
     : _buttonColor{0.2f, 0.2f, 0.2f, 1.0f},
@@ -25,6 +45,7 @@ auto UI::setup() -> void {
   _deleteTexture = LoadTexture("trashcan.png");
   _loadTexture = LoadTexture("ant.png");
   _progressTexture = LoadTexture("signal3.png");
+  _exitTexture = LoadTexture("exitRight.png");
   _setup = true;
 }
 
@@ -41,7 +62,7 @@ auto UI::draw(float deltaTime) -> void {
 }
 
 auto UI::draw_settings_button() -> void {
-  const auto settingsButtonPosition = ImVec2{_screenWidth - 50.0f, _screenHeight - 50.0f};
+  const auto settingsButtonPosition = ImVec2{_screenWidth - 80.0f, _screenHeight - 85.0f};
   static const ImGuiWindowFlags buttonWindowFlags =
       ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
       ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings |
@@ -53,7 +74,7 @@ auto UI::draw_settings_button() -> void {
   if (ImGui::Begin("Right Panel", nullptr, buttonWindowFlags)) {
     begin_button_style();
 
-    if (ImGui::ImageButton("##settings", (ImTextureID)(uintptr_t)_gearTexture.id, ImVec2(30, 30))) {
+    if (ImGui::ImageButton("##settings", _gearTexture.id, ImVec2(50, 50))) {
       _settingsMaximized = true;
     }
     end_button_style();
@@ -66,10 +87,10 @@ auto UI::draw_settings_menu() -> void {
       ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
       ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar;
   // Calculate center position for the panel
-  float settingsWindowWidth = std::max(0.4f * _screenWidth, 100.0f);
-  float settingsWindowHeight = std::max(0.4f * _screenHeight, 100.0f);
-  const auto settingsWindowPosition = ImVec2{(_screenWidth - settingsWindowWidth) * 0.5f,
-                                             (_screenHeight - settingsWindowHeight) * 0.5f};
+  float settingsWindowWidth = 80.0f;
+  float settingsWindowHeight = _screenHeight;
+  const auto settingsWindowPosition =
+      ImVec2{(_screenWidth - settingsWindowWidth), (_screenHeight - settingsWindowHeight) * 0.5f};
 
   ImGui::SetNextWindowPos(settingsWindowPosition);
   ImGui::SetNextWindowSize(ImVec2(settingsWindowWidth, settingsWindowHeight));
@@ -77,44 +98,22 @@ auto UI::draw_settings_menu() -> void {
   if (ImGui::Begin("Settings", &_settingsMaximized, settingsWindowFlags)) {
     // Draw the top bar
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    const ImVec2 window_pos = ImGui::GetWindowPos();
-    draw_list->AddRectFilled(ImVec2(window_pos.x, window_pos.y),
-                             ImVec2(window_pos.x + settingsWindowWidth, window_pos.y + 40),
-                             ImGui::ColorConvertFloat4ToU32(_buttonColor));
 
     // Add close button in top right corner
-    ImGui::SetCursorPos(ImVec2(settingsWindowWidth - 40, 0));
     begin_button_style();
 
-    if (ImGui::ImageButton(
-            "Close", (ImTextureID)(uintptr_t)_closeButtonTexture.id, ImVec2(30, 30))) {
+    GroupedImageButton("#save_load", "Save/Load", _saveButtonTexture.id, ImVec2(50, 50));
+    GroupedImageButton("#progress", " Enable\nProgress", _progressTexture.id, ImVec2(50, 50));
+
+    ImGui::SetCursorPos(ImVec2{10.0f, _screenHeight - 80.0f});
+
+    if (GroupedImageButton("#exitSettings", "Return", _exitTexture.id, ImVec2(50, 50))) {
       _settingsMaximized = false;
     }
     end_button_style();
-    draw_save_load_button();
-    draw_leaderboard_button();
   }
 
   ImGui::End();
-}
-
-auto UI::draw_save_load_button() -> void {
-  ImGui::SetCursorPos(ImVec2(10, 50));  // Relative to window content area
-
-  begin_button_style();
-  if (ImGui::Button("Save/Load", ImVec2(100, 30))) {
-    // Handle save/load
-  }
-  end_button_style();
-}
-
-auto UI::draw_leaderboard_button() -> void {
-  // You can also use relative positioning
-  begin_button_style();
-  ImGui::SetCursorPos(ImVec2(10, 100));
-  if (ImGui::Button("Leaderboard", ImVec2(100, 30))) {
-  }
-  end_button_style();
 }
 
 auto UI::draw_settings() -> void {
