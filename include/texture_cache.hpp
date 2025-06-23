@@ -1,28 +1,25 @@
 #pragma once
 
-#include <unordered_map>
+#include <raylib.h>
+
 #include <memory>
-#include "raylib-cpp.hpp"
+#include <unordered_map>
 
 class TextureCache {
-    public:
-        static TextureCache &get_instance() {
-            static TextureCache instance;
-            return instance;
-        }
+ public:
+  auto add_texture(const std::string& name, const std::string& path) -> bool;
+  auto has_texture(const std::string& name) const -> bool;
+  auto get_texture(const std::string& name) -> Texture2D;
+  auto set_default(const std::string& name) -> bool;
+  auto get_default(const std::string& name) -> Texture2D;
 
-        raylib::Texture2D & get_texture(std::string const &path) {
-            if (_textures.find(path) == _textures.end()) {
-                _textures[path] = LoadTexture(path.c_str());
-            }
-            return _textures[path];
-        }
+  ~TextureCache();
 
-        protected:
-            TextureCache() = default;
-            TextureCache(TextureCache const &) = delete;
-            TextureCache &operator=(TextureCache const &) = delete;
-            ~TextureCache() = default;
-            
-            std::unordered_map<std::string, raylib::Texture2D> _textures;
+  TextureCache() = default;
+  TextureCache(TextureCache const&) = delete;
+  TextureCache& operator=(TextureCache const&) = delete;
+
+ protected:
+  std::unordered_map<std::string, Texture2D> _textures;
+  std::string _defaultTextureName;
 };

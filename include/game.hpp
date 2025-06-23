@@ -3,8 +3,10 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include <ui/renderer.hpp>
+
 #include "input.hpp"
-#include "ui.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 class Game {
@@ -19,11 +21,13 @@ class Game {
   auto set_target_fps(int fps) -> void;
 
  private:
+  auto load_textures() -> void;
   const float DEFAULT_FPS = 60;
   Camera2D _camera;
   World _world;
   Input _input;
   float _cameraSpeed;
   int _fps = DEFAULT_FPS;
-  UI _ui;
+  UI::Renderer _ui;
+  std::shared_ptr<TextureCache> _textureCache;
 };

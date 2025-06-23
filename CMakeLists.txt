@@ -87,6 +87,8 @@ set(C_SOURCES
 )
 
 set(CXX_SOURCES
+    src/util/file.cpp
+    src/texture_cache.cpp
     src/main.cpp
     src/game.cpp 
     src/input.cpp
@@ -100,7 +102,12 @@ set(CXX_SOURCES
     src/surroundings.cpp
     src/food.cpp
     src/brain.cpp
-    src/ui.cpp
+    src/ui/renderer.cpp
+    src/ui/buttons.cpp
+    src/ui/behaviors/maximizer.cpp 
+    src/ui/behaviors/textured.cpp
+    src/ui/menu/settings.cpp
+    src/ui/menu/save_load.cpp
 )
 
 # Create library target
@@ -109,7 +116,7 @@ add_library(neural_ants_lib STATIC
     ${CXX_SOURCES}
 )
 target_compile_options(neural_ants_lib PRIVATE ${PARALLEL_FLAGS})
-target_link_libraries(neural_ants_lib PRIVATE raylib imgui_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread)
+target_link_libraries(neural_ants_lib PRIVATE raylib imgui_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread stdc++fs)
 
 # Add include directories
 target_include_directories(neural_ants_lib PRIVATE 
@@ -122,7 +129,7 @@ target_include_directories(neural_ants_lib PRIVATE
 # Create main executable
 add_executable(neural_ants src/main.cpp)
 target_compile_options(neural_ants PRIVATE ${PARALLEL_FLAGS})
-target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib imgui_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread)
+target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib imgui_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread stdc++fs)
 target_include_directories(neural_ants PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
@@ -147,6 +154,7 @@ target_link_libraries(neural_ants_unit_tests PRIVATE
     TBB::tbb
     OpenMP::OpenMP_CXX
     pthread
+    stdc++fs
 )
 
 # Include directories for unit tests
@@ -189,6 +197,7 @@ target_link_libraries(neural_ants_benchmarks PRIVATE
     TBB::tbb
     OpenMP::OpenMP_CXX
     pthread
+    stdc++fs
 )
 
 # Include directories for benchmarks
