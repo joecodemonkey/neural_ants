@@ -40,9 +40,62 @@ FetchContent_Declare(
         GIT_TAG v3.8.1
 )
 
+FetchContent_Declare(
+        ImGui
+        GIT_REPOSITORY https://github.com/ocornut/imgui
+        GIT_TAG v1.91.9b
+)
+
+FetchContent_Declare(
+        ImPlot
+        GIT_REPOSITORY https://github.com/epezent/implot
+        GIT_TAG master
+)
+
+FetchContent_Declare(
+    rlImGui
+    GIT_REPOSITORY https://github.com/raylib-extras/rlImGui    
+    GIT_TAG main
+)
+
+
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
 FetchContent_MakeAvailable(Catch2)
+FetchContent_MakeAvailable(ImGui)
+FetchContent_MakeAvailable(ImPlot)
+FetchContent_MakeAvailable(rlImGui)
+
+# Grab the headers and sources for IMGUI
+file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*.cpp")
+file(GLOB IMGUI_HEADERS "${imgui_SOURCE_DIR}/*.h")
+
+# Create ImGui library
+add_library(imgui_lib STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES} )
+target_include_directories(imgui_lib PUBLIC ${imgui_SOURCE_DIR})
+
+# Grab the headers and sources for IMPLOT
+file(GLOB IMPLOT_SOURCES "${implot_SOURCE_DIR}/*.cpp")
+file(GLOB IMPLOT_HEADERS "${implot_SOURCE_DIR}/*.h")
+
+# Create ImPlot library
+add_library(implot_lib STATIC ${IMPLOT_HEADERS} ${IMPLOT_SOURCES})
+target_include_directories(implot_lib PUBLIC ${implot_SOURCE_DIR})
+target_link_libraries(implot_lib PUBLIC imgui_lib)
+
+file(GLOB RLIMGUI_SOURCES "${rlimgui_SOURCE_DIR}/*.cpp")
+file(GLOB RLIMGUI_HEADERS "${rlimgui_SOURCE_DIR}/*.cpp")
+
+# Create rlImGui library
+add_library(rlimgui_lib STATIC ${RLIMGUI_HEADERS} ${RLIMGUI_SOURCES})
+
+target_include_directories(rlimgui_lib PUBLIC 
+    ${rlimgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}
+)
+
+target_link_libraries(rlimgui_lib PUBLIC imgui_lib implot_lib raylib)
+
 
 # Separate C and C++ sources
 set(C_SOURCES
@@ -51,6 +104,8 @@ set(C_SOURCES
 )
 
 set(CXX_SOURCES
+    src/util/file.cpp
+    src/texture_cache.cpp
     src/main.cpp
     src/game.cpp 
     src/input.cpp
@@ -64,6 +119,11 @@ set(CXX_SOURCES
     src/surroundings.cpp
     src/food.cpp
     src/brain.cpp
+    src/ui/renderer.cpp
+    src/ui/buttons.cpp
+    src/ui/menu/settings.cpp
+    src/ui/menu/save_load.cpp
+    src/ui/state.cpp
 )
 
 # Create library target
@@ -72,22 +132,25 @@ add_library(neural_ants_lib STATIC
     ${CXX_SOURCES}
 )
 target_compile_options(neural_ants_lib PRIVATE ${PARALLEL_FLAGS})
-target_link_libraries(neural_ants_lib PRIVATE raylib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread)
+target_link_libraries(neural_ants_lib PRIVATE raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread stdc++fs)
 
 # Add include directories
 target_include_directories(neural_ants_lib PRIVATE 
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${imgui_SOURCE_DIR}
+    ${rlimgui_SOURCE_DIR}
 )
 
 # Create main executable
 add_executable(neural_ants src/main.cpp)
 target_compile_options(neural_ants PRIVATE ${PARALLEL_FLAGS})
-target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread)
+target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread stdc++fs)
 target_include_directories(neural_ants PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/fmt_cxx-src/include
+    ${implot_SOURCE_DIR}
 )
 
 # Test configuration
@@ -104,10 +167,13 @@ target_link_libraries(neural_ants_unit_tests PRIVATE
     Catch2::Catch2WithMain
     neural_ants_lib
     raylib
+    imgui_lib
+    implot_lib
     fmt::fmt
     TBB::tbb
     OpenMP::OpenMP_CXX
     pthread
+    stdc++fs
 )
 
 # Include directories for unit tests
@@ -115,6 +181,7 @@ target_include_directories(neural_ants_unit_tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
+    ${implot_SOURCE_DIR}
 )
 
 # Register unit tests with CTest
@@ -146,10 +213,13 @@ target_link_libraries(neural_ants_benchmarks PRIVATE
     Catch2::Catch2WithMain
     neural_ants_lib
     raylib
+    imgui_lib
+    implot_lib
     fmt::fmt
     TBB::tbb
     OpenMP::OpenMP_CXX
     pthread
+    stdc++fs
 )
 
 # Include directories for benchmarks
@@ -157,6 +227,7 @@ target_include_directories(neural_ants_benchmarks PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
+    ${implot_SOURCE_DIR}
 )
 
 # Register benchmarks with CTest
