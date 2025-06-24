@@ -121,8 +121,6 @@ set(CXX_SOURCES
     src/brain.cpp
     src/ui/renderer.cpp
     src/ui/buttons.cpp
-    src/ui/behaviors/maximizer.cpp 
-    src/ui/behaviors/textured.cpp
     src/ui/menu/settings.cpp
     src/ui/menu/save_load.cpp
     src/ui/state.cpp

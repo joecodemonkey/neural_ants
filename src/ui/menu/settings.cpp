@@ -28,7 +28,7 @@ auto UI::Menu::Settings::draw() -> void {
   ImGui::SetNextWindowPos(settingsWindowPosition);
   ImGui::SetNextWindowSize(ImVec2(settingsWindowWidth, settingsWindowHeight));
 
-  bool maximized = _maximizer.maximized();
+  bool maximized = true;
 
   if (ImGui::Begin("Settings", &maximized, settingsWindowFlags)) {
     if (UI::Buttons::GroupedImage(
