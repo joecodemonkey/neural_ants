@@ -6,8 +6,10 @@
 #include <ui/renderer.hpp>
 
 #include "ui/buttons.hpp"
+#include "ui/state.hpp"
 
-UI::Renderer::Renderer() : _setup(false), _paused(false) {}
+UI::Renderer::Renderer()
+    : _setup(false), _paused(false), _settingsMenu(_state), _saveLoadMenu(_state) {}
 
 auto UI::Renderer::setup() -> void {
   if (_setup) {
@@ -26,15 +28,14 @@ auto UI::Renderer::draw(float deltaTime) -> void {
 
   _screenHeight = GetScreenHeight();
   _screenWidth = GetScreenWidth();
-  if (_settingsMenu.maximizer().maximized()) {
+  if (_state.is_maximized(State::SETTINGS)) {
+    _paused = false;
     _settingsMenu.draw();
-    _saveLoadMenu.maximizer() = _settingsMenu.saveLoadMaximizer();
-  } else if (_saveLoadMenu.maximizer().maximized()) {
+  } else if (_state.is_maximized(State::SAVELOAD)) {
+    _paused = true;
     _saveLoadMenu.draw();
-    // TODO: GET RID OF MAXIMIZER
-    _settingsMenu.maximizer() = _saveLoadMenu.settingsMaximizer();
-    _settingsMenu.saveLoadMaximizer() = _saveLoadMenu.maximizer();
   } else {
+    _paused = false;
     draw_settings_button();
   }
   rlImGuiEnd();
@@ -55,7 +56,7 @@ auto UI::Renderer::draw_settings_button() -> void {
 
     if (ImGui::ImageButton(
             "##settings", _textureCache->get_texture("settings").id, ImVec2(50, 50))) {
-      _settingsMenu.maximizer().maximize();
+      _state.maximize(State::SETTINGS);
     }
     UI::Buttons::end_button_style();
   }

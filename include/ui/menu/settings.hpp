@@ -1,10 +1,12 @@
 #include <texture_cache.hpp>
 #include <ui/behaviors/maximizable.hpp>
+#include <ui/state.hpp>
 
 namespace UI {
 namespace Menu {
 class Settings {
  public:
+  Settings(UI::State& state);
   auto draw() -> void;
   auto maximizer() -> Behaviors::Maximizable&;
   auto maximizer() const -> const Behaviors::Maximizable&;
@@ -19,6 +21,7 @@ class Settings {
   UI::Behaviors::Maximizable _saveLoadMaximizer;
   UI::Behaviors::Maximizable _progressMaximizer;
   std::shared_ptr<TextureCache> _textureCache;
+  UI::State& _state;
 };
 }  // namespace Menu
 }  // namespace UI

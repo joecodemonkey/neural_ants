@@ -5,6 +5,7 @@
 #include <memory>
 #include <ui/menu/save_load.hpp>
 #include <ui/menu/settings.hpp>
+#include <ui/state.hpp>
 
 #include "texture_cache.hpp"
 
@@ -33,5 +34,6 @@ class Renderer {
   UI::Menu::Settings _settingsMenu;
   UI::Menu::SaveLoad _saveLoadMenu;
   std::shared_ptr<TextureCache> _textureCache;
+  UI::State _state;
 };
 }  // namespace UI

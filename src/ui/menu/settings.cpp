@@ -4,29 +4,12 @@
 #include <ui/buttons.hpp>
 #include <ui/menu/settings.hpp>
 
-auto UI::Menu::Settings::maximizer() -> UI::Behaviors::Maximizable& {
-  return _maximizer;
-}
-auto UI::Menu::Settings::maximizer() const -> const UI::Behaviors::Maximizable& {
-  return _maximizer;
-}
+#include "ui/state.hpp"
 
-auto UI::Menu::Settings::saveLoadMaximizer() -> UI::Behaviors::Maximizable& {
-  return _saveLoadMaximizer;
-}
-auto UI::Menu::Settings::saveLoadMaximizer() const -> const UI::Behaviors::Maximizable& {
-  return _saveLoadMaximizer;
-}
-
-auto UI::Menu::Settings::progressMaximizer() -> UI::Behaviors::Maximizable& {
-  return _progressMaximizer;
-}
-auto UI::Menu::Settings::progressMaximizer() const -> const UI::Behaviors::Maximizable& {
-  return _progressMaximizer;
-}
+UI::Menu::Settings::Settings(UI::State& state) : _state(state) {}
 
 auto UI::Menu::Settings::draw() -> void {
-  if (!_maximizer.maximized()) {
+  if (!_state.is_maximized(State::SETTINGS)) {
     return;
   }
 
@@ -50,22 +33,21 @@ auto UI::Menu::Settings::draw() -> void {
   if (ImGui::Begin("Settings", &maximized, settingsWindowFlags)) {
     if (UI::Buttons::GroupedImage(
             "#save_load", "Save/Load", _textureCache->get_texture("save").id, ImVec2(50, 50))) {
-      _saveLoadMaximizer.maximize();
-      _maximizer.minimize();
+      _state.minimize(State::SETTINGS);
+      _state.maximize(State::SAVELOAD);
     }
     if (UI::Buttons::GroupedImage("#progress",
                                   " Enable\nProgress",
                                   _textureCache->get_texture("progress").id,
                                   ImVec2(50, 50))) {
-      _progressMaximizer.maximize();
+      _state.maximize(State::PROGRESS);
     }
 
     ImGui::SetCursorPos(ImVec2{10.0f, screenHeight - 80.0f});
 
     if (UI::Buttons::GroupedImage(
             "#exitSettings", "Return", _textureCache->get_texture("exit").id, ImVec2(50, 50))) {
-      _maximizer.minimize();
-      _saveLoadMaximizer.maximize();
+      _state.minimize(State::SETTINGS);
     }
   }
   ImGui::End();
