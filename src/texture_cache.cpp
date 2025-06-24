@@ -50,7 +50,9 @@ bool TextureCache::set_default(const std::string& name) {
 
 TextureCache::~TextureCache() {
   for (auto& pair : _textures) {
-    UnloadTexture(pair.second);
+    std::cerr << "Unloading Texture\n";
+    /* TODO: Is this okay? */
+    // UnloadTexture(pair.second);
   }
   _textures.clear();
 }
