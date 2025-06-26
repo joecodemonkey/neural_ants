@@ -29,7 +29,7 @@ This project depends on several third-party libraries that are automatically dow
 
 ## {fmt}
 
-**License**: MIT License  
+**License**: Open, Custom 
 **Copyright**: Victor Zverovich  
 **URL**: https://github.com/fmtlib/fmt
 
