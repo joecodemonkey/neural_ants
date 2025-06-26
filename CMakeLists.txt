@@ -6,19 +6,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Enable parallel algorithms and OpenMP
-find_package(OpenMP REQUIRED)
-list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu/cmake/TBB")
-find_package(TBB REQUIRED)
-
 # Enable parallel algorithms
-set(PARALLEL_FLAGS "-D_GLIBCXX_PARALLEL -pthread")
+
+# Enable threading
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-# Add debug flags
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+# Build configuration - Release by default, Debug if NEURAL_ANTS_DEBUG is set
+if(DEFINED ENV{NEURAL_ANTS_DEBUG})
+    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+    message(STATUS "Debug build enabled via NEURAL_ANTS_DEBUG environment variable")
+else()
+    set(CMAKE_BUILD_TYPE Release)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native -DNDEBUG -Wno-stringop-overflow")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native -DNDEBUG -Wno-stringop-overflow")
+    message(STATUS "Release build with -O3 optimization")
+endif()
 
 include(FetchContent)
 
@@ -58,6 +62,16 @@ FetchContent_Declare(
     GIT_TAG main
 )
 
+FetchContent_Declare(
+    oneTBB
+    GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
+    GIT_TAG v2021.13.0
+)
+
+# Disable oneTBB tests and examples to avoid build issues
+set(TBB_TEST OFF CACHE BOOL "" FORCE)
+set(TBB_EXAMPLES OFF CACHE BOOL "" FORCE)
+
 
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
@@ -65,6 +79,7 @@ FetchContent_MakeAvailable(Catch2)
 FetchContent_MakeAvailable(ImGui)
 FetchContent_MakeAvailable(ImPlot)
 FetchContent_MakeAvailable(rlImGui)
+FetchContent_MakeAvailable(oneTBB)
 
 # Grab the headers and sources for IMGUI
 file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*.cpp")
@@ -131,8 +146,7 @@ add_library(neural_ants_lib STATIC
     ${C_SOURCES}
     ${CXX_SOURCES}
 )
-target_compile_options(neural_ants_lib PRIVATE ${PARALLEL_FLAGS})
-target_link_libraries(neural_ants_lib PRIVATE raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread stdc++fs)
+target_link_libraries(neural_ants_lib PRIVATE raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb pthread stdc++fs)
 
 # Add include directories
 target_include_directories(neural_ants_lib PRIVATE 
@@ -144,8 +158,7 @@ target_include_directories(neural_ants_lib PRIVATE
 
 # Create main executable
 add_executable(neural_ants src/main.cpp)
-target_compile_options(neural_ants PRIVATE ${PARALLEL_FLAGS})
-target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb OpenMP::OpenMP_CXX pthread stdc++fs)
+target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb pthread stdc++fs)
 target_include_directories(neural_ants PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
@@ -171,7 +184,6 @@ target_link_libraries(neural_ants_unit_tests PRIVATE
     implot_lib
     fmt::fmt
     TBB::tbb
-    OpenMP::OpenMP_CXX
     pthread
     stdc++fs
 )
@@ -195,17 +207,9 @@ file(GLOB_RECURSE BENCHMARK_SOURCES "tests/benchmark/*.cpp")
 # Create benchmark executable
 add_executable(neural_ants_benchmarks ${BENCHMARK_SOURCES})
 
-# Set release mode and optimization flags for benchmarks
-set_target_properties(neural_ants_benchmarks PROPERTIES
-    CMAKE_BUILD_TYPE Release
-)
-
-# Set high optimization flags for benchmarks
+# Add fast-math for benchmarks (optimization already handled globally)
 target_compile_options(neural_ants_benchmarks PRIVATE
-    -O3
-    -march=native
     -ffast-math
-    ${PARALLEL_FLAGS}
 )
 
 # Link benchmark executable with Catch2
@@ -217,7 +221,6 @@ target_link_libraries(neural_ants_benchmarks PRIVATE
     implot_lib
     fmt::fmt
     TBB::tbb
-    OpenMP::OpenMP_CXX
     pthread
     stdc++fs
 )
