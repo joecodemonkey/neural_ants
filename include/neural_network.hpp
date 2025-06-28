@@ -1,4 +1,5 @@
 #pragma once
+#include <nlohmann/json.hpp>
 #include <vector>
 
 #include "neuron.hpp"
@@ -10,6 +11,7 @@ class NeuralNetwork {
   typedef std::vector<Neuron::Value> ValueVector;
 
   NeuralNetwork();
+  NeuralNetwork(const nlohmann::json& json);
   virtual ~NeuralNetwork() = default;
 
   // Copy operations
@@ -44,6 +46,8 @@ class NeuralNetwork {
   auto randomize() -> void;
   auto enable_threads() -> void;
   auto disable_threads() -> void;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   auto configure_output_layer() -> void;

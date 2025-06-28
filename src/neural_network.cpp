@@ -332,3 +332,60 @@ auto NeuralNetwork::disable_threads() -> void {
     neuron.disable_threads();
   }
 }
+
+auto NeuralNetwork::to_json() const -> nlohmann::json {
+  nlohmann::json json;
+
+  json["input_count"] = _inputsValues.size();
+  json["hidden_layer_count"] = _hiddenLayers.size();
+  json["hidden_layer_neuron_count"] = _hiddenLayerNeuronCount;
+  json["output_neuron_count"] = _outputLayer.size();
+  json["threaded"] = _threaded;
+  json["validated"] = _validated;
+  json["ready"] = _ready;
+
+  json["input_values"] = _inputsValues;
+  json["output_values"] = _outputValues;
+
+  nlohmann::json hidden_layers_json = nlohmann::json::array();
+  for (const auto& layer : _hiddenLayers) {
+    nlohmann::json layer_json = nlohmann::json::array();
+    for (const auto& neuron : layer) {
+      layer_json.push_back(neuron.to_json());
+    }
+    hidden_layers_json.push_back(layer_json);
+  }
+  json["hidden_layers"] = hidden_layers_json;
+
+  nlohmann::json output_layer_json = nlohmann::json::array();
+  for (const auto& neuron : _outputLayer) {
+    output_layer_json.push_back(neuron.to_json());
+  }
+  json["output_layer"] = output_layer_json;
+
+  return json;
+}
+
+NeuralNetwork::NeuralNetwork(const nlohmann::json& json) {
+  _hiddenLayerNeuronCount = json.at("hidden_layer_neuron_count").get<size_t>();
+  _threaded = json.at("threaded").get<bool>();
+  _validated = json.at("validated").get<bool>();
+  _ready = json.at("ready").get<bool>();
+
+  _inputsValues = json.at("input_values").get<ValueVector>();
+  _outputValues = json.at("output_values").get<ValueVector>();
+
+  _hiddenLayers.clear();
+  for (const auto& layer_json : json.at("hidden_layers")) {
+    Layer layer;
+    for (const auto& neuron_json : layer_json) {
+      layer.push_back(Neuron(neuron_json));
+    }
+    _hiddenLayers.push_back(layer);
+  }
+
+  _outputLayer.clear();
+  for (const auto& neuron_json : json.at("output_layer")) {
+    _outputLayer.push_back(Neuron(neuron_json));
+  }
+}
