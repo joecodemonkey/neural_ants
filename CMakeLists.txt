@@ -68,6 +68,12 @@ FetchContent_Declare(
     GIT_TAG v2021.13.0
 )
 
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
+)
+
 # Disable oneTBB tests and examples to avoid build issues
 set(TBB_TEST OFF CACHE BOOL "" FORCE)
 set(TBB_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -80,6 +86,7 @@ FetchContent_MakeAvailable(ImGui)
 FetchContent_MakeAvailable(ImPlot)
 FetchContent_MakeAvailable(rlImGui)
 FetchContent_MakeAvailable(oneTBB)
+FetchContent_MakeAvailable(nlohmann_json)
 
 # Grab the headers and sources for IMGUI
 file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*.cpp")
@@ -120,6 +127,7 @@ set(C_SOURCES
 
 set(CXX_SOURCES
     src/util/file.cpp
+    src/util/serialization.cpp
     src/texture_cache.cpp
     src/main.cpp
     src/game.cpp 
@@ -146,7 +154,7 @@ add_library(neural_ants_lib STATIC
     ${C_SOURCES}
     ${CXX_SOURCES}
 )
-target_link_libraries(neural_ants_lib PRIVATE raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb pthread stdc++fs)
+target_link_libraries(neural_ants_lib PRIVATE raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb nlohmann_json::nlohmann_json pthread stdc++fs)
 
 # Add include directories
 target_include_directories(neural_ants_lib PRIVATE 
@@ -158,7 +166,7 @@ target_include_directories(neural_ants_lib PRIVATE
 
 # Create main executable
 add_executable(neural_ants src/main.cpp)
-target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb pthread stdc++fs)
+target_link_libraries(neural_ants PRIVATE neural_ants_lib raylib imgui_lib implot_lib rlimgui_lib fmt::fmt TBB::tbb nlohmann_json::nlohmann_json pthread stdc++fs)
 target_include_directories(neural_ants PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
@@ -184,6 +192,7 @@ target_link_libraries(neural_ants_unit_tests PRIVATE
     implot_lib
     fmt::fmt
     TBB::tbb
+    nlohmann_json::nlohmann_json
     pthread
     stdc++fs
 )
@@ -221,6 +230,7 @@ target_link_libraries(neural_ants_benchmarks PRIVATE
     implot_lib
     fmt::fmt
     TBB::tbb
+    nlohmann_json::nlohmann_json
     pthread
     stdc++fs
 )
