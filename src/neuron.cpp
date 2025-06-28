@@ -86,6 +86,14 @@ Neuron::Neuron(Neuron&& other) {
   _value = other._value;
 }
 
+Neuron::Neuron(const nlohmann::json& json) {
+  _bias = json.at("bias").get<Value>();
+  _weights = json.at("weights").get<ValueVector>();
+  _inputs = json.at("inputs").get<ValueVector>();
+  _value = json.at("value").get<Value>();
+  _threaded = json.at("threaded").get<bool>();
+}
+
 auto Neuron::randomize() -> void {
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -141,4 +149,14 @@ auto Neuron::calculate() -> void {
   }
 
   _value = activation_function(_bias + _value);
+}
+
+auto Neuron::to_json() const -> nlohmann::json {
+  nlohmann::json json;
+  json["bias"] = _bias;
+  json["weights"] = _weights;
+  json["inputs"] = _inputs;
+  json["value"] = _value;
+  json["threaded"] = _threaded;
+  return json;
 }
