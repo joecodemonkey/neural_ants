@@ -5,6 +5,7 @@
 #include <limits>
 #include <ranges>
 #include <type_traits>
+#include <vector>
 
 namespace Util {
 
@@ -14,12 +15,14 @@ inline bool equal(T a, T b, T tolerance = std::numeric_limits<T>::epsilon()) {
   return std::abs(a - b) <= tolerance;
 }
 
-// C++23 array version using concepts and ranges
-template <std::floating_point T, std::size_t N>
-inline bool equal(const T (&a)[N],
-                  const T (&b)[N],
+template <std::floating_point T>
+inline bool equal(const std::vector<T>& a,
+                  const std::vector<T>& b,
                   T tolerance = std::numeric_limits<T>::epsilon()) {
-  return std::ranges::all_of(std::views::iota(0uz, N),
+  if (a.size() != b.size()) {
+    return false;
+  }
+  return std::ranges::all_of(std::views::iota(0uz, a.size()),
                              [&](std::size_t i) { return equal(a[i], b[i], tolerance); });
 }
 }  // namespace Util

@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <limits>
+#include <vector>
 
 TEST_CASE("Math Utility Functions", "[math]") {
   SECTION("equal function with float") {
@@ -143,6 +144,54 @@ TEST_CASE("Math Utility Functions", "[math]") {
       REQUIRE(Util::equal(1.0f, 10.0f, 10.0f));
       REQUIRE(Util::equal(1.0f, -5.0f, 10.0f));
       REQUIRE_FALSE(Util::equal(1.0f, 15.0f, 10.0f));
+    }
+  }
+
+  SECTION("std::vector equality function") {
+    SECTION("exact equality with float vectors") {
+      std::vector<float> vec1 = {1.0f, 2.0f, 3.0f};
+      std::vector<float> vec2 = {1.0f, 2.0f, 3.0f};
+      REQUIRE(Util::equal(vec1, vec2));
+
+      std::vector<float> vec3 = {0.0f, -1.0f};
+      std::vector<float> vec4 = {0.0f, -1.0f};
+      REQUIRE(Util::equal(vec3, vec4));
+    }
+
+    SECTION("different sizes return false") {
+      std::vector<float> vec1 = {1.0f, 2.0f, 3.0f};
+      std::vector<float> vec2 = {1.0f, 2.0f};
+      REQUIRE_FALSE(Util::equal(vec1, vec2));
+
+      std::vector<float> vec3 = {1.0f};
+      std::vector<float> vec4 = {1.0f, 2.0f, 3.0f};
+      REQUIRE_FALSE(Util::equal(vec3, vec4));
+    }
+
+    SECTION("near equality within epsilon with float vectors") {
+      float epsilon = std::numeric_limits<float>::epsilon();
+      std::vector<float> vec1 = {1.0f, 2.0f, 3.0f};
+      std::vector<float> vec2 = {1.0f + epsilon, 2.0f - epsilon, 3.0f + epsilon};
+      REQUIRE(Util::equal(vec1, vec2));
+    }
+
+    SECTION("custom tolerance with float vectors") {
+      std::vector<float> vec1 = {1.0f, 2.0f, 3.0f, 4.0f};
+      std::vector<float> vec2 = {1.1f, 1.9f, 3.1f, 3.9f};
+      REQUIRE(Util::equal(vec1, vec2, 0.2f));
+
+      std::vector<float> vec3 = {1.0f, 2.0f, 3.0f};
+      std::vector<float> vec4 = {1.3f, 2.0f, 3.0f};
+      REQUIRE_FALSE(Util::equal(vec3, vec4, 0.2f));
+    }
+
+    SECTION("empty vectors") {
+      std::vector<float> vec1;
+      std::vector<float> vec2;
+      REQUIRE(Util::equal(vec1, vec2));
+
+      std::vector<float> vec3 = {1.0f};
+      REQUIRE_FALSE(Util::equal(vec1, vec3));
     }
   }
 }
