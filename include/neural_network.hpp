@@ -22,6 +22,9 @@ class NeuralNetwork {
   NeuralNetwork(NeuralNetwork&& other) noexcept;
   auto operator=(NeuralNetwork&& other) noexcept -> NeuralNetwork&;
 
+  // Equality operator
+  auto operator==(const NeuralNetwork& other) const -> bool;
+
   auto set_input_count(size_t count) -> void;
   auto get_input_count() const -> size_t;
 

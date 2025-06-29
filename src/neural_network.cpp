@@ -59,6 +59,14 @@ auto NeuralNetwork::operator=(NeuralNetwork&& other) noexcept -> NeuralNetwork& 
   return *this;
 }
 
+// Equality operator
+auto NeuralNetwork::operator==(const NeuralNetwork& other) const -> bool {
+  return _hiddenLayerNeuronCount == other._hiddenLayerNeuronCount &&
+         _validated == other._validated && _threaded == other._threaded && _ready == other._ready &&
+         _inputsValues == other._inputsValues && _outputValues == other._outputValues &&
+         _hiddenLayers == other._hiddenLayers && _outputLayer == other._outputLayer;
+}
+
 auto NeuralNetwork::set_input_values(const ValueVector& input) -> void {
   _inputsValues = input;
   _ready = false;
