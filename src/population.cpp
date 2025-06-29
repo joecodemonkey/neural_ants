@@ -14,6 +14,76 @@
 
 Population::Population(World& world) : _world(world), _size(DEFAULT_POPULATION_SIZE) {}
 
+Population::Population(const nlohmann::json& j, World& world) : _world(world) {
+  _size = j.at("size").get<int>();
+  // Note: texture path and loaded state remain unchanged from game initialization
+
+  _ants.clear();
+  for (const auto& ant_json : j.at("ants")) {
+    Ant ant(ant_json, world);
+    // Apply texture immediately if already loaded, otherwise will be applied in update()
+    if (_textureLoaded && !_texturePath.empty()) {
+      ant.set_texture(_texture);
+    }
+    _ants.push_back(ant);
+  }
+
+  _pangenome.clear();
+  for (const auto& genome_json : j.at("pangenome")) {
+    _pangenome.push_back(Genome(genome_json));
+  }
+}
+
+Population::Population(const Population& other)
+    : _world(other._world),
+      _ants(other._ants),
+      _size(other._size),
+      _textureLoaded(other._textureLoaded),
+      _texturePath(other._texturePath),
+      _pangenome(other._pangenome),
+      _texture(other._texture) {}
+
+Population& Population::operator=(const Population& other) {
+  if (this != &other) {
+    _ants = other._ants;
+    _size = other._size;
+    _textureLoaded = other._textureLoaded;
+    _texturePath = other._texturePath;
+    _pangenome = other._pangenome;
+    _texture = other._texture;
+  }
+  return *this;
+}
+
+Population::Population(Population&& other)
+    : _world(other._world),
+      _ants(std::move(other._ants)),
+      _size(other._size),
+      _textureLoaded(other._textureLoaded),
+      _texturePath(std::move(other._texturePath)),
+      _pangenome(std::move(other._pangenome)),
+      _texture(other._texture) {
+  other._size = 0;
+  other._textureLoaded = false;
+  other._texture = {};
+}
+
+Population& Population::operator=(Population&& other) {
+  if (this != &other) {
+    _ants = std::move(other._ants);
+    _size = other._size;
+    _textureLoaded = other._textureLoaded;
+    _texturePath = std::move(other._texturePath);
+    _pangenome = std::move(other._pangenome);
+    _texture = other._texture;
+
+    other._size = 0;
+    other._textureLoaded = false;
+    other._texture = {};
+  }
+  return *this;
+}
+
 auto Population::set_size(int size) -> void {
   _size = size;
 }
@@ -89,6 +159,11 @@ auto Population::update(float time) -> void {
     if (!IsTextureValid(_texture)) {
       throw std::runtime_error("Failed to load ant texture at path: " + _texturePath);
     }
+
+    // Apply texture to all existing ants (important for loaded games)
+    for (Ant& ant : _ants) {
+      ant.set_texture(_texture);
+    }
   }
   // update all ants
   for (Ant& ant : _ants) {
@@ -127,4 +202,23 @@ auto Population::set_texture_path(const std::string& path) -> void {
 
 auto Population::get_texture_path() const -> const std::string& {
   return _texturePath;
+}
+
+auto Population::to_json() const -> nlohmann::json {
+  nlohmann::json j;
+  j["size"] = _size;
+
+  nlohmann::json ants_array = nlohmann::json::array();
+  for (const auto& ant : _ants) {
+    ants_array.push_back(ant.to_json());
+  }
+  j["ants"] = ants_array;
+
+  nlohmann::json pangenome_array = nlohmann::json::array();
+  for (const auto& genome : _pangenome) {
+    pangenome_array.push_back(genome.to_json());
+  }
+  j["pangenome"] = pangenome_array;
+
+  return j;
 }

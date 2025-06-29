@@ -3,6 +3,7 @@
 #include <raylib.h>
 
 #include <functional>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,7 @@ class Pangenome;
 class Population {
  public:
   Population(World& world);
+  Population(const nlohmann::json& j, World& world);
   ~Population() = default;
 
   auto set_size(int size) -> void;
@@ -27,13 +29,15 @@ class Population {
   [[nodiscard]] auto get_collisions(const Vector2& position, float radius)
       -> std::vector<std::reference_wrapper<Ant>>;
 
-  Population(const Population& other) = delete;
-  Population& operator=(const Population& other) = delete;
-  Population(Population&& other) = delete;
-  Population& operator=(Population&& other) = delete;
+  Population(const Population& other);
+  Population& operator=(const Population& other);
+  Population(Population&& other);
+  Population& operator=(Population&& other);
 
   auto set_texture_path(const std::string& path) -> void;
   [[nodiscard]] auto get_texture_path() const -> const std::string&;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   auto reproduce() -> void;
