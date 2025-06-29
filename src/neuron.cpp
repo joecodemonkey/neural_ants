@@ -1,11 +1,13 @@
 #include "neuron.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <execution>
 #include <numeric>
 #include <random>
 #include <ranges>
 #include <stdexcept>
+#include <util/math.hpp>
 
 auto Neuron::set_input(size_t idx, Value value) -> void {
   _inputs.at(idx) = value;
@@ -159,4 +161,20 @@ auto Neuron::to_json() const -> nlohmann::json {
   json["value"] = _value;
   json["threaded"] = _threaded;
   return json;
+}
+
+auto Neuron::operator==(const Neuron& other) const -> bool {
+  if (!Util::equal(_bias, other._bias)) {
+    return false;
+  }
+
+  if (!Util::equal(_value, other._value)) {
+    return false;
+  }
+
+  if (!Util::equal(_inputs, other._inputs)) {
+    return false;
+  }
+
+  return Util::equal(_weights, other._weights);
 }

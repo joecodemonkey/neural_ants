@@ -33,6 +33,8 @@ class Neuron {
   Neuron(const Neuron& other);
   Neuron(Neuron&& other);
 
+  auto operator==(const Neuron& other) const -> bool;
+
   auto randomize() -> void;
 
   auto enable_threads() -> void;
