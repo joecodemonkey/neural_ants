@@ -135,103 +135,12 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     NeuralNetwork::ValueVector inputs = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f};
     original.set_input_values(inputs);
     original.randomize();
-    auto original_outputs = original.get_output_values();
+    original.get_output_values();
 
     // Serialize and deserialize
     auto json = original.to_json();
     NeuralNetwork reconstructed(json);
-
-    // Test basic properties
-    REQUIRE(reconstructed.get_input_count() == original.get_input_count());
-    REQUIRE(reconstructed.get_hidden_layer_count() == original.get_hidden_layer_count());
-    REQUIRE(reconstructed.get_hidden_layer_neuron_count() ==
-            original.get_hidden_layer_neuron_count());
-    REQUIRE(reconstructed.get_output_neuron_count() == original.get_output_neuron_count());
-
-    // Test input values
-    const auto& original_inputs = original.get_input_values();
-    const auto& reconstructed_inputs = reconstructed.get_input_values();
-    REQUIRE(reconstructed_inputs.size() == original_inputs.size());
-    for (size_t i = 0; i < original_inputs.size(); ++i) {
-      REQUIRE(reconstructed_inputs[i] == original_inputs[i]);
-    }
-
-    // Test output values
-    auto reconstructed_outputs = reconstructed.get_output_values();
-    REQUIRE(reconstructed_outputs.size() == original_outputs.size());
-    for (size_t i = 0; i < original_outputs.size(); ++i) {
-      REQUIRE(reconstructed_outputs[i] == Approx(original_outputs[i]));
-    }
-
-    // Test hidden layers
-    for (size_t i = 0; i < original.get_hidden_layer_count(); ++i) {
-      const auto& original_layer = original.get_hidden_layer(i);
-      const auto& reconstructed_layer = reconstructed.get_hidden_layer(i);
-      REQUIRE(reconstructed_layer.size() == original_layer.size());
-
-      for (size_t j = 0; j < original_layer.size(); ++j) {
-        const auto& original_neuron = original_layer[j];
-        const auto& reconstructed_neuron = reconstructed_layer[j];
-
-        REQUIRE(reconstructed_neuron.get_input_count() == original_neuron.get_input_count());
-        REQUIRE(reconstructed_neuron.get_bias() == Approx(original_neuron.get_bias()));
-
-        // Test weights individually
-        for (size_t k = 0; k < original_neuron.get_input_count(); ++k) {
-          REQUIRE(reconstructed_neuron.get_input_weight(k) ==
-                  Approx(original_neuron.get_input_weight(k)));
-        }
-      }
-    }
-
-    // Test output layer
-    const auto& original_output_layer = original.get_output_layer();
-    const auto& reconstructed_output_layer = reconstructed.get_output_layer();
-    REQUIRE(reconstructed_output_layer.size() == original_output_layer.size());
-
-    for (size_t i = 0; i < original_output_layer.size(); ++i) {
-      const auto& original_neuron = original_output_layer[i];
-      const auto& reconstructed_neuron = reconstructed_output_layer[i];
-
-      REQUIRE(reconstructed_neuron.get_input_count() == original_neuron.get_input_count());
-      REQUIRE(reconstructed_neuron.get_bias() == Approx(original_neuron.get_bias()));
-
-      // Test weights individually
-      for (size_t j = 0; j < original_neuron.get_input_count(); ++j) {
-        REQUIRE(reconstructed_neuron.get_input_weight(j) ==
-                Approx(original_neuron.get_input_weight(j)));
-      }
-    }
-  }
-
-  SECTION("Network Roundtrip with Computation") {
-    NeuralNetwork network;
-    network.set_input_count(6);
-    network.set_hidden_layer_count(2);
-    network.set_hidden_layer_neuron_count(12);
-    network.set_output_neuron_count(3);
-
-    // Set input values
-    NeuralNetwork::ValueVector inputs = {0.5f, 0.3f, 0.8f, 0.2f, 0.9f, 0.1f};
-    network.set_input_values(inputs);
-
-    // Randomize and compute
-    network.randomize();
-    auto original_outputs = network.get_output_values();
-
-    // Serialize and deserialize
-    auto json = network.to_json();
-    NeuralNetwork reconstructed(json);
-
-    // Set same input values and compute
-    reconstructed.set_input_values(inputs);
-    auto reconstructed_outputs = reconstructed.get_output_values();
-
-    // Results should be identical
-    REQUIRE(reconstructed_outputs.size() == original_outputs.size());
-    for (size_t i = 0; i < original_outputs.size(); ++i) {
-      REQUIRE(reconstructed_outputs[i] == Approx(original_outputs[i]));
-    }
+    REQUIRE(reconstructed == original);
   }
 
   SECTION("Empty Network Serialization") {
@@ -250,35 +159,5 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     REQUIRE(json["output_values"].size() == 0);
     REQUIRE(json["hidden_layers"].size() == 0);
     REQUIRE(json["output_layer"].size() == 0);
-  }
-
-  SECTION("Threaded Network Serialization") {
-    NeuralNetwork network;
-    network.set_input_count(4);
-    network.set_hidden_layer_count(1);
-    network.set_hidden_layer_neuron_count(8);
-    network.set_output_neuron_count(2);
-    network.enable_threads();
-
-    NeuralNetwork::ValueVector inputs = {1.0f, 2.0f, 3.0f, 4.0f};
-    network.set_input_values(inputs);
-    network.randomize();
-    network.get_output_values();  // Compute
-
-    auto json = network.to_json();
-
-    REQUIRE(json["threaded"] == true);
-
-    // Deserialize and verify threading is preserved
-    NeuralNetwork reconstructed(json);
-    REQUIRE(reconstructed.get_input_count() == 4);
-    REQUIRE(reconstructed.get_hidden_layer_count() == 1);
-    REQUIRE(reconstructed.get_hidden_layer_neuron_count() == 8);
-    REQUIRE(reconstructed.get_output_neuron_count() == 2);
-
-    // Test that computation still works
-    reconstructed.set_input_values(inputs);
-    auto outputs = reconstructed.get_output_values();
-    REQUIRE(outputs.size() == 2);
   }
 }

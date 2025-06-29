@@ -95,18 +95,7 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
 
     auto json = original.to_json();
     Neuron deserialized = Neuron(json);
-
-    // Compare all properties
-    REQUIRE(deserialized.get_bias() == original.get_bias());
-    REQUIRE(deserialized.get_input_count() == original.get_input_count());
-
-    for (size_t i = 0; i < original.get_input_count(); ++i) {
-      REQUIRE(deserialized.get_input(i) == original.get_input(i));
-      REQUIRE(deserialized.get_input_weight(i) == original.get_input_weight(i));
-    }
-
-    // Compare the internal value (result of calculation)
-    REQUIRE(deserialized.get_output() == original.get_output());
+    REQUIRE(deserialized == original);
   }
 
   SECTION("Serialization with randomized neuron") {
@@ -168,12 +157,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     REQUIRE(json["inputs"].size() == large_count);
 
     Neuron deserialized = Neuron(json);
-    REQUIRE(deserialized.get_input_count() == large_count);
-
-    // Verify a few values
-    REQUIRE(deserialized.get_input(0) == 0.0f);
-    REQUIRE(deserialized.get_input(50) == 50.0f);
-    REQUIRE(deserialized.get_input_weight(0) == 0.0f);
-    REQUIRE(deserialized.get_input_weight(50) == 5.0f);
+    REQUIRE(deserialized == neuron);
   }
 }
