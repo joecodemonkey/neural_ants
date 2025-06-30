@@ -11,6 +11,11 @@ Genome::Genome(Genome&& other) noexcept
       _mutationRate(other._mutationRate),
       _fitness(other._fitness) {}
 
+Genome::Genome(const nlohmann::json& json)
+    : _network(json.at("network")),
+      _mutationRate(json.at("mutation_rate").get<double>()),
+      _fitness(json.at("fitness").get<double>()) {}
+
 auto Genome::operator=(const Genome& other) -> Genome& {
   if (this != &other) {
     _network = other._network;
@@ -27,6 +32,11 @@ auto Genome::operator=(Genome&& other) noexcept -> Genome& {
     _fitness = other._fitness;
   }
   return *this;
+}
+
+auto Genome::operator==(const Genome& other) const -> bool {
+  return _network == other._network && _mutationRate == other._mutationRate &&
+         _fitness == other._fitness;
 }
 
 auto Genome::get_network() const -> const NeuralNetwork& {
@@ -125,4 +135,12 @@ auto Genome::get_fitness() const -> double {
 
 auto Genome::set_fitness(double fitness) -> void {
   _fitness = fitness;
+}
+
+auto Genome::to_json() const -> nlohmann::json {
+  nlohmann::json j;
+  j["network"] = _network.to_json();
+  j["mutation_rate"] = _mutationRate;
+  j["fitness"] = _fitness;
+  return j;
 }

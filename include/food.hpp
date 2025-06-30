@@ -1,6 +1,8 @@
 #pragma once
 #include <raylib.h>
 
+#include <nlohmann/json.hpp>
+
 #include "surroundings.hpp"
 
 class Ant;
@@ -11,7 +13,9 @@ class Food {
 
   Food();
   Food(const Vector2& position);
+  Food(const nlohmann::json& j);
   auto operator=(const Food& other) -> Food&;
+  auto operator==(const Food& other) const -> bool;
 
   auto draw() const -> void;
   auto eat(Ant& ant) -> void;
@@ -23,6 +27,8 @@ class Food {
   auto reset(const Vector2& position) -> void;
   [[nodiscard]] auto get_bounds() const -> const Rectangle&;
   [[nodiscard]] auto get_radius() const -> float;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   float _value;

@@ -10,6 +10,7 @@
 #include "raylibmathex.h"
 #include "raymath.h"
 #include "resources.hpp"
+#include "util/serialization.hpp"
 #include "world.hpp"
 
 Ant::Ant(World& world, const Genome& genome)
@@ -34,6 +35,14 @@ auto Ant::operator=(const Ant& other) -> Ant& {
     new (&_brain) Brain(_world, _genome.get_network());
   }
   return *this;
+}
+
+auto Ant::operator==(const Ant& other) const -> bool {
+  return Vector2Equals(_position, other._position) && Vector2Equals(_velocity, other._velocity) &&
+         _dead == other._dead && _energy == other._energy && _lifeSpan == other._lifeSpan &&
+         _radius == other._radius && _bounds.x == other._bounds.x && _bounds.y == other._bounds.y &&
+         _bounds.width == other._bounds.width && _bounds.height == other._bounds.height &&
+         _scale == other._scale && _frozen == other._frozen && _genome == other._genome;
 }
 
 Ant::Ant(const Ant& other)
@@ -82,6 +91,10 @@ auto Ant::set_energy(float energy) -> void {
 
 auto Ant::get_life_span() const -> float {
   return _lifeSpan;
+}
+
+auto Ant::set_life_span(float life_span) -> void {
+  _lifeSpan = life_span;
 }
 
 auto Ant::get_position() const -> const Vector2& {
@@ -255,4 +268,33 @@ Ant::~Ant() {}
 
 auto Ant::get_genome() const -> Genome {
   return _genome;
+}
+
+auto Ant::to_json() const -> nlohmann::json {
+  nlohmann::json j;
+  j["position"] = Util::vector2_to_json(_position);
+  j["velocity"] = Util::vector2_to_json(_velocity);
+  j["bounds"] = Util::rectangle_to_json(_bounds);
+  j["radius"] = _radius;
+  j["dead"] = _dead;
+  j["frozen"] = _frozen;
+  j["scale"] = _scale;
+  j["energy"] = _energy;
+  j["life_span"] = _lifeSpan;
+  j["genome"] = _genome.to_json();
+  return j;
+}
+
+Ant::Ant(const nlohmann::json& json, World& world)
+    : _world(world), _genome(json.at("genome")), _brain(world, _genome.get_network()) {
+  _position = Util::vector2_from_json(json.at("position"));
+  _velocity = Util::vector2_from_json(json.at("velocity"));
+  _bounds = Util::rectangle_from_json(json.at("bounds"));
+
+  _radius = json.at("radius").get<float>();
+  _dead = json.at("dead").get<bool>();
+  _frozen = json.at("frozen").get<bool>();
+  _scale = json.at("scale").get<float>();
+  _energy = json.at("energy").get<float>();
+  _lifeSpan = json.at("life_span").get<float>();
 }

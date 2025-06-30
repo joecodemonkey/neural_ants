@@ -3,6 +3,7 @@
 class World;
 class Population;
 
+#include <nlohmann/json.hpp>
 #include <vector>
 
 #include "food.hpp"
@@ -13,6 +14,10 @@ class Resources {
   Resources() = delete;
 
   Resources(World& world);
+  Resources(const nlohmann::json& j, World& world);
+  Resources(const Resources& other);
+  Resources& operator=(const Resources& other);
+  bool operator==(const Resources& other) const;
 
   ~Resources() = default;
 
@@ -25,6 +30,8 @@ class Resources {
 
   auto feed_ants(Population& population) -> void;
   auto food_in_rect(const Rectangle& rect) const -> bool;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   auto food_position() -> Vector2;

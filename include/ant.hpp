@@ -2,6 +2,8 @@
 #include <fmt/core.h>
 #include <raylib.h>
 
+#include <nlohmann/json.hpp>
+
 #include "brain.hpp"
 #include "raymath.h"
 
@@ -13,8 +15,11 @@ class Ant {
   static constexpr float MAX_VELOCITY = 30.0f;
 
   Ant(World& world, const Genome& genome);
+  Ant(const nlohmann::json& json, World& world);
 
   auto operator=(const Ant& other) -> Ant&;
+
+  auto operator==(const Ant& other) const -> bool;
 
   Ant(const Ant& other);
 
@@ -36,15 +41,13 @@ class Ant {
   auto set_dead(bool dead) -> void;
 
   [[nodiscard]] auto get_life_span() const -> float;
+  auto set_life_span(float life_span) -> void;
 
   [[nodiscard]] auto get_position() const -> const Vector2&;
   auto set_position(const Vector2& position) -> void;
 
   [[nodiscard]] auto get_scale() const -> float;
   auto set_scale(float scale) -> void;
-
-  //[[nodiscard]] auto get_texture_path() const -> const std::string&;
-  // auto set_texture_path(std::string const& path) -> void;
 
   auto set_texture(Texture2D texture) -> void;
 
@@ -57,6 +60,8 @@ class Ant {
   auto get_velocity() const -> const Vector2&;
 
   auto get_genome() const -> Genome;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   auto create_ant() -> Ant;

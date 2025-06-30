@@ -1,9 +1,9 @@
+#pragma once
+
 #include "genome.hpp"
 #include "neural_network.hpp"
 #include "raylib.h"
 #include "surroundings.hpp"
-
-#pragma once
 
 class Resources;
 class Ant;
