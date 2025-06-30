@@ -84,6 +84,19 @@ Population& Population::operator=(Population&& other) {
   return *this;
 }
 
+auto Population::operator==(const Population& other) const -> bool {
+  // Compare all relevant member variables
+  if (_textureLoaded != other._textureLoaded || _texturePath != other._texturePath ||
+      _size != other._size) {
+    return false;
+  }
+  if (_ants != other._ants || _pangenome != other._pangenome) {
+    return false;
+  }
+
+  return true;
+}
+
 auto Population::set_size(int size) -> void {
   _size = size;
 }

@@ -33,6 +33,7 @@ class Population {
   Population& operator=(const Population& other);
   Population(Population&& other);
   Population& operator=(Population&& other);
+  auto operator==(const Population& other) const -> bool;
 
   auto set_texture_path(const std::string& path) -> void;
   [[nodiscard]] auto get_texture_path() const -> const std::string&;
