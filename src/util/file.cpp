@@ -3,6 +3,7 @@
 #include <expected>
 #include <filesystem>
 #include <format>
+#include <fstream>
 #include <util/file.hpp>
 
 #include "fmt/format.h"
@@ -65,4 +66,59 @@ auto Util::File::get_files(const std::string& directory, const std::string& exte
     fileInfoVec.emplace_back(FileInfo{file.first, get_time_string(file.second)});
   }
   return fileInfoVec;
+}
+
+auto Util::File::write_file(const std::string& path, const std::string& content)
+    -> std::expected<void, std::string> {
+  try {
+    std::ofstream file(path);
+    if (!file.is_open()) {
+      return std::unexpected(fmt::format("Failed to open file for writing: {}", path));
+    }
+    file << content;
+    if (file.fail()) {
+      return std::unexpected(fmt::format("Failed to write to file: {}", path));
+    }
+    return {};
+  } catch (const std::exception& e) {
+    return std::unexpected(fmt::format("Error writing file {}: {}", path, e.what()));
+  }
+}
+
+auto Util::File::read_file(const std::string& path) -> std::expected<std::string, std::string> {
+  try {
+    std::ifstream file(path);
+    if (!file.is_open()) {
+      return std::unexpected(fmt::format("Failed to open file for reading: {}", path));
+    }
+    
+    std::string content((std::istreambuf_iterator<char>(file)),
+                        std::istreambuf_iterator<char>());
+    
+    if (file.bad()) {
+      return std::unexpected(fmt::format("Error reading file: {}", path));
+    }
+    
+    return content;
+  } catch (const std::exception& e) {
+    return std::unexpected(fmt::format("Error reading file {}: {}", path, e.what()));
+  }
+}
+
+auto Util::File::delete_file(const std::string& path) -> std::expected<void, std::string> {
+  try {
+    if (!std::filesystem::exists(path)) {
+      return std::unexpected(fmt::format("File does not exist: {}", path));
+    }
+    
+    if (!std::filesystem::remove(path)) {
+      return std::unexpected(fmt::format("Failed to delete file: {}", path));
+    }
+    
+    return {};
+  } catch (const std::filesystem::filesystem_error& e) {
+    return std::unexpected(fmt::format("Filesystem error deleting {}: {}", path, e.what()));
+  } catch (const std::exception& e) {
+    return std::unexpected(fmt::format("Error deleting file {}: {}", path, e.what()));
+  }
 }
