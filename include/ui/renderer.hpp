@@ -9,11 +9,13 @@
 
 #include "texture_cache.hpp"
 
+class Game;
+
 namespace UI {
 
 class Renderer {
  public:
-  Renderer();
+  Renderer(Game& game);
   auto draw(float deltaTime) -> void;
   auto paused() const -> bool;
   auto pause() -> void;
@@ -28,6 +30,7 @@ class Renderer {
   auto draw_settings() -> void;
   auto draw_save_load_menu() -> void;
 
+  Game& _game;
   int _screenWidth, _screenHeight;
   bool _setup, _paused;
 

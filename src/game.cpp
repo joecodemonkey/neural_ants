@@ -11,7 +11,7 @@
 #include "util/serialization.hpp"
 #include "world.hpp"
 
-Game::Game() : _input(*this) {
+Game::Game() : _ui(*this), _input(*this) {
   _camera = {.offset = Vector2Zero(), .target = Vector2Zero(), .rotation = 0.0F, .zoom = 1.0f};
   _world.get_population().set_size(50);
   _world.get_population().set_texture_path("./ant.png");
@@ -31,7 +31,6 @@ auto Game::run() -> void {
     if (!texturesLoaded) {
       load_textures();
       _ui.add_texture_cache(_textureCache);
-      _ui.set_game_reference(*this);
       texturesLoaded = true;
     }
 

@@ -8,8 +8,12 @@
 #include "ui/buttons.hpp"
 #include "ui/state.hpp"
 
-UI::Renderer::Renderer()
-    : _setup(false), _paused(false), _settingsMenu(_state), _saveLoadMenu(_state) {}
+UI::Renderer::Renderer(Game& game)
+    : _game(game),
+      _setup(false),
+      _paused(false),
+      _settingsMenu(_state),
+      _saveLoadMenu(_state, game) {}
 
 auto UI::Renderer::setup() -> void {
   if (_setup) {
