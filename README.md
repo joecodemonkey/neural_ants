@@ -168,6 +168,11 @@ make -j$(nproc)
 # Run tests
 ./neural_ants_unit_tests
 ```
+
+## Todo
+
+See [TODO.md](TODO.md) for a detailed list of planned features and improvements.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
