@@ -2,20 +2,20 @@
 
 #include <raylib.h>
 
+#include <ant.hpp>
+#include <containers/circular_stats.hpp>
 #include <functional>
+#include <genome.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
-#include "ant.hpp"
-#include "genome.hpp"
-
-class Ant;
+// Forward declaration
 class World;
-class Pangenome;
 
 class Population {
  public:
+  typedef Containers::CircularStats<double> FitnessData;
   Population(World& world);
   Population(const nlohmann::json& j, World& world);
   ~Population() = default;
@@ -40,6 +40,9 @@ class Population {
 
   auto to_json() const -> nlohmann::json;
 
+  auto get_fitness_data() -> FitnessData&;
+  auto get_fitness_data() const -> const FitnessData&;
+
  protected:
   auto reproduce() -> void;
   auto create_ant() -> Ant;
@@ -56,4 +59,5 @@ class Population {
   std::string _texturePath;
   std::vector<Genome> _pangenome;
   Texture2D _texture;
+  FitnessData _fitnessData;
 };

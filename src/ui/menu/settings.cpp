@@ -38,7 +38,7 @@ auto UI::Menu::Settings::draw() -> void {
     }
     if (UI::Buttons::GroupedImage(
             "#analytics", "Analytics", _textureCache->get_texture("progress").id, ImVec2(50, 50))) {
-      _state.maximize(State::PROGRESS);
+      _state.toggle(State::MEAN_FITNESS);
     }
 
     ImGui::SetCursorPos(ImVec2{10.0f, screenHeight - 80.0f});

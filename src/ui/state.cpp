@@ -14,4 +14,11 @@ auto State::is_maximized(Component component) -> bool {
   return _maximzedComponents.find(component) != _maximzedComponents.end();
 }
 
+auto State::toggle(Component component) -> void {
+  if (is_maximized(component)) {
+    minimize(component);
+  } else {
+    maximize(component);
+  }
+}
 }  // namespace UI

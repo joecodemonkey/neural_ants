@@ -14,19 +14,24 @@
 3. Unit test Genome Breeding
 4. Ant Initailization
 5. Ant Life Cycle
+6. Population mean.  
 
 
 ### Simplification
 1. Get a Random Vector2 written to simplify testing, maximize reuse
-
+2. Move all textures to the texture cache and make everything get textures from there.
 
 ## Potential Bugs
 ### Food
 1. Food Count should never be zero.
 
 ## Features
+### Resources
+1. Add support for multiple resources
 ### Food
 1. When two ants arrive at food at the same time, they should consume the food equally.
+### Water
+1. Implement water as a second resource.
 
 ### Analytics
 1. Draw a graph of the population fitness over time.
@@ -41,6 +46,10 @@
 4. Allow the user to modify the neuron count per layer.
 
 ### Styling
-1. Make Save Game UI look better
+1. Get a better font in multiple sizes
 
 ### Species
+1. Add support for more than one species
+#### Spiders
+1. Implement Spiders
+2. Spiders eat ants, ants flee spiders (or should)
