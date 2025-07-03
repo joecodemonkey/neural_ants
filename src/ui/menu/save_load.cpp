@@ -41,8 +41,8 @@ auto UI::Menu::SaveLoad::draw() -> void {
     if (!files) {
       ImGui::Text("Error reading save files: %s", files.error().c_str());
     }
-
     ImGui::SetWindowFontScale(1.5f);  // 1.5x larger
+
     ImGui::Text("Save Files");
     ImGui::SetWindowFontScale(1.0f);  // Reset to normal
 
@@ -63,7 +63,7 @@ auto UI::Menu::SaveLoad::draw() -> void {
         ImGui::TableSetupColumn("Button 1", ImGuiTableColumnFlags_WidthFixed, buttonDim.x * 2.0F);
         ImGui::TableSetupColumn("Button 2", ImGuiTableColumnFlags_WidthFixed, buttonDim.x * 2.0F);
         ImGui::TableNextColumn();
-        ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(150, 150, 150, 255));
+
         static char newSaveName[256] = "new_save.save";
         ImGui::InputText("##new_save_input", newSaveName, sizeof(newSaveName) - 1);
         std::string new_save = std::string(newSaveName);
@@ -81,7 +81,6 @@ auto UI::Menu::SaveLoad::draw() -> void {
 
         for (const auto& saveFile : *files) {
           ImGui::TableNextRow();
-          ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(200, 200, 200, 255));
 
           ImGui::TableNextColumn();
           ImGui::Text("%s", saveFile.name.c_str());
@@ -129,6 +128,7 @@ auto UI::Menu::SaveLoad::draw() -> void {
         _state.minimize(State::SAVELOAD);
       }
     }
+
     ImGui::End();
   }
 }

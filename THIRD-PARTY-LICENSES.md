@@ -39,6 +39,13 @@ This project depends on several third-party libraries that are automatically dow
 **Copyright**: Catch2 Contributors  
 **URL**: https://github.com/catchorg/Catch2
 
+## Kenney Game Icons
+
+**License**: Creative Commons CC0  
+**Copyright**: Kenney (https://kenney.nl)  
+**URL**: https://kenney.nl/assets/game-icons  
+**Description**: Game icons used in the user interface
+
 ---
 
 *Note: This project uses FetchContent to automatically download these dependencies during build. The actual license files are included with each downloaded dependency in the build directory.*

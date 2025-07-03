@@ -187,6 +187,7 @@ For complete third-party license information, see [THIRD-PARTY-LICENSES.md](THIR
 
 ## Acknowledgments
 
+- **Kenney.nl** for the game icons used in the UI - [Game Icons](https://kenney.nl/assets/game-icons) (Creative Commons CC0)
 - Intel oneTBB team for threading building blocks
 - IMGUI for awesome gui
 - Raylib community for the fantastic graphics library
