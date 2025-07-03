@@ -3,6 +3,7 @@
 #include <raylib.h>
 
 #include <memory>
+#include <ui/menu/fitness_display.hpp>
 #include <ui/menu/save_load.hpp>
 #include <ui/menu/settings.hpp>
 #include <ui/state.hpp>
@@ -36,6 +37,7 @@ class Renderer {
 
   UI::Menu::Settings _settingsMenu;
   UI::Menu::SaveLoad _saveLoadMenu;
+  UI::Menu::FitnessDisplay _fitnessDisplay;
   std::shared_ptr<TextureCache> _textureCache;
   UI::State _state;
 };

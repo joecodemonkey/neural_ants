@@ -3,6 +3,7 @@
 #include <rlImGui.h>
 
 #include <expected>
+#include <game.hpp>
 #include <ui/renderer.hpp>
 
 #include "ui/buttons.hpp"
@@ -87,6 +88,10 @@ auto UI::Renderer::draw(float deltaTime) -> void {
   } else {
     _paused = false;
     draw_settings_button();
+  }
+  if (_state.is_maximized(State::MEAN_FITNESS)) {
+    _fitnessDisplay.set_mean(_game.get_world().get_population().get_fitness_data().get_mean());
+    _fitnessDisplay.draw();
   }
   rlImGuiEnd();
 }

@@ -146,6 +146,7 @@ set(CXX_SOURCES
     src/ui/buttons.cpp
     src/ui/menu/settings.cpp
     src/ui/menu/save_load.cpp
+    src/ui/menu/fitness_display.cpp
     src/ui/state.cpp
 )
 
