@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
+
 #include "population.hpp"
 #include "raylib.h"
 #include "resources.hpp"
@@ -7,6 +9,22 @@
 class World {
  public:
   World();
+  World(const nlohmann::json& j);
+
+  // Copy constructor
+  World(const World& other);
+
+  // Move constructor
+  World(World&& other) noexcept;
+
+  // Copy assignment operator
+  World& operator=(const World& other);
+
+  // Move assignment operator
+  World& operator=(World&& other) noexcept;
+
+  // Equality operator
+  bool operator==(const World& other) const;
 
   [[nodiscard]] auto get_population() const -> const Population&;
   [[nodiscard]] auto get_population() -> Population&;
@@ -26,6 +44,8 @@ class World {
   [[nodiscard]] auto out_of_bounds(const Vector2& position) const -> bool;
 
   [[nodiscard]] auto spawn_position(const Vector2& dimensions) const -> Vector2;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   const Rectangle DEFAULT_BOUNDS = {0.0f, 0.0f, 1000.0f, 1000.0f};

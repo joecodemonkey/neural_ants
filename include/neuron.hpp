@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <nlohmann/json.hpp>
 #include <vector>
 
 class Neuron {
@@ -8,6 +9,8 @@ class Neuron {
   typedef std::vector<Value> ValueVector;
 
   Neuron() {}
+
+  Neuron(const nlohmann::json& json);
 
   auto set_input(size_t idx, Value value) -> void;
   auto get_input(size_t idx) const -> Value;
@@ -30,10 +33,14 @@ class Neuron {
   Neuron(const Neuron& other);
   Neuron(Neuron&& other);
 
+  auto operator==(const Neuron& other) const -> bool;
+
   auto randomize() -> void;
 
   auto enable_threads() -> void;
   auto disable_threads() -> void;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   static auto activation_function(Value x) -> Value {

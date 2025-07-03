@@ -36,10 +36,8 @@ auto UI::Menu::Settings::draw() -> void {
       _state.minimize(State::SETTINGS);
       _state.maximize(State::SAVELOAD);
     }
-    if (UI::Buttons::GroupedImage("#progress",
-                                  " Enable\nProgress",
-                                  _textureCache->get_texture("progress").id,
-                                  ImVec2(50, 50))) {
+    if (UI::Buttons::GroupedImage(
+            "#analytics", "Analytics", _textureCache->get_texture("progress").id, ImVec2(50, 50))) {
       _state.maximize(State::PROGRESS);
     }
 

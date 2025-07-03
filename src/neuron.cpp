@@ -1,11 +1,13 @@
 #include "neuron.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <execution>
 #include <numeric>
 #include <random>
 #include <ranges>
 #include <stdexcept>
+#include <util/math.hpp>
 
 auto Neuron::set_input(size_t idx, Value value) -> void {
   _inputs.at(idx) = value;
@@ -86,6 +88,14 @@ Neuron::Neuron(Neuron&& other) {
   _value = other._value;
 }
 
+Neuron::Neuron(const nlohmann::json& json) {
+  _bias = json.at("bias").get<Value>();
+  _weights = json.at("weights").get<ValueVector>();
+  _inputs = json.at("inputs").get<ValueVector>();
+  _value = json.at("value").get<Value>();
+  _threaded = json.at("threaded").get<bool>();
+}
+
 auto Neuron::randomize() -> void {
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -141,4 +151,30 @@ auto Neuron::calculate() -> void {
   }
 
   _value = activation_function(_bias + _value);
+}
+
+auto Neuron::to_json() const -> nlohmann::json {
+  nlohmann::json json;
+  json["bias"] = _bias;
+  json["weights"] = _weights;
+  json["inputs"] = _inputs;
+  json["value"] = _value;
+  json["threaded"] = _threaded;
+  return json;
+}
+
+auto Neuron::operator==(const Neuron& other) const -> bool {
+  if (!Util::equal(_bias, other._bias)) {
+    return false;
+  }
+
+  if (!Util::equal(_value, other._value)) {
+    return false;
+  }
+
+  if (!Util::equal(_inputs, other._inputs)) {
+    return false;
+  }
+
+  return Util::equal(_weights, other._weights);
 }

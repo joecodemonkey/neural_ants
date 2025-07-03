@@ -8,6 +8,31 @@ Resources::Resources(World& world) : _world(world) {
   _food_count = DEFAULT_COUNT;
 }
 
+Resources::Resources(const nlohmann::json& json, World& world) : _world(world) {
+  _food_count = json.at("food_count").get<size_t>();
+
+  for (const auto& food_json : json.at("food")) {
+    _food.push_back(Food(food_json));
+  }
+}
+
+Resources::Resources(const Resources& other) : _world(other._world) {
+  _food_count = other._food_count;
+  _food = other._food;
+}
+
+Resources& Resources::operator=(const Resources& other) {
+  if (this != &other) {
+    _food_count = other._food_count;
+    _food = other._food;
+  }
+  return *this;
+}
+
+bool Resources::operator==(const Resources& other) const {
+  return _food_count == other._food_count && _food == other._food;
+}
+
 auto Resources::update(float time) -> void {
   // Add food to the resources
   while (_food.size() < _food_count)
@@ -55,4 +80,17 @@ auto Resources::food_in_rect(const Rectangle& rect) const -> bool {
     }
   }
   return false;
+}
+
+auto Resources::to_json() const -> nlohmann::json {
+  nlohmann::json json;
+  json["food_count"] = _food_count;
+
+  nlohmann::json food_array = nlohmann::json::array();
+  for (const auto& food : _food) {
+    food_array.push_back(food.to_json());
+  }
+  json["food"] = food_array;
+
+  return json;
 }

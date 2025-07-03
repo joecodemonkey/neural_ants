@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <nlohmann/json.hpp>
 
 #include "neural_network.hpp"
 #include "neuron.hpp"
@@ -11,9 +12,11 @@ class Genome {
   Genome() = default;
   Genome(const Genome& other);
   Genome(Genome&& other) noexcept;
+  Genome(const nlohmann::json& json);
 
   auto operator=(const Genome& other) -> Genome&;
   auto operator=(Genome&& other) noexcept -> Genome&;
+  auto operator==(const Genome& other) const -> bool;
 
   auto breed_with(const Genome& other) -> Genome;
   auto get_network() const -> const NeuralNetwork&;
@@ -25,6 +28,8 @@ class Genome {
   auto get_mutation_rate() const -> double;
   auto get_fitness() const -> double;
   auto set_fitness(double fitness) -> void;
+
+  auto to_json() const -> nlohmann::json;
 
  protected:
   auto breed_network(NeuralNetwork& childNetwork) -> void;

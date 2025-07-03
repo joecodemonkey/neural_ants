@@ -3,11 +3,91 @@
 #include "population.hpp"
 #include "raylib.h"
 #include "resources.hpp"
+#include "util/serialization.hpp"
 
 World::World() : _resources(*this), _population(*this) {
   _bounds = World::DEFAULT_BOUNDS;
   _spawnMargin = DEFAULT_SPAWN_MARGIN;
   update_spawn_rect();
+}
+
+World::World(const nlohmann::json& j) : _resources(*this), _population(*this) {
+  _bounds = Util::rectangle_from_json(j.at("bounds"));
+  _spawnBounds = Util::rectangle_from_json(j.at("spawn_bounds"));
+  _spawnMargin = j.at("spawn_margin").get<float>();
+
+  _resources = Resources(j.at("resources"), *this);
+  _population = Population(j.at("population"), *this);
+}
+
+// Copy constructor
+World::World(const World& other) : _resources(*this), _population(*this) {
+  _bounds = other._bounds;
+  _spawnBounds = other._spawnBounds;
+  _spawnMargin = other._spawnMargin;
+
+  // Reconstruct resources and population with the new world reference
+  _resources = Resources(other._resources);
+  _population = Population(other._population);
+}
+
+// Move constructor
+World::World(World&& other) noexcept : _resources(*this), _population(*this) {
+  _bounds = other._bounds;
+  _spawnBounds = other._spawnBounds;
+  _spawnMargin = other._spawnMargin;
+
+  // Move resources and population
+  _resources = std::move(other._resources);
+  _population = std::move(other._population);
+
+  // Reset other's members
+  other._bounds = DEFAULT_BOUNDS;
+  other._spawnBounds = {0.0f, 0.0f, 0.0f, 0.0f};
+  other._spawnMargin = DEFAULT_SPAWN_MARGIN;
+}
+
+// Copy assignment operator
+World& World::operator=(const World& other) {
+  if (this != &other) {
+    _bounds = other._bounds;
+    _spawnBounds = other._spawnBounds;
+    _spawnMargin = other._spawnMargin;
+
+    // Reconstruct resources and population with the new world reference
+    _resources = Resources(other._resources);
+    _population = Population(other._population);
+  }
+  return *this;
+}
+
+// Move assignment operator
+World& World::operator=(World&& other) noexcept {
+  if (this != &other) {
+    _bounds = other._bounds;
+    _spawnBounds = other._spawnBounds;
+    _spawnMargin = other._spawnMargin;
+
+    // Move resources and population
+    _resources = std::move(other._resources);
+    _population = std::move(other._population);
+
+    // Reset other's members
+    other._bounds = DEFAULT_BOUNDS;
+    other._spawnBounds = {0.0f, 0.0f, 0.0f, 0.0f};
+    other._spawnMargin = DEFAULT_SPAWN_MARGIN;
+  }
+  return *this;
+}
+
+// Equality operator
+bool World::operator==(const World& other) const {
+  return _bounds.x == other._bounds.x && _bounds.y == other._bounds.y &&
+         _bounds.width == other._bounds.width && _bounds.height == other._bounds.height &&
+         _spawnBounds.x == other._spawnBounds.x && _spawnBounds.y == other._spawnBounds.y &&
+         _spawnBounds.width == other._spawnBounds.width &&
+         _spawnBounds.height == other._spawnBounds.height && _spawnMargin == other._spawnMargin &&
+         _resources == other._resources && _population == other._population;
 }
 
 auto World::get_bounds() const -> const Rectangle& {
@@ -72,4 +152,16 @@ auto World::out_of_bounds(const Vector2& position) const -> bool {
   auto x = GetRandomValue(_spawnBounds.x, _spawnBounds.x + _spawnBounds.width - dimensions.x);
   auto y = GetRandomValue(_spawnBounds.y, _spawnBounds.y + _spawnBounds.height - dimensions.y);
   return Vector2{static_cast<float>(x), static_cast<float>(y)};
+}
+
+auto World::to_json() const -> nlohmann::json {
+  nlohmann::json j;
+
+  j["bounds"] = Util::rectangle_to_json(_bounds);
+  j["spawn_bounds"] = Util::rectangle_to_json(_spawnBounds);
+  j["spawn_margin"] = _spawnMargin;
+  j["resources"] = _resources.to_json();
+  j["population"] = _population.to_json();
+
+  return j;
 }
