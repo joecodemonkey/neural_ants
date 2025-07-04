@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <iostream>
 
 #include "ant.hpp"
 #include "neural_network.hpp"

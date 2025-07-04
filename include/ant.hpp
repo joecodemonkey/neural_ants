@@ -5,10 +5,10 @@
 #include <nlohmann/json.hpp>
 
 #include "brain.hpp"
+#include "genome.hpp"
 #include "raymath.h"
 
 class World;
-class Genome;
 
 class Ant {
  public:
@@ -75,8 +75,8 @@ class Ant {
   const float FONT_SPACING = 1.0F;
 
   World& _world;
-  Brain _brain;
   Genome _genome;
+  Brain _brain;
 
   Vector2 _position = Vector2Zero();
   Vector2 _velocity = Vector2Zero();
