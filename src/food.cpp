@@ -1,5 +1,7 @@
 #include "food.hpp"
 
+#include <genome.hpp>
+
 #include "ant.hpp"
 #include "raylib.h"
 #include "util/serialization.hpp"
