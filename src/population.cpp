@@ -129,13 +129,6 @@ auto Population::create_ant() -> Ant {
       return a.get_fitness() > b.get_fitness();
     });
 
-    // print mean genome fitness
-    double totalFitness = 0.0;
-    for (const auto& genome : _pangenome) {
-      totalFitness += genome.get_fitness();
-    }
-    double meanFitness = totalFitness / _pangenome.size();
-    std::cerr << "Mean genome fitness: " << meanFitness << std::endl;
     Genome parentA = _pangenome.back();  // take 1 fit
     _pangenome.pop_back();
     Genome parentB = _pangenome.back();  // take 1 fit

@@ -23,6 +23,8 @@ class Game {
   auto get_world() -> World&;
   auto get_target_fps() const -> int;
   auto set_target_fps(int fps) -> void;
+  auto get_update_speed() const -> long long;
+  auto set_update_speed(long long speed) -> void;
 
   auto save_game(const std::string& filename) const -> std::expected<void, std::string>;
   auto load_game(const std::string& filename) -> std::expected<void, std::string>;
@@ -38,6 +40,8 @@ class Game {
   Input _input;
   float _cameraSpeed;
   int _fps = DEFAULT_FPS;
+  long long _updateSpeed;
+  float _lastSpeedAdjustmentTime = 0.0f;
   bool _raylibInitialized = false;
   UI::Renderer _ui;
   std::shared_ptr<TextureCache> _textureCache;

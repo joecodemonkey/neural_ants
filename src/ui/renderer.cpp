@@ -3,9 +3,12 @@
 #include <rlImGui.h>
 
 #include <expected>
+#include <string>
+#include <fmt/format.h>
 #include <game.hpp>
 #include <ui/renderer.hpp>
 
+#include "game.hpp"
 #include "ui/buttons.hpp"
 #include "ui/state.hpp"
 
@@ -13,8 +16,9 @@ UI::Renderer::Renderer(Game& game)
     : _game(game),
       _setup(false),
       _paused(false),
-      _settingsMenu(_state),
-      _saveLoadMenu(_state, game) {}
+      _settingsMenu(_state, game),
+      _saveLoadMenu(_state, game),
+      _fitnessDisplay() {}
 
 auto UI::Renderer::setup() -> void {
   if (_setup) {
@@ -75,10 +79,13 @@ auto UI::Renderer::setup() -> void {
 
 auto UI::Renderer::draw(float deltaTime) -> void {
   setup();
-  rlImGuiBegin();
-
+  
   _screenHeight = GetScreenHeight();
   _screenWidth = GetScreenWidth();
+  
+  draw_speed_display();
+  
+  rlImGuiBegin();
   if (_state.is_maximized(State::SETTINGS)) {
     _paused = false;
     _settingsMenu.draw();
@@ -132,4 +139,35 @@ auto UI::Renderer::pause() -> void {
 
 auto UI::Renderer::unpause() -> void {
   _paused = false;
+}
+
+auto UI::Renderer::draw_speed_display() -> void {
+  static long long lastUpdateSpeed = 1LL;
+  static float displayTimer = 0.0f;
+  static bool showSpeedDisplay = false;
+  
+  long long currentSpeed = _game.get_update_speed();
+  
+  if (currentSpeed != lastUpdateSpeed) {
+    lastUpdateSpeed = currentSpeed;
+    displayTimer = 3.0f;
+    showSpeedDisplay = true;
+  }
+  
+  if (showSpeedDisplay && displayTimer > 0.0f) {
+    displayTimer -= GetFrameTime();
+    
+    if (displayTimer <= 0.0f) {
+      showSpeedDisplay = false;
+    } else {
+      std::string speedText = fmt::format("Speed: {}x", currentSpeed);
+      int fontSize = 40;
+      int textWidth = MeasureText(speedText.c_str(), fontSize);
+      
+      int centerX = _screenWidth / 2 - textWidth / 2;
+      int centerY = _screenHeight / 2 - fontSize / 2;
+      
+      DrawText(speedText.c_str(), centerX, centerY, fontSize, RED);
+    }
+  }
 }
