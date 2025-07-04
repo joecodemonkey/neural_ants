@@ -129,13 +129,6 @@ auto Population::create_ant() -> Ant {
       return a.get_fitness() > b.get_fitness();
     });
 
-    // print mean genome fitness
-    double totalFitness = 0.0;
-    for (const auto& genome : _pangenome) {
-      totalFitness += genome.get_fitness();
-    }
-    double meanFitness = totalFitness / _pangenome.size();
-    std::cerr << "Mean genome fitness: " << meanFitness << std::endl;
     Genome parentA = _pangenome.back();  // take 1 fit
     _pangenome.pop_back();
     Genome parentB = _pangenome.back();  // take 1 fit
@@ -187,6 +180,7 @@ auto Population::update(float time) -> void {
     if (ant.is_dead()) {
       auto genome = ant.get_genome();
       genome.set_fitness(ant.get_life_span());
+      _fitnessData.add_data(genome.get_fitness());
       _pangenome.push_back(genome);
       ant = create_ant();
     } else {
@@ -234,4 +228,12 @@ auto Population::to_json() const -> nlohmann::json {
   j["pangenome"] = pangenome_array;
 
   return j;
+}
+
+auto Population::get_fitness_data() -> FitnessData& {
+  return _fitnessData;
+}
+
+auto Population::get_fitness_data() const -> const FitnessData& {
+  return _fitnessData;
 }

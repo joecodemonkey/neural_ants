@@ -5,6 +5,7 @@
 #include <expected>
 #include <string>
 #include <fmt/format.h>
+#include <game.hpp>
 #include <ui/renderer.hpp>
 
 #include "game.hpp"
@@ -16,7 +17,8 @@ UI::Renderer::Renderer(Game& game)
       _setup(false),
       _paused(false),
       _settingsMenu(_state, game),
-      _saveLoadMenu(_state, game) {}
+      _saveLoadMenu(_state, game),
+      _fitnessDisplay() {}
 
 auto UI::Renderer::setup() -> void {
   if (_setup) {
@@ -93,6 +95,10 @@ auto UI::Renderer::draw(float deltaTime) -> void {
   } else {
     _paused = false;
     draw_settings_button();
+  }
+  if (_state.is_maximized(State::MEAN_FITNESS)) {
+    _fitnessDisplay.set_mean(_game.get_world().get_population().get_fitness_data().get_mean());
+    _fitnessDisplay.draw();
   }
   rlImGuiEnd();
 }

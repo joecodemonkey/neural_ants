@@ -39,7 +39,7 @@ auto UI::Menu::Settings::draw() -> void {
     }
     if (UI::Buttons::GroupedImage(
             "#analytics", "Analytics", _textureCache->get_texture("progress").id, ImVec2(50, 50))) {
-      _state.maximize(State::PROGRESS);
+      _state.toggle(State::MEAN_FITNESS);
     }
     if (UI::Buttons::GroupedImage("#fastForward",
                                   "Faster",
@@ -48,16 +48,12 @@ auto UI::Menu::Settings::draw() -> void {
       long long currentSpeed = _game.get_update_speed();
       _game.set_update_speed(currentSpeed * 2LL);
     }
-    
+
     // Only show rewind button when speed > 1x
     if (_game.get_update_speed() > 1LL) {
-      if (UI::Buttons::GroupedImage("#rewind",
-                                    "Slower",
-                                    _textureCache->get_texture("rewind").id,
-                                    ImVec2(50, 50))) {
-        long long currentSpeed = _game.get_update_speed();
-        long long newSpeed = currentSpeed / 2LL;
-        // Don't allow speed to go below 1x
+      if (UI::Buttons::GroupedImage(
+              "#rewind", "Slower", _textureCache->get_texture("rewind").id, ImVec2(50, 50))) {
+        long long newSpeed = _game.get_update_speed() / 2LL;
         if (newSpeed < 1LL) {
           newSpeed = 1LL;
         }
