@@ -11,7 +11,7 @@
 #include "util/serialization.hpp"
 #include "world.hpp"
 
-Game::Game() : _ui(*this), _input(*this) {
+Game::Game() : _ui(*this), _input(*this), _updateSpeed(1LL) {
   _camera = {.offset = Vector2Zero(), .target = Vector2Zero(), .rotation = 0.0F, .zoom = 1.0f};
   _world.get_population().set_size(50);
   _world.get_population().set_texture_path("./ant.png");
@@ -37,8 +37,24 @@ auto Game::run() -> void {
     BeginMode2D(_camera);
 
     if (!_ui.paused()) {
-      _input.update(time);
-      _world.update(time);
+      for (auto count = 0; count < _updateSpeed; ++count) {
+        _input.update(time);
+        _world.update(time);
+      }
+    }
+    
+    // Monitor FPS and reduce speed if it drops below 10 FPS
+    // Wait 2 seconds before making safety adjustments to prevent rapid drops
+    float currentTime = GetTime();
+    
+    int currentFPS = GetFPS();
+    if (currentFPS < 10 && _updateSpeed > 1LL && (currentTime - _lastSpeedAdjustmentTime) >= 2.0f) {
+      _updateSpeed = _updateSpeed / 2LL;
+      // Ensure speed never goes below 1x
+      if (_updateSpeed < 1LL) {
+        _updateSpeed = 1LL;
+      }
+      _lastSpeedAdjustmentTime = currentTime;
     }
 
     ClearBackground(BLACK);
@@ -75,6 +91,19 @@ auto Game::set_target_fps(int fps) -> void {
   }
 }
 
+auto Game::get_update_speed() const -> long long {
+  return _updateSpeed;
+}
+
+auto Game::set_update_speed(long long speed) -> void {
+  // Don't allow speed increases during FPS cooldown period
+  float currentTime = GetTime();
+  if (speed > _updateSpeed && (currentTime - _lastSpeedAdjustmentTime) < 2.0f) {
+    return; // Ignore the request to increase speed
+  }
+  _updateSpeed = speed;
+}
+
 auto Game::initialize_raylib() -> void {
   if (!_raylibInitialized) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
@@ -96,6 +125,8 @@ auto Game::load_textures() -> void {
   _textureCache->add_texture("load", "import.png");
   _textureCache->add_texture("progress", "signal3.png");
   _textureCache->add_texture("exit", "exitRight.png");
+  _textureCache->add_texture("fastForward", "fastForward.png");
+  _textureCache->add_texture("rewind", "rewind.png");
   _textureCache->add_texture("ant", "default");
 }
 

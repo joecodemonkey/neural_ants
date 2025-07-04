@@ -4,9 +4,10 @@
 #include <ui/buttons.hpp>
 #include <ui/menu/settings.hpp>
 
+#include "game.hpp"
 #include "ui/state.hpp"
 
-UI::Menu::Settings::Settings(UI::State& state) : _state(state) {}
+UI::Menu::Settings::Settings(UI::State& state, Game& game) : _state(state), _game(game) {}
 
 auto UI::Menu::Settings::draw() -> void {
   if (!_state.is_maximized(State::SETTINGS)) {
@@ -39,6 +40,29 @@ auto UI::Menu::Settings::draw() -> void {
     if (UI::Buttons::GroupedImage(
             "#analytics", "Analytics", _textureCache->get_texture("progress").id, ImVec2(50, 50))) {
       _state.maximize(State::PROGRESS);
+    }
+    if (UI::Buttons::GroupedImage("#fastForward",
+                                  "Faster",
+                                  _textureCache->get_texture("fastForward").id,
+                                  ImVec2(50, 50))) {
+      long long currentSpeed = _game.get_update_speed();
+      _game.set_update_speed(currentSpeed * 2LL);
+    }
+    
+    // Only show rewind button when speed > 1x
+    if (_game.get_update_speed() > 1LL) {
+      if (UI::Buttons::GroupedImage("#rewind",
+                                    "Slower",
+                                    _textureCache->get_texture("rewind").id,
+                                    ImVec2(50, 50))) {
+        long long currentSpeed = _game.get_update_speed();
+        long long newSpeed = currentSpeed / 2LL;
+        // Don't allow speed to go below 1x
+        if (newSpeed < 1LL) {
+          newSpeed = 1LL;
+        }
+        _game.set_update_speed(newSpeed);
+      }
     }
 
     ImGui::SetCursorPos(ImVec2{10.0f, screenHeight - 80.0f});

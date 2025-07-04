@@ -29,6 +29,7 @@ class Renderer {
   auto draw_settings_button() -> void;
   auto draw_settings() -> void;
   auto draw_save_load_menu() -> void;
+  auto draw_speed_display() -> void;
 
   Game& _game;
   int _screenWidth, _screenHeight;
