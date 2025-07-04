@@ -75,7 +75,7 @@
             "name": "Debug Neural Ants Tests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/neural_ants_tests",
+            "program": "${workspaceFolder}/build/neural_ants_unit_tests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -185,6 +185,9 @@ auto Game::load_game(const std::string& filename) -> std::expected<void, std::st
     // Restore world state
     _world = World(save_data.at("world"));
 
+    // Set texture path for loaded game
+    _world.get_population().set_texture_path("./ant.png");
+
     // Force texture loading and application to restored ants
     _world.get_population().update(0.0f);
 
