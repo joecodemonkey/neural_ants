@@ -34,13 +34,11 @@ TEST_CASE("Population JSON serialization", "[population]") {
   SECTION("JSON round trip with texture path") {
     Population original(world);
     original.set_size(5);
-    original.set_texture_path("/path/to/texture.png");
 
     nlohmann::json j = original.to_json();
     Population restored(j, world);
 
     REQUIRE(restored.get_size() == original.get_size());
-    REQUIRE(restored.get_texture_path().empty());
   }
 
   SECTION("Empty population serialization") {

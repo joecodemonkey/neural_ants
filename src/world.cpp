@@ -1,9 +1,9 @@
-#include "world.hpp"
+#include <raylib.h>
 
-#include "population.hpp"
-#include "raylib.h"
-#include "resources.hpp"
-#include "util/serialization.hpp"
+#include <population.hpp>
+#include <resources.hpp>
+#include <util/serialization.hpp>
+#include <world.hpp>
 
 World::World() : _resources(*this), _population(*this) {
   _bounds = World::DEFAULT_BOUNDS;
@@ -164,4 +164,12 @@ auto World::to_json() const -> nlohmann::json {
   j["population"] = _population.to_json();
 
   return j;
+}
+
+auto World::set_texture_cache(std::shared_ptr<TextureCache> cache) -> void {
+  _textureCache = cache;
+}
+
+auto World::get_texture_cache() -> std::shared_ptr<TextureCache>& {
+  return _textureCache;
 }

@@ -7,7 +7,6 @@
 #include <functional>
 #include <genome.hpp>
 #include <nlohmann/json.hpp>
-#include <string>
 #include <vector>
 
 // Forward declaration
@@ -35,9 +34,6 @@ class Population {
   Population& operator=(Population&& other);
   auto operator==(const Population& other) const -> bool;
 
-  auto set_texture_path(const std::string& path) -> void;
-  [[nodiscard]] auto get_texture_path() const -> const std::string&;
-
   auto to_json() const -> nlohmann::json;
 
   auto get_fitness_data() -> FitnessData&;
@@ -54,10 +50,8 @@ class Population {
   int _size;
 
   static constexpr size_t TARGET_PANGENOME_SIZE = 100;
-  bool _textureLoaded = false;
 
-  std::string _texturePath;
   std::vector<Genome> _pangenome;
-  Texture2D _texture;
+
   FitnessData _fitnessData;
 };

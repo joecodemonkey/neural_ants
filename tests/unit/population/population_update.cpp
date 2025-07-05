@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "genome.hpp"
 #include "population.hpp"
 #include "world.hpp"
-#include "genome.hpp"
 
 TEST_CASE("Population update functionality", "[population]") {
   World world;
@@ -21,9 +21,9 @@ TEST_CASE("Population update functionality", "[population]") {
   SECTION("Update with zero size population") {
     Population population(world);
     population.set_size(0);
-    
+
     REQUIRE_NOTHROW(population.update(1.0f));
-    
+
     // Should still have zero size after update
     auto collisions = population.get_collisions({0.0f, 0.0f}, 1000.0f);
     REQUIRE(collisions.empty());
@@ -32,11 +32,11 @@ TEST_CASE("Population update functionality", "[population]") {
   SECTION("Update creates ants according to size") {
     Population population(world);
     population.set_size(3);
-    
+
     // Before update, there should be no ants
     auto collisions_before = population.get_collisions({500.0f, 500.0f}, 1000.0f);
     REQUIRE(collisions_before.empty());
-    
+
     // After update, should have up to 3 ants
     population.update(1.0f);
     auto collisions_after = population.get_collisions({500.0f, 500.0f}, 1000.0f);
@@ -46,8 +46,7 @@ TEST_CASE("Population update functionality", "[population]") {
   SECTION("Update with invalid texture path") {
     Population population(world);
     population.set_size(1);
-    population.set_texture_path("/nonexistent/path.png");
-    
+
     // Should throw when trying to load invalid texture
     REQUIRE_THROWS_AS(population.update(1.0f), std::runtime_error);
   }
@@ -55,11 +54,10 @@ TEST_CASE("Population update functionality", "[population]") {
   SECTION("Update with empty texture path") {
     Population population(world);
     population.set_size(1);
-    population.set_texture_path("");
-    
+
     // Should not throw with empty texture path
     REQUIRE_NOTHROW(population.update(1.0f));
-    
+
     auto collisions = population.get_collisions({500.0f, 500.0f}, 1000.0f);
     REQUIRE(collisions.size() <= 1);
   }
@@ -67,14 +65,14 @@ TEST_CASE("Population update functionality", "[population]") {
   SECTION("Update maintains population size") {
     Population population(world);
     population.set_size(2);
-    
+
     // Multiple updates should maintain the same population size
     population.update(1.0f);
     auto collisions1 = population.get_collisions({500.0f, 500.0f}, 1000.0f);
-    
+
     population.update(1.0f);
     auto collisions2 = population.get_collisions({500.0f, 500.0f}, 1000.0f);
-    
+
     // Should maintain population size
     REQUIRE(collisions1.size() == collisions2.size());
     REQUIRE(collisions2.size() <= 2);
@@ -83,7 +81,7 @@ TEST_CASE("Population update functionality", "[population]") {
   SECTION("Update with different time values") {
     Population population(world);
     population.set_size(1);
-    
+
     // Should handle different time values without crashing
     REQUIRE_NOTHROW(population.update(0.0f));
     REQUIRE_NOTHROW(population.update(0.1f));
@@ -95,21 +93,21 @@ TEST_CASE("Population update functionality", "[population]") {
     Population population(world);
     population.set_size(1);
     population.update(1.0f);
-    
+
     auto collisions1 = population.get_collisions({500.0f, 500.0f}, 1000.0f);
     REQUIRE(collisions1.size() <= 1);
-    
+
     // Increase size and update
     population.set_size(3);
     population.update(1.0f);
-    
+
     auto collisions2 = population.get_collisions({500.0f, 500.0f}, 1000.0f);
     REQUIRE(collisions2.size() <= 3);
-    
+
     // Decrease size and update
     population.set_size(1);
     population.update(1.0f);
-    
+
     auto collisions3 = population.get_collisions({500.0f, 500.0f}, 1000.0f);
     REQUIRE(collisions3.size() <= 1);
   }

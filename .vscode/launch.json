@@ -19,7 +19,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "CMake Build",
+            "preLaunchTask": "CMake Build Debug",
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {
@@ -42,7 +42,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "CMake Build",
+            "preLaunchTask": "CMake Build Debug",
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {
@@ -89,7 +89,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "CMake Build",
+            "preLaunchTask": "CMake Build Debug",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ],

@@ -1,17 +1,16 @@
 #include "ant.hpp"
 
-#include <iostream>
+#include <raylib.h>
+#include <raylibdrawex.h>
+#include <raylibmathex.h>
+#include <raymath.h>
 
-#include "brain.hpp"
-#include "genome.hpp"
-#include "population.hpp"
-#include "raylib.h"
-#include "raylibdrawex.h"
-#include "raylibmathex.h"
-#include "raymath.h"
-#include "resources.hpp"
-#include "util/serialization.hpp"
-#include "world.hpp"
+#include <brain.hpp>
+#include <genome.hpp>
+#include <population.hpp>
+#include <resources.hpp>
+#include <util/serialization.hpp>
+#include <world.hpp>
 
 Ant::Ant(World& world, const Genome& genome)
     : _world(world), _brain(world, genome.get_network()), _genome(genome) {}
@@ -28,7 +27,6 @@ auto Ant::operator=(const Ant& other) -> Ant& {
     _bounds = other._bounds;
     _scale = other._scale;
     _genome = other._genome;
-    _texture = other._texture;
 
     // Destroy and reconstruct brain
     _brain.~Brain();
@@ -54,7 +52,6 @@ Ant::Ant(const Ant& other)
   _dead = other._dead;
   _energy = other._energy;
   _lifeSpan = other._lifeSpan;
-  _texture = other._texture;
   _radius = other._radius;
   _bounds = other._bounds;
   _scale = other._scale;
@@ -144,7 +141,14 @@ auto Ant::update_energy(float time) -> void {
 
 auto Ant::draw_body() -> void {
   if (!IsTextureValid(_texture)) {
-    throw std::runtime_error("Ant texture is invalid - cannot draw ant body");
+    if (!_world.get_texture_cache()) {
+      return;
+    }
+    if (_world.get_texture_cache()->has_texture("ant")) {
+      set_texture(_world.get_texture_cache()->get_texture("ant"));
+    } else {
+      return;
+    }
   }
 
   DrawTextureEx(_texture, {_bounds.x, _bounds.y}, get_rotation(), 1.0F, WHITE);

@@ -1,12 +1,11 @@
 #pragma once
 #include <fmt/core.h>
 #include <raylib.h>
+#include <raymath.h>
 
+#include <brain.hpp>
+#include <genome.hpp>
 #include <nlohmann/json.hpp>
-
-#include "brain.hpp"
-#include "genome.hpp"
-#include "raymath.h"
 
 class World;
 
@@ -49,8 +48,6 @@ class Ant {
   [[nodiscard]] auto get_scale() const -> float;
   auto set_scale(float scale) -> void;
 
-  auto set_texture(Texture2D texture) -> void;
-
   [[nodiscard]] auto get_bounds() const -> const Rectangle&;
 
   auto reset(const Vector2& position) -> void;
@@ -64,11 +61,12 @@ class Ant {
   auto to_json() const -> nlohmann::json;
 
  protected:
+  auto set_texture(Texture2D texture) -> void;
+
   auto create_ant() -> Ant;
 
   const float DEFAULT_SCALE = 20.0F;
   const float STARTING_ENERGY = 1000.0F;
-  // sedintary energy per second is the base rate of energy loss for a stationary ant
   const float SEDINTARY_ENERGY_PER_SECOND = 1.0F;
   const float LINE_THICKNESS = 2.0F;
   const float FONT_SIZE = 10.0F;
