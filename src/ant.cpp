@@ -140,18 +140,9 @@ auto Ant::update_energy(float time) -> void {
 }
 
 auto Ant::draw_body() -> void {
-  if (!IsTextureValid(_texture)) {
-    if (!_world.get_texture_cache()) {
-      return;
-    }
-    if (_world.get_texture_cache()->has_texture("ant")) {
-      set_texture(_world.get_texture_cache()->get_texture("ant"));
-    } else {
-      return;
-    }
+  if (is_texture_valid() || load_texture()) {
+    DrawTextureEx(_texture, {_bounds.x, _bounds.y}, get_rotation(), 1.0F, WHITE);
   }
-
-  DrawTextureEx(_texture, {_bounds.x, _bounds.y}, get_rotation(), 1.0F, WHITE);
 }
 
 auto Ant::draw_energy() const -> void {
@@ -196,19 +187,29 @@ auto Ant::draw_coordinates() const -> void {
   DrawText(text.c_str(), coordinates_rect.x, coordinates_rect.y, FONT_SIZE, BLACK);
 }
 
-auto Ant::set_texture(Texture2D texture) -> void {
-  if (!IsTextureValid(texture)) {
-    throw std::runtime_error("Invalid Texture passed to ant.");
+auto Ant::load_texture() -> bool {
+  if (!_world.get_texture_cache()) {
+    update_bounds();
+    update_radius();
+    return false;
   }
-  _texture = texture;
+  if (!_world.get_texture_cache()->has_texture("ant")) {
+    update_bounds();
+    update_radius();
+    return false;
+  }
+
+  _texture = _world.get_texture_cache()->get_texture("ant");
   update_bounds();
   update_radius();
+
+  return true;
 }
 
 auto Ant::draw_direction() const -> void {
   const auto rotation = get_rotation();
 
-  const float lineLength = static_cast<float>(_texture.width) * 2.0F;
+  const float lineLength = static_cast<float>(_bounds.width) * 2.0F;
   const float endX = _position.x + cosf(rotation * DEG2RAD) * lineLength;
   const float endY = _position.y + sinf(rotation * DEG2RAD) * lineLength;
 
@@ -241,8 +242,12 @@ auto Ant::get_bounds() const -> const Rectangle& {
 }
 
 auto Ant::update_bounds() -> void {
-  _bounds.width = _texture.width;
-  _bounds.height = _texture.height;
+  if (is_texture_valid()) {
+    _bounds.width = _texture.width;
+    _bounds.height = _texture.height;
+  } else {
+    _bounds = DEFAULT_BOUNDS;
+  }
   _bounds = RotateRect(_bounds, _position, get_rotation());
 }
 
@@ -251,8 +256,8 @@ auto Ant::update_bounds() -> void {
 }
 
 auto Ant::update_radius() -> void {
-  const auto width_sq = _texture.width * _texture.width;
-  const auto height_sq = _texture.height * _texture.height;
+  const auto width_sq = _bounds.width * _bounds.width;
+  const auto height_sq = _bounds.height * _bounds.height;
   _radius = sqrtf((width_sq + height_sq)) / 2.0F;
 }
 
@@ -301,4 +306,8 @@ Ant::Ant(const nlohmann::json& json, World& world)
   _scale = json.at("scale").get<float>();
   _energy = json.at("energy").get<float>();
   _lifeSpan = json.at("life_span").get<float>();
+}
+
+auto Ant::is_texture_valid() const -> bool {
+  return IsTextureValid(_texture);
 }

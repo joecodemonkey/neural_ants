@@ -61,7 +61,8 @@ class Ant {
   auto to_json() const -> nlohmann::json;
 
  protected:
-  auto set_texture(Texture2D texture) -> void;
+  auto load_texture() -> bool;
+  auto is_texture_valid() const -> bool;
 
   auto create_ant() -> Ant;
 
@@ -71,6 +72,7 @@ class Ant {
   const float LINE_THICKNESS = 2.0F;
   const float FONT_SIZE = 10.0F;
   const float FONT_SPACING = 1.0F;
+  const Rectangle DEFAULT_BOUNDS = {0.0F, 0.0F, 16.0F, 16.0F};
 
   World& _world;
   Genome _genome;
@@ -78,7 +80,7 @@ class Ant {
 
   Vector2 _position = Vector2Zero();
   Vector2 _velocity = Vector2Zero();
-  Rectangle _bounds = {0.0F, 0.0F, 0.0F, 0.0F};
+  Rectangle _bounds = DEFAULT_BOUNDS;
   float _radius = 0.0F;
   bool _dead = false;
   bool _frozen = false;
