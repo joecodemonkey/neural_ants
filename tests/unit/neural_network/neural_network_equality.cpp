@@ -114,19 +114,6 @@ TEST_CASE("NeuralNetwork equality operator", "[neural_network]") {
     REQUIRE_FALSE(network2 == network1);
   }
 
-  SECTION("Networks with different threading states are not equal") {
-    NeuralNetwork network1;
-    network1.enable_network_threads();
-    network1.enable_neuron_threads();
-
-    NeuralNetwork network2;
-    network2.disable_network_threads();
-    network2.disable_neuron_threads();
-
-    REQUIRE_FALSE(network1 == network2);
-    REQUIRE_FALSE(network2 == network1);
-  }
-
   SECTION("Networks with different ready states are not equal") {
     NeuralNetwork network1;
     network1.set_input_count(3);

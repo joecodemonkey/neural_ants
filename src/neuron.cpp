@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <execution>
 #include <numeric>
 #include <random>
 #include <ranges>
@@ -38,24 +37,12 @@ auto Neuron::get_bias() const -> Value {
 
 auto Neuron::get_output() -> Value {
   if (_outputDirty) {
-    Value sum;
-    if (_threaded) {
-      sum = std::transform_reduce(std::execution::par,
-                                  _inputs.begin(),
-                                  _inputs.end(),
-                                  _weights.begin(),
-                                  0.0f,
-                                  std::plus<Value>{},
-                                  std::multiplies<Value>{});
-    } else {
-      sum = std::transform_reduce(std::execution::seq,
-                                  _inputs.begin(),
-                                  _inputs.end(),
-                                  _weights.begin(),
-                                  0.0f,
-                                  std::plus<Value>{},
-                                  std::multiplies<Value>{});
-    }
+    Value sum = std::transform_reduce(_inputs.begin(),
+                                      _inputs.end(),
+                                      _weights.begin(),
+                                      0.0f,
+                                      std::plus<Value>{},
+                                      std::multiplies<Value>{});
     _value = activation_function(_bias + sum);
     _outputDirty = false;
   }
@@ -77,7 +64,6 @@ auto Neuron::operator=(const Neuron& other) -> Neuron& {
     _weights = other._weights;
     _bias = other._bias;
     _value = other._value;
-    _threaded = other._threaded;
     _outputDirty = other._outputDirty;
   }
   return *this;
@@ -89,7 +75,6 @@ auto Neuron::operator=(Neuron&& other) -> Neuron& {
     _weights = std::move(other._weights);
     _bias = other._bias;
     _value = other._value;
-    _threaded = other._threaded;
     _outputDirty = other._outputDirty;
   }
   return *this;
@@ -100,7 +85,6 @@ Neuron::Neuron(const Neuron& other) {
   _weights = other._weights;
   _bias = other._bias;
   _value = other._value;
-  _threaded = other._threaded;
   _outputDirty = other._outputDirty;
 }
 
@@ -109,7 +93,6 @@ Neuron::Neuron(Neuron&& other) {
   _weights = std::move(other._weights);
   _bias = other._bias;
   _value = other._value;
-  _threaded = other._threaded;
   _outputDirty = other._outputDirty;
 }
 
@@ -146,15 +129,6 @@ auto Neuron::set_inputs(const ValueVector& inputs) -> void {
   _inputs = inputs;
   _outputDirty = true;
 }
-
-auto Neuron::enable_threads() -> void {
-  _threaded = true;
-}
-
-auto Neuron::disable_threads() -> void {
-  _threaded = false;
-}
-
 
 auto Neuron::to_json() const -> nlohmann::json {
   nlohmann::json json;

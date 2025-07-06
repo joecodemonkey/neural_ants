@@ -33,7 +33,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     neuron.set_input_weight(1, -0.3f);
     neuron.set_input_weight(2, 0.8f);
     neuron.set_bias(0.7f);
-    neuron.enable_threads();
 
     // Trigger calculation to set _value
     neuron.get_output();
@@ -84,7 +83,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     original.set_input_weight(2, 0.7f);
     original.set_input_weight(3, 0.8f);
     original.set_bias(0.9f);
-    original.disable_threads();
 
     // Trigger calculation
     original.get_output();

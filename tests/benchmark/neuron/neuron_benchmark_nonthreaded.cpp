@@ -9,9 +9,6 @@ class NonThreadedNeuronBenchmark : public NeuronBenchmarkBase {
  public:
   NonThreadedNeuronBenchmark() = default;
   NonThreadedNeuronBenchmark(const std::string& name) : NeuronBenchmarkBase(name) {};
-  void setup() {
-    _neuron.disable_threads();
-  }
 };
 
 // Reuse the same benchmark cases but with threading disabled
@@ -20,7 +17,6 @@ TEST_CASE_METHOD(NonThreadedNeuronBenchmark,
                  "[benchmark]") {
   NonThreadedNeuronBenchmark benchmark(
       std::string("Non-Threaded Neuron Calculation Benchmark - Single Neuron"));
-  benchmark.setup();
   benchmark.reset();
   benchmark.run();
   benchmark.display();
@@ -31,7 +27,7 @@ TEST_CASE_METHOD(NonThreadedNeuronBenchmark,
                  "[benchmark]") {
   NonThreadedNeuronBenchmark benchmark(
       std::string("Non-Threaded Multiple Neurons Benchmark - 100 Neuron Duration"));
-  benchmark.setup();
+
   std::chrono::nanoseconds duration{0};
   for (size_t i = 0; i < 100; ++i) {
     benchmark.reset();

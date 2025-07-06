@@ -37,9 +37,6 @@ class Neuron {
 
   auto randomize() -> void;
 
-  auto enable_threads() -> void;
-  auto disable_threads() -> void;
-
   auto to_json() const -> nlohmann::json;
 
  protected:
@@ -51,6 +48,5 @@ class Neuron {
   Value _bias = 0;
   ValueVector _weights;
   ValueVector _inputs;
-  bool _threaded = false;
   bool _outputDirty = true;
 };
