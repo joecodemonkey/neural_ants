@@ -2,10 +2,12 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "neuron.hpp"
+#include "random_generator.hpp"
 
 using Catch::Approx;
 
 TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]") {
+  RandomGenerator generator;
   SECTION("Empty neuron serialization") {
     Neuron neuron;
     auto json = neuron.to_json();
@@ -95,7 +97,7 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
   SECTION("Serialization with randomized neuron") {
     Neuron neuron;
     neuron.set_input_count(5);
-    neuron.randomize();
+    neuron.randomize(generator);
 
     // Set some inputs to known values for testing
     neuron.set_input(0, 1.0f);

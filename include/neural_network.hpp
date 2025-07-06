@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "neuron.hpp"
+#include "random_generator.hpp"
 
 // A fully connected neural network
 class NeuralNetwork {
@@ -55,7 +56,6 @@ class NeuralNetwork {
   auto configure_hidden_layers() -> void;
   auto get_hidden_layer_weight_count(size_t layer_idx) -> size_t;
   auto configure_hidden_layer(size_t idx) -> void;
-  auto get_hidden_layer_values(size_t layerIndex) -> ValueVector;
   auto compute() -> void;
   auto validate() -> void;
 
@@ -75,4 +75,5 @@ class NeuralNetwork {
   // ready is set to false when inputs change and is set back to true
   // when the output is retrieved and all upstream data gets recalculated
   bool _ready = false;
+  RandomGenerator _randomGenerator;
 };

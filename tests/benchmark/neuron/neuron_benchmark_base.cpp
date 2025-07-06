@@ -3,6 +3,8 @@
 #include <chrono>
 #include <iostream>
 
+#include "random_generator.hpp"
+
 auto NeuronBenchmarkBase::generate_random_inputs() -> void {
   _inputs.resize(NUM_INPUTS);
   for (auto& input : _inputs) {
@@ -11,8 +13,9 @@ auto NeuronBenchmarkBase::generate_random_inputs() -> void {
 }
 
 auto NeuronBenchmarkBase::reset() -> void {
+  RandomGenerator generator;
   _neuron.set_input_count(NUM_INPUTS);
-  _neuron.randomize();
+  _neuron.randomize(generator);
   generate_random_inputs();
 }
 

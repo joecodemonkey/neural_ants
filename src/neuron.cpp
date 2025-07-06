@@ -104,17 +104,14 @@ Neuron::Neuron(const nlohmann::json& json) {
   _outputDirty = true;
 }
 
-auto Neuron::randomize() -> void {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<Value> dist(-1.0f, 1.0f);
-
+auto Neuron::randomize(RandomGenerator& rng) -> void {
   for (auto& weight : _weights) {
-    weight = dist(gen);
+    weight = static_cast<Value>(rng.uniform(-1.0, 1.0));
   }
 
-  _bias = dist(gen);
-  _value = dist(gen);
+  _bias = static_cast<Value>(rng.uniform(-1.0, 1.0));
+  _value = static_cast<Value>(rng.uniform(-1.0, 1.0));
+  _outputDirty = true;
 }
 
 auto Neuron::get_inputs() const -> const ValueVector& {

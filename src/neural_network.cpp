@@ -162,47 +162,19 @@ auto NeuralNetwork::get_hidden_layer_neuron_count() const -> size_t {
 }
 
 auto NeuralNetwork::randomize() -> void {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<Neuron::Value> dist(-1.0f, 1.0f);
-
   // Randomize hidden layers
   for (auto& layer : _hiddenLayers) {
     for (auto& neuron : layer) {
-      neuron.randomize();
+      neuron.randomize(_randomGenerator);
     }
   }
 
   // Randomize output layer
   for (auto& neuron : _outputLayer) {
-    neuron.randomize();
+    neuron.randomize(_randomGenerator);
   }
 
   _ready = false;
-}
-
-auto NeuralNetwork::get_hidden_layer_values(size_t layerIndex) -> ValueVector {
-  auto& layer = _hiddenLayers.at(layerIndex);
-  ValueVector valueVector;
-  valueVector.reserve(_hiddenLayerNeuronCount);
-
-  ValueVector inputs;
-
-  if (layerIndex == 0) {
-    inputs = get_input_values();
-  } else {
-    inputs = get_hidden_layer_values(layerIndex - 1);
-  }
-
-  std::for_each(
-      std::begin(layer), std::end(layer), [&](Neuron& neuron) { neuron.set_inputs(inputs); });
-
-  valueVector.resize(layer.size());
-  std::transform(std::begin(layer), std::end(layer), valueVector.begin(), [](Neuron& neuron) {
-    return neuron.get_output();
-  });
-
-  return valueVector;
 }
 
 auto NeuralNetwork::compute() -> void {
@@ -211,21 +183,29 @@ auto NeuralNetwork::compute() -> void {
   }
 
   ValueVector inputs;
+  _outputValues.clear();
+  _outputValues.resize(_outputLayer.size());
 
   if (_hiddenLayers.empty()) {
     inputs = get_input_values();
   } else {
-    inputs = get_hidden_layer_values(_hiddenLayers.size() - 1);
+    inputs = get_input_values();
+    ValueVector outputs;
+    outputs.reserve(_hiddenLayerNeuronCount);
+    for (size_t layerIndex = 0; layerIndex < _hiddenLayers.size(); ++layerIndex) {
+      outputs.clear();
+      for (size_t neuronIndex = 0; neuronIndex < _hiddenLayerNeuronCount; ++neuronIndex) {
+        _hiddenLayers[layerIndex][neuronIndex].set_inputs(inputs);
+        outputs.push_back(_hiddenLayers[layerIndex][neuronIndex].get_output());
+      }
+      inputs = outputs;
+    }
   }
 
-  _outputValues.clear();
-  _outputValues.resize(_outputLayer.size());
-
-  std::transform(
-      _outputLayer.begin(), _outputLayer.end(), _outputValues.begin(), [&](Neuron& neuron) {
-        neuron.set_inputs(inputs);
-        return neuron.get_output();
-      });
+  for (size_t neuronIndex = 0; neuronIndex < _outputLayer.size(); ++neuronIndex) {
+    _outputLayer[neuronIndex].set_inputs(inputs);
+    _outputValues[neuronIndex] = _outputLayer[neuronIndex].get_output();
+  }
   _ready = true;
 }
 

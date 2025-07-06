@@ -4,6 +4,7 @@
 #include "neuron.hpp"
 
 TEST_CASE("Neuron equality operator", "[neuron]") {
+  RandomGenerator generator;
   SECTION("identical neurons are equal") {
     std::vector<Neuron> neurons(2);
     std::for_each(std::begin(neurons), std::end(neurons), [](Neuron& neuron) {
@@ -104,7 +105,7 @@ TEST_CASE("Neuron equality operator", "[neuron]") {
 
   SECTION("copy constructed neurons are equal") {
     Neuron neuron1;
-    neuron1.randomize();
+    neuron1.randomize(generator);
 
     Neuron neuron2(neuron1);  // Copy constructor
 
@@ -114,7 +115,7 @@ TEST_CASE("Neuron equality operator", "[neuron]") {
 
   SECTION("assigned neurons are equal") {
     Neuron neuron1;
-    neuron1.randomize();
+    neuron1.randomize(generator);
 
     Neuron neuron2;
     neuron2 = neuron1;  // Assignment operator
