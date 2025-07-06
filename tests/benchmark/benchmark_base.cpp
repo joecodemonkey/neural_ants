@@ -7,6 +7,10 @@ auto BenchmarkBase::get_duration() -> std::chrono::microseconds {
   return std::chrono::duration_cast<std::chrono::microseconds>(_duration);
 }
 
+auto BenchmarkBase::get_duration_ns() -> std::chrono::nanoseconds {
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(_duration);
+}
+
 auto BenchmarkBase::get_duration_ms() -> std::chrono::milliseconds {
   return std::chrono::duration_cast<std::chrono::milliseconds>(_duration);
 }
@@ -28,5 +32,5 @@ auto BenchmarkBase::run() -> void {
   auto start = std::chrono::high_resolution_clock::now();
   derived_run();
   auto stop = std::chrono::high_resolution_clock::now();
-  _duration += std::chrono::duration<double>(stop - start);
+  _duration = std::chrono::duration<double>(stop - start);
 }

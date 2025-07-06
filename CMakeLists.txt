@@ -183,7 +183,7 @@ enable_testing()
 file(GLOB_RECURSE UNIT_TEST_SOURCES "tests/unit/*.cpp")
 
 # Create unit test executable
-add_executable(neural_ants_unit_tests ${UNIT_TEST_SOURCES})
+add_executable(neural_ants_unit_tests ${UNIT_TEST_SOURCES} ${BENCHMARK_HELPER_SOURCES})
 
 # Link unit test executable with Catch2
 target_link_libraries(neural_ants_unit_tests PRIVATE
@@ -214,9 +214,10 @@ catch_discover_tests(neural_ants_unit_tests)
 
 # Benchmark configuration
 file(GLOB_RECURSE BENCHMARK_SOURCES "tests/benchmark/*.cpp")
+file(GLOB_RECURSE BENCHMARK_HELPER_SOURCES "src/tests/helpers/*.cpp")
 
 # Create benchmark executable
-add_executable(neural_ants_benchmarks ${BENCHMARK_SOURCES})
+add_executable(neural_ants_benchmarks ${BENCHMARK_SOURCES} ${BENCHMARK_HELPER_SOURCES})
 
 # Add fast-math for benchmarks (optimization already handled globally)
 target_compile_options(neural_ants_benchmarks PRIVATE
