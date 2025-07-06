@@ -22,7 +22,6 @@ class Population {
   auto set_size(int size) -> void;
   [[nodiscard]] auto get_size() const -> int;
 
-  auto draw() -> void;
   auto update(float time) -> void;
 
   [[nodiscard]] auto get_collisions(const Vector2& position, float radius)
@@ -38,6 +37,9 @@ class Population {
 
   auto get_fitness_data() -> FitnessData&;
   auto get_fitness_data() const -> const FitnessData&;
+
+  auto get_ants() -> std::vector<Ant>&;
+  auto set_texture_dimensions(float width, float height) -> void;
 
  protected:
   auto reproduce() -> void;

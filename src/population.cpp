@@ -64,11 +64,6 @@ auto Population::get_size() const -> int {
   return _size;
 }
 
-auto Population::draw() -> void {
-  for (auto& ant : _ants) {
-    ant.draw();
-  }
-}
 
 auto Population::reproduce() -> void {
   while (_ants.size() < _size) {
@@ -166,4 +161,14 @@ auto Population::get_fitness_data() -> FitnessData& {
 
 auto Population::get_fitness_data() const -> const FitnessData& {
   return _fitnessData;
+}
+
+auto Population::get_ants() -> std::vector<Ant>& {
+  return _ants;
+}
+
+auto Population::set_texture_dimensions(float width, float height) -> void {
+  for (auto& ant : _ants) {
+    ant.set_texture_dimensions(width, height);
+  }
 }

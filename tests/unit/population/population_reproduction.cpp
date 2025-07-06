@@ -64,7 +64,7 @@ TEST_CASE("Population reproduction logic", "[population]") {
     // Verify ant is in valid state
     REQUIRE_FALSE(ant.is_dead());
     REQUIRE(ant.get_energy() > 0.0f);
-    REQUIRE(ant.get_scale() > 0.0f);
+    REQUIRE(ant.get_radius() >= 0.0f);
   }
 
   SECTION("Create ant with empty pangenome uses random genome") {

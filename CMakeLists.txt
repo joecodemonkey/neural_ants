@@ -134,6 +134,7 @@ set(CXX_SOURCES
     src/input.cpp
     src/world.cpp
     src/ant.cpp
+    src/ant_renderer.cpp
     src/population.cpp
     src/resources.cpp
     src/neuron.cpp

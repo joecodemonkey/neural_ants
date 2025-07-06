@@ -8,6 +8,7 @@
 #include <util/file.hpp>
 #include <util/serialization.hpp>
 #include <world.hpp>
+#include <ant_renderer.hpp>
 
 Game::Game() : _ui(*this), _input(*this), _updateSpeed(1LL) {
   _camera = {.offset = Vector2Zero(), .target = Vector2Zero(), .rotation = 0.0F, .zoom = 1.0f};
@@ -29,6 +30,7 @@ auto Game::run() -> void {
       load_textures();
       _ui.add_texture_cache(_textureCache);
       _world.set_texture_cache(_textureCache);
+      _antRenderer.set_texture_cache(_textureCache.get());
 
       texturesLoaded = true;
     }
@@ -58,6 +60,7 @@ auto Game::run() -> void {
 
     ClearBackground(BLACK);
     _world.draw();
+    _antRenderer.draw(_world.get_population());
     EndMode2D();
     _ui.draw(time);
 
@@ -200,4 +203,8 @@ auto Game::get_world() const -> const World& {
 
 auto Game::get_world() -> World& {
   return _world;
+}
+
+auto Game::get_texture_cache() -> std::shared_ptr<TextureCache> {
+  return _textureCache;
 }

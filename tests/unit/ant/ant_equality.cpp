@@ -39,12 +39,10 @@ TEST_CASE("Ant equality operator", "[ant]") {
     // Set same values (avoiding texture-dependent operations)
     ant1.set_position({10.0f, 20.0f});
     ant1.set_energy(500.0f);
-    ant1.set_scale(25.0f);
     ant1.set_dead(false);
 
     ant2.set_position({10.0f, 20.0f});
     ant2.set_energy(500.0f);
-    ant2.set_scale(25.0f);
     ant2.set_dead(false);
 
     REQUIRE(ant1 == ant2);
@@ -57,7 +55,6 @@ TEST_CASE("Ant equality operator", "[ant]") {
     Ant original(world, genome);
     original.set_position({15.0f, 25.0f});
     original.set_energy(750.0f);
-    original.set_scale(30.0f);
     original.set_dead(false);
 
     Ant copy(original);  // Copy constructor
@@ -72,7 +69,6 @@ TEST_CASE("Ant equality operator", "[ant]") {
     Ant original(world, genome);
     original.set_position({5.0f, 15.0f});
     original.set_energy(300.0f);
-    original.set_scale(18.0f);
     original.set_dead(false);
 
     Ant assigned(world, genome);
@@ -106,13 +102,13 @@ TEST_CASE("Ant equality operator", "[ant]") {
     REQUIRE_FALSE(ant2 == ant1);
   }
 
-  SECTION("Ants with different scales are not equal") {
+  SECTION("Ants with different texture dimensions are not equal") {
     Genome genome = create_minimal_genome();
     Ant ant1(world, genome);
     Ant ant2(world, genome);
 
-    ant1.set_scale(20.0f);
-    ant2.set_scale(25.0f);
+    ant1.set_texture_dimensions(20.0f, 20.0f);
+    ant2.set_texture_dimensions(25.0f, 25.0f);
 
     REQUIRE_FALSE(ant1 == ant2);
     REQUIRE_FALSE(ant2 == ant1);
@@ -160,7 +156,6 @@ TEST_CASE("Ant equality operator", "[ant]") {
     Ant ant(world, genome);
     ant.set_position({10.0f, 20.0f});
     ant.set_energy(500.0f);
-    ant.set_scale(25.0f);
     ant.set_dead(false);
 
     REQUIRE(ant == ant);

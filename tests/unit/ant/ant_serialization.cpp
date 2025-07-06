@@ -36,7 +36,8 @@ TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
     REQUIRE(json.contains("radius"));
     REQUIRE(json.contains("dead"));
     REQUIRE(json.contains("frozen"));
-    REQUIRE(json.contains("scale"));
+    REQUIRE(json.contains("texture_width"));
+    REQUIRE(json.contains("texture_height"));
     REQUIRE(json.contains("energy"));
     REQUIRE(json.contains("life_span"));
     REQUIRE(json.contains("genome"));
@@ -50,7 +51,8 @@ TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
     // Test default values
     REQUIRE(json["dead"] == false);
     REQUIRE(json["frozen"] == false);
-    REQUIRE(json["scale"] == 20.0f);
+    REQUIRE(json["texture_width"] == 16.0f);
+    REQUIRE(json["texture_height"] == 16.0f);
     REQUIRE(json["energy"] == 1000.0f);
     REQUIRE(json["life_span"] == 0.0f);
     REQUIRE(json["radius"] == 0.0f);
@@ -63,7 +65,7 @@ TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
 
     ant.set_position({15.5f, 25.3f});
     ant.set_energy(750.0f);
-    ant.set_scale(25.0f);
+    ant.set_texture_dimensions(25.0f, 30.0f);
     ant.set_dead(false);
 
     auto json = ant.to_json();
@@ -74,7 +76,8 @@ TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
 
     // Test other properties
     REQUIRE(json["energy"] == 750.0f);
-    REQUIRE(json["scale"] == 25.0f);
+    REQUIRE(json["texture_width"] == 25.0f);
+    REQUIRE(json["texture_height"] == 30.0f);
     REQUIRE(json["dead"] == false);
     REQUIRE(json["life_span"] == 0.0f);
 

@@ -9,6 +9,7 @@
 #include <texture_cache.hpp>
 #include <ui/renderer.hpp>
 #include <world.hpp>
+#include <ant_renderer.hpp>
 
 class Game {
  public:
@@ -45,4 +46,5 @@ class Game {
   bool _raylibInitialized = false;
   UI::Renderer _ui;
   std::shared_ptr<TextureCache> _textureCache;
+  AntRenderer _antRenderer;
 };

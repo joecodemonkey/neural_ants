@@ -140,7 +140,6 @@ auto World::update(float time) -> void {
 auto World::draw() -> void {
   DrawRectangle(_bounds.x, _bounds.y, _bounds.width, _bounds.height, WHITE);
   _resources.draw();
-  _population.draw();
 }
 
 auto World::out_of_bounds(const Vector2& position) const -> bool {
