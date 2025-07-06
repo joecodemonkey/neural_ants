@@ -53,7 +53,7 @@ Population& Population::operator=(Population&& other) {
 }
 
 auto Population::operator==(const Population& other) const -> bool {
-  return (_size == other._size && _ants == other._ants || _pangenome == other._pangenome);
+  return (_size == other._size && _ants == other._ants && _pangenome == other._pangenome);
 }
 
 auto Population::set_size(int size) -> void {

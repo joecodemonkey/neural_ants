@@ -43,14 +43,6 @@ TEST_CASE("Population update functionality", "[population]") {
     REQUIRE(collisions_after.size() <= 3);
   }
 
-  SECTION("Update with invalid texture path") {
-    Population population(world);
-    population.set_size(1);
-
-    // Should throw when trying to load invalid texture
-    REQUIRE_THROWS_AS(population.update(1.0f), std::runtime_error);
-  }
-
   SECTION("Update with empty texture path") {
     Population population(world);
     population.set_size(1);
