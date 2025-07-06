@@ -74,6 +74,12 @@ FetchContent_Declare(
     GIT_TAG v3.12.0
 )
 
+FetchContent_Declare(
+    xoshiro_cpp
+    GIT_REPOSITORY https://github.com/Reputeless/Xoshiro-cpp.git
+    GIT_TAG master
+)
+
 # Disable oneTBB tests and examples to avoid build issues
 set(TBB_TEST OFF CACHE BOOL "" FORCE)
 set(TBB_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -87,6 +93,7 @@ FetchContent_MakeAvailable(ImPlot)
 FetchContent_MakeAvailable(rlImGui)
 FetchContent_MakeAvailable(oneTBB)
 FetchContent_MakeAvailable(nlohmann_json)
+FetchContent_MakeAvailable(xoshiro_cpp)
 
 # Grab the headers and sources for IMGUI
 file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*.cpp")
@@ -164,6 +171,7 @@ target_include_directories(neural_ants_lib PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${imgui_SOURCE_DIR}
     ${rlimgui_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Create main executable
@@ -174,6 +182,7 @@ target_include_directories(neural_ants PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/fmt_cxx-src/include
     ${implot_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Test configuration
@@ -205,6 +214,7 @@ target_include_directories(neural_ants_unit_tests PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
     ${implot_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Register unit tests with CTest
@@ -244,6 +254,7 @@ target_include_directories(neural_ants_benchmarks PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
     ${implot_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Register benchmarks with CTest
