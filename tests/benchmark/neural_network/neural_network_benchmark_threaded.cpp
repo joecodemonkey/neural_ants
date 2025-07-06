@@ -11,7 +11,8 @@ class ThreadedNeuralNetworkBenchmark : public NeuralNetworkBenchmarkBase {
   ThreadedNeuralNetworkBenchmark(const std::string& name) : NeuralNetworkBenchmarkBase(name) {};
 
   void setup() {
-    _network.enable_threads();
+    _network.enable_network_threads();
+    _network.enable_neuron_threads();
   }
 };
 

@@ -47,11 +47,10 @@ class Neuron {
     return tanh(x);
   }
 
-  auto calculate() -> void;
-
   Value _value = 0;
   Value _bias = 0;
   ValueVector _weights;
   ValueVector _inputs;
   bool _threaded = false;
+  bool _outputDirty = true;
 };

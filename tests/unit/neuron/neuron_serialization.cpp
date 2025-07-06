@@ -14,7 +14,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     REQUIRE(json.contains("weights"));
     REQUIRE(json.contains("inputs"));
     REQUIRE(json.contains("value"));
-    REQUIRE(json.contains("threaded"));
 
     REQUIRE(json["bias"] == 0.0f);
     REQUIRE(json["weights"].is_array());
@@ -22,7 +21,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     REQUIRE(json["inputs"].is_array());
     REQUIRE(json["inputs"].size() == 0);
     REQUIRE(json["value"] == 0.0f);
-    REQUIRE(json["threaded"] == false);
   }
 
   SECTION("Configured neuron serialization") {
@@ -51,7 +49,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     REQUIRE(json["inputs"][0] == 1.0f);
     REQUIRE(json["inputs"][1] == 2.0f);
     REQUIRE(json["inputs"][2] == 3.0f);
-    REQUIRE(json["threaded"] == true);
     // Note: _value will be the result of activation function, so we just check it's a number
     REQUIRE(json["value"].is_number());
   }
@@ -62,7 +59,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     json["weights"] = {0.1f, -0.2f, 0.3f};
     json["inputs"] = {1.0f, 2.0f, 3.0f};
     json["value"] = 0.8f;
-    json["threaded"] = true;
 
     Neuron neuron(json);
 
@@ -116,7 +112,6 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
     REQUIRE(json["weights"].size() == 5);
     REQUIRE(json["inputs"].size() == 5);
     REQUIRE(json["value"].is_number());
-    REQUIRE(json["threaded"].is_boolean());
 
     // All weights should be in the randomization range [-1, 1]
     for (const auto& weight : json["weights"]) {

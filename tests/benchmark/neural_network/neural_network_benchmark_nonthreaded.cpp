@@ -11,7 +11,8 @@ class NonThreadedNeuralNetworkBenchmark : public NeuralNetworkBenchmarkBase {
   NonThreadedNeuralNetworkBenchmark(const std::string& name) : NeuralNetworkBenchmarkBase(name) {};
 
   void setup() {
-    _network.disable_threads();
+    _network.disable_network_threads();
+    _network.disable_neuron_threads();
   }
 };
 

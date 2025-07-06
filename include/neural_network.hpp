@@ -47,8 +47,10 @@ class NeuralNetwork {
   auto get_hidden_layer_neuron_count() const -> size_t;
 
   auto randomize() -> void;
-  auto enable_threads() -> void;
-  auto disable_threads() -> void;
+  auto enable_network_threads() -> void;
+  auto disable_network_threads() -> void;
+  auto enable_neuron_threads() -> void;
+  auto disable_neuron_threads() -> void;
 
   auto to_json() const -> nlohmann::json;
 
@@ -71,7 +73,8 @@ class NeuralNetwork {
   ValueVector _inputsValues;
   ValueVector _outputValues;
   bool _validated = false;
-  bool _threaded = false;
+  bool _networkThreaded = false;
+  bool _neuronThreaded = false;
 
   size_t _hiddenLayerNeuronCount;
 
