@@ -1,12 +1,11 @@
 #pragma once
 #include <fmt/core.h>
 #include <raylib.h>
+#include <raymath.h>
 
+#include <brain.hpp>
+#include <genome.hpp>
 #include <nlohmann/json.hpp>
-
-#include "brain.hpp"
-#include "genome.hpp"
-#include "raymath.h"
 
 class World;
 
@@ -25,7 +24,6 @@ class Ant {
 
   ~Ant();
 
-  auto draw() -> void;
 
   auto update(float time) -> void;
 
@@ -46,10 +44,7 @@ class Ant {
   [[nodiscard]] auto get_position() const -> const Vector2&;
   auto set_position(const Vector2& position) -> void;
 
-  [[nodiscard]] auto get_scale() const -> float;
-  auto set_scale(float scale) -> void;
-
-  auto set_texture(Texture2D texture) -> void;
+  [[nodiscard]] auto get_radius() const -> float;
 
   [[nodiscard]] auto get_bounds() const -> const Rectangle&;
 
@@ -63,16 +58,14 @@ class Ant {
 
   auto to_json() const -> nlohmann::json;
 
+  auto set_texture_dimensions(float width, float height) -> void;
+
  protected:
   auto create_ant() -> Ant;
 
-  const float DEFAULT_SCALE = 20.0F;
   const float STARTING_ENERGY = 1000.0F;
-  // sedintary energy per second is the base rate of energy loss for a stationary ant
   const float SEDINTARY_ENERGY_PER_SECOND = 1.0F;
-  const float LINE_THICKNESS = 2.0F;
-  const float FONT_SIZE = 10.0F;
-  const float FONT_SPACING = 1.0F;
+  const Rectangle DEFAULT_BOUNDS = {0.0F, 0.0F, 16.0F, 16.0F};
 
   World& _world;
   Genome _genome;
@@ -80,12 +73,12 @@ class Ant {
 
   Vector2 _position = Vector2Zero();
   Vector2 _velocity = Vector2Zero();
-  Rectangle _bounds = {0.0F, 0.0F, 0.0F, 0.0F};
+  Rectangle _bounds = DEFAULT_BOUNDS;
   float _radius = 0.0F;
   bool _dead = false;
   bool _frozen = false;
-  float _scale = DEFAULT_SCALE;
-  Texture2D _texture;
+  float _textureWidth = 16.0F;
+  float _textureHeight = 16.0F;
   float _energy = STARTING_ENERGY;
   float _lifeSpan = 0.0F;  // time in seconds ant has been alive (measure of fitness)
 
@@ -93,13 +86,6 @@ class Ant {
   auto update_energy(float time) -> void;
   auto update_bounds() -> void;
   auto update_radius() -> void;
-
-  auto draw_body() -> void;
-  auto draw_energy() const -> void;
-  auto draw_coordinates() const -> void;
-  [[nodiscard]] auto get_coordinates_rect() const -> Rectangle;
-  auto draw_direction() const -> void;
-  auto draw_bounding() const -> void;
 
   [[nodiscard]] auto get_rotation() const -> float;
 };

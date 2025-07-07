@@ -2,6 +2,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "neuron.hpp"
+#include "random_generator.hpp"
 
 using Catch::Approx;
 
@@ -9,11 +10,12 @@ TEST_CASE("Neuron randomization", "[neuron]") {
   Neuron neuron;
   size_t weight_count = 3;
   neuron.set_input_count(weight_count);
+  RandomGenerator generator;
 
   REQUIRE(neuron.get_bias() == 0.0f);
 
   SECTION("Randomize weights and bias") {
-    neuron.randomize();
+    neuron.randomize(generator);
 
     // Check that values are within reasonable ranges
     for (size_t i = 0; i < weight_count; ++i) {

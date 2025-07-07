@@ -1,9 +1,9 @@
-#include "world.hpp"
+#include <raylib.h>
 
-#include "population.hpp"
-#include "raylib.h"
-#include "resources.hpp"
-#include "util/serialization.hpp"
+#include <population.hpp>
+#include <resources.hpp>
+#include <util/serialization.hpp>
+#include <world.hpp>
 
 World::World() : _resources(*this), _population(*this) {
   _bounds = World::DEFAULT_BOUNDS;
@@ -140,7 +140,6 @@ auto World::update(float time) -> void {
 auto World::draw() -> void {
   DrawRectangle(_bounds.x, _bounds.y, _bounds.width, _bounds.height, WHITE);
   _resources.draw();
-  _population.draw();
 }
 
 auto World::out_of_bounds(const Vector2& position) const -> bool {
@@ -164,4 +163,12 @@ auto World::to_json() const -> nlohmann::json {
   j["population"] = _population.to_json();
 
   return j;
+}
+
+auto World::set_texture_cache(std::shared_ptr<TextureCache> cache) -> void {
+  _textureCache = cache;
+}
+
+auto World::get_texture_cache() -> std::shared_ptr<TextureCache>& {
+  return _textureCache;
 }

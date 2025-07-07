@@ -7,7 +7,6 @@
 #include <functional>
 #include <genome.hpp>
 #include <nlohmann/json.hpp>
-#include <string>
 #include <vector>
 
 // Forward declaration
@@ -23,7 +22,6 @@ class Population {
   auto set_size(int size) -> void;
   [[nodiscard]] auto get_size() const -> int;
 
-  auto draw() -> void;
   auto update(float time) -> void;
 
   [[nodiscard]] auto get_collisions(const Vector2& position, float radius)
@@ -35,13 +33,13 @@ class Population {
   Population& operator=(Population&& other);
   auto operator==(const Population& other) const -> bool;
 
-  auto set_texture_path(const std::string& path) -> void;
-  [[nodiscard]] auto get_texture_path() const -> const std::string&;
-
   auto to_json() const -> nlohmann::json;
 
   auto get_fitness_data() -> FitnessData&;
   auto get_fitness_data() const -> const FitnessData&;
+
+  auto get_ants() -> std::vector<Ant>&;
+  auto set_texture_dimensions(float width, float height) -> void;
 
  protected:
   auto reproduce() -> void;
@@ -54,10 +52,8 @@ class Population {
   int _size;
 
   static constexpr size_t TARGET_PANGENOME_SIZE = 100;
-  bool _textureLoaded = false;
 
-  std::string _texturePath;
   std::vector<Genome> _pangenome;
-  Texture2D _texture;
+
   FitnessData _fitnessData;
 };

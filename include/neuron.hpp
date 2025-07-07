@@ -3,6 +3,8 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 
+#include "random_generator.hpp"
+
 class Neuron {
  public:
   typedef float Value;
@@ -35,10 +37,7 @@ class Neuron {
 
   auto operator==(const Neuron& other) const -> bool;
 
-  auto randomize() -> void;
-
-  auto enable_threads() -> void;
-  auto disable_threads() -> void;
+  auto randomize(RandomGenerator& rng) -> void;
 
   auto to_json() const -> nlohmann::json;
 
@@ -47,11 +46,9 @@ class Neuron {
     return tanh(x);
   }
 
-  auto calculate() -> void;
-
   Value _value = 0;
   Value _bias = 0;
   ValueVector _weights;
   ValueVector _inputs;
-  bool _threaded = false;
+  bool _outputDirty = true;
 };

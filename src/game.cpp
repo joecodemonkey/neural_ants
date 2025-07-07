@@ -1,20 +1,18 @@
-#include "game.hpp"
-
 #include <fmt/format.h>
+#include <raylib.h>
+#include <raymath.h>
 
 #include <chrono>
+#include <game.hpp>
 #include <nlohmann/json.hpp>
-
-#include "raylib.h"
-#include "raymath.h"
-#include "util/file.hpp"
-#include "util/serialization.hpp"
-#include "world.hpp"
+#include <util/file.hpp>
+#include <util/serialization.hpp>
+#include <world.hpp>
+#include <ant_renderer.hpp>
 
 Game::Game() : _ui(*this), _input(*this), _updateSpeed(1LL) {
   _camera = {.offset = Vector2Zero(), .target = Vector2Zero(), .rotation = 0.0F, .zoom = 1.0f};
   _world.get_population().set_size(50);
-  _world.get_population().set_texture_path("./ant.png");
   _world.get_resources().set_food_count(100);
 }
 
@@ -31,6 +29,9 @@ auto Game::run() -> void {
     if (!texturesLoaded) {
       load_textures();
       _ui.add_texture_cache(_textureCache);
+      _world.set_texture_cache(_textureCache);
+      _antRenderer.set_texture_cache(_textureCache.get());
+
       texturesLoaded = true;
     }
 
@@ -42,11 +43,11 @@ auto Game::run() -> void {
         _world.update(time);
       }
     }
-    
+
     // Monitor FPS and reduce speed if it drops below 10 FPS
     // Wait 2 seconds before making safety adjustments to prevent rapid drops
     float currentTime = GetTime();
-    
+
     int currentFPS = GetFPS();
     if (currentFPS < 10 && _updateSpeed > 1LL && (currentTime - _lastSpeedAdjustmentTime) >= 2.0f) {
       _updateSpeed = _updateSpeed / 2LL;
@@ -59,6 +60,7 @@ auto Game::run() -> void {
 
     ClearBackground(BLACK);
     _world.draw();
+    _antRenderer.draw(_world.get_population());
     EndMode2D();
     _ui.draw(time);
 
@@ -99,7 +101,7 @@ auto Game::set_update_speed(long long speed) -> void {
   // Don't allow speed increases during FPS cooldown period
   float currentTime = GetTime();
   if (speed > _updateSpeed && (currentTime - _lastSpeedAdjustmentTime) < 2.0f) {
-    return; // Ignore the request to increase speed
+    return;  // Ignore the request to increase speed
   }
   _updateSpeed = speed;
 }
@@ -127,7 +129,7 @@ auto Game::load_textures() -> void {
   _textureCache->add_texture("exit", "exitRight.png");
   _textureCache->add_texture("fastForward", "fastForward.png");
   _textureCache->add_texture("rewind", "rewind.png");
-  _textureCache->add_texture("ant", "default");
+  _textureCache->add_texture("ant", "ant.png");
 }
 
 auto Game::save_game(const std::string& filename) const -> std::expected<void, std::string> {
@@ -160,36 +162,27 @@ auto Game::save_game(const std::string& filename) const -> std::expected<void, s
 
 auto Game::load_game(const std::string& filename) -> std::expected<void, std::string> {
   try {
-    // Read file
     auto content = Util::File::read_file(filename);
     if (!content) {
       return std::unexpected(content.error());
     }
 
-    // Parse JSON
     nlohmann::json save_data = nlohmann::json::parse(*content);
 
-    // Validate version
+    if (save_data.empty()) {
+      return std::unexpected("Save file is empty or invalid JSON");
+    }
+
     auto version = save_data.at("version").get<std::string>();
     if (version != "1.0") {
       return std::unexpected(fmt::format("Unsupported save file version: {}", version));
     }
 
-    // Restore camera state using serialization utility
     _camera = Util::camera2d_from_json(save_data.at("camera"));
-
-    // Restore game settings
     _fps = save_data.at("fps").get<int>();
     _cameraSpeed = save_data.at("camera_speed").get<float>();
-
-    // Restore world state
     _world = World(save_data.at("world"));
-
-    // Set texture path for loaded game
-    _world.get_population().set_texture_path("./ant.png");
-
-    // Force texture loading and application to restored ants
-    _world.get_population().update(0.0f);
+    _world.set_texture_cache(_textureCache);
 
     return {};
 
@@ -210,4 +203,8 @@ auto Game::get_world() const -> const World& {
 
 auto Game::get_world() -> World& {
   return _world;
+}
+
+auto Game::get_texture_cache() -> std::shared_ptr<TextureCache> {
+  return _textureCache;
 }

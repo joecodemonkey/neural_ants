@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <texture_cache.hpp>
 #include <ui/state.hpp>
 

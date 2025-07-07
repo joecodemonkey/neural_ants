@@ -1,7 +1,7 @@
 #include <iostream>
 #include <texture_cache.hpp>
 
-bool TextureCache::add_texture(const std::string& name, const std::string& path) {
+auto TextureCache::add_texture(const std::string& name, const std::string& path) -> bool {
   if (has_texture(name)) {
     return false;
   }
@@ -12,7 +12,6 @@ bool TextureCache::add_texture(const std::string& name, const std::string& path)
     return false;
   }
 
-  // Add texture to cache
   _textures[name] = texture;
 
   if (_textures.size() == 1) {
@@ -22,11 +21,11 @@ bool TextureCache::add_texture(const std::string& name, const std::string& path)
   return true;
 }
 
-bool TextureCache::has_texture(const std::string& name) const {
+auto TextureCache::has_texture(const std::string& name) const -> bool {
   return _textures.find(name) != _textures.end();
 }
 
-Texture2D TextureCache::get_texture(const std::string& name) {
+auto TextureCache::get_texture(const std::string& name) -> Texture2D& {
   auto it = _textures.find(name);
   if (it != _textures.end()) {
     return it->second;
@@ -39,7 +38,7 @@ Texture2D TextureCache::get_texture(const std::string& name) {
   throw std::runtime_error("Texture '" + name + "' not found and no default texture is set");
 }
 
-bool TextureCache::set_default(const std::string& name) {
+auto TextureCache::set_default(const std::string& name) -> bool {
   if (!has_texture(name)) {
     return false;
   }
@@ -51,7 +50,7 @@ bool TextureCache::set_default(const std::string& name) {
 TextureCache::~TextureCache() {
   for (auto& pair : _textures) {
     std::cerr << "Unloading Texture\n";
-    /* TODO: Is this okay? */
+    /* TODO: FIX THIS */
     // UnloadTexture(pair.second);
   }
   _textures.clear();

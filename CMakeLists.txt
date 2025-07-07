@@ -74,6 +74,12 @@ FetchContent_Declare(
     GIT_TAG v3.12.0
 )
 
+FetchContent_Declare(
+    xoshiro_cpp
+    GIT_REPOSITORY https://github.com/Reputeless/Xoshiro-cpp.git
+    GIT_TAG master
+)
+
 # Disable oneTBB tests and examples to avoid build issues
 set(TBB_TEST OFF CACHE BOOL "" FORCE)
 set(TBB_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -87,6 +93,7 @@ FetchContent_MakeAvailable(ImPlot)
 FetchContent_MakeAvailable(rlImGui)
 FetchContent_MakeAvailable(oneTBB)
 FetchContent_MakeAvailable(nlohmann_json)
+FetchContent_MakeAvailable(xoshiro_cpp)
 
 # Grab the headers and sources for IMGUI
 file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*.cpp")
@@ -134,6 +141,7 @@ set(CXX_SOURCES
     src/input.cpp
     src/world.cpp
     src/ant.cpp
+    src/ant_renderer.cpp
     src/population.cpp
     src/resources.cpp
     src/neuron.cpp
@@ -163,6 +171,7 @@ target_include_directories(neural_ants_lib PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${imgui_SOURCE_DIR}
     ${rlimgui_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Create main executable
@@ -173,6 +182,7 @@ target_include_directories(neural_ants PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/fmt_cxx-src/include
     ${implot_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Test configuration
@@ -182,7 +192,7 @@ enable_testing()
 file(GLOB_RECURSE UNIT_TEST_SOURCES "tests/unit/*.cpp")
 
 # Create unit test executable
-add_executable(neural_ants_unit_tests ${UNIT_TEST_SOURCES})
+add_executable(neural_ants_unit_tests ${UNIT_TEST_SOURCES} ${BENCHMARK_HELPER_SOURCES})
 
 # Link unit test executable with Catch2
 target_link_libraries(neural_ants_unit_tests PRIVATE
@@ -204,6 +214,7 @@ target_include_directories(neural_ants_unit_tests PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
     ${implot_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Register unit tests with CTest
@@ -213,9 +224,10 @@ catch_discover_tests(neural_ants_unit_tests)
 
 # Benchmark configuration
 file(GLOB_RECURSE BENCHMARK_SOURCES "tests/benchmark/*.cpp")
+file(GLOB_RECURSE BENCHMARK_HELPER_SOURCES "src/tests/helpers/*.cpp")
 
 # Create benchmark executable
-add_executable(neural_ants_benchmarks ${BENCHMARK_SOURCES})
+add_executable(neural_ants_benchmarks ${BENCHMARK_SOURCES} ${BENCHMARK_HELPER_SOURCES})
 
 # Add fast-math for benchmarks (optimization already handled globally)
 target_compile_options(neural_ants_benchmarks PRIVATE
@@ -242,6 +254,7 @@ target_include_directories(neural_ants_benchmarks PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/raylib-src/src
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/catch2-src/src
     ${implot_SOURCE_DIR}
+    ${xoshiro_cpp_SOURCE_DIR}
 )
 
 # Register benchmarks with CTest

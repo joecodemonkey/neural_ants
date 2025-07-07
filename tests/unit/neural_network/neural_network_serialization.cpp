@@ -26,7 +26,6 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     REQUIRE(json.contains("hidden_layer_count"));
     REQUIRE(json.contains("hidden_layer_neuron_count"));
     REQUIRE(json.contains("output_neuron_count"));
-    REQUIRE(json.contains("threaded"));
     REQUIRE(json.contains("validated"));
     REQUIRE(json.contains("ready"));
     REQUIRE(json.contains("input_values"));
@@ -39,7 +38,6 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     REQUIRE(json["hidden_layer_count"] == 3);
     REQUIRE(json["hidden_layer_neuron_count"] == 50);
     REQUIRE(json["output_neuron_count"] == 2);
-    REQUIRE(json["threaded"] == false);
     REQUIRE(json["validated"] == true);
     REQUIRE(json["ready"] == true);
 
@@ -61,7 +59,6 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
       for (size_t j = 0; j < 50; ++j) {
         REQUIRE(json["hidden_layers"][i][j].contains("weights"));
         REQUIRE(json["hidden_layers"][i][j].contains("bias"));
-        REQUIRE(json["hidden_layers"][i][j].contains("threaded"));
       }
     }
 
@@ -70,7 +67,6 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     for (size_t i = 0; i < 2; ++i) {
       REQUIRE(json["output_layer"][i].contains("weights"));
       REQUIRE(json["output_layer"][i].contains("bias"));
-      REQUIRE(json["output_layer"][i].contains("threaded"));
     }
   }
 
@@ -82,7 +78,6 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     network.set_hidden_layer_count(2);
     network.set_hidden_layer_neuron_count(20);
     network.set_output_neuron_count(5);
-    network.enable_threads();
 
     // Set input values
     NeuralNetwork::ValueVector inputs = {
@@ -102,7 +97,6 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     REQUIRE(json["hidden_layer_count"] == 2);
     REQUIRE(json["hidden_layer_neuron_count"] == 20);
     REQUIRE(json["output_neuron_count"] == 5);
-    REQUIRE(json["threaded"] == true);
 
     // Test input values
     REQUIRE(json["input_values"].size() == 10);
@@ -129,7 +123,6 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     original.set_hidden_layer_count(1);
     original.set_hidden_layer_neuron_count(16);
     original.set_output_neuron_count(4);
-    original.enable_threads();
 
     // Set input values and randomize
     NeuralNetwork::ValueVector inputs = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f};

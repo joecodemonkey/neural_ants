@@ -1,7 +1,6 @@
 #include "neural_network.hpp"
 
 #include <algorithm>
-#include <execution>
 #include <random>
 #include <stdexcept>
 
@@ -62,7 +61,7 @@ auto NeuralNetwork::operator=(NeuralNetwork&& other) noexcept -> NeuralNetwork& 
 // Equality operator
 auto NeuralNetwork::operator==(const NeuralNetwork& other) const -> bool {
   return _hiddenLayerNeuronCount == other._hiddenLayerNeuronCount &&
-         _validated == other._validated && _threaded == other._threaded && _ready == other._ready &&
+         _validated == other._validated && _ready == other._ready &&
          _inputsValues == other._inputsValues && _outputValues == other._outputValues &&
          _hiddenLayers == other._hiddenLayers && _outputLayer == other._outputLayer;
 }
@@ -163,52 +162,19 @@ auto NeuralNetwork::get_hidden_layer_neuron_count() const -> size_t {
 }
 
 auto NeuralNetwork::randomize() -> void {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<Neuron::Value> dist(-1.0f, 1.0f);
-
   // Randomize hidden layers
   for (auto& layer : _hiddenLayers) {
     for (auto& neuron : layer) {
-      neuron.randomize();
+      neuron.randomize(_randomGenerator);
     }
   }
 
   // Randomize output layer
   for (auto& neuron : _outputLayer) {
-    neuron.randomize();
+    neuron.randomize(_randomGenerator);
   }
 
   _ready = false;
-}
-
-auto NeuralNetwork::get_hidden_layer_values(size_t layerIndex) -> ValueVector {
-  auto& layer = _hiddenLayers.at(layerIndex);
-  ValueVector valueVector;
-  valueVector.reserve(_hiddenLayerNeuronCount);
-
-  ValueVector inputs;
-
-  if (layerIndex == 0) {
-    inputs = get_input_values();
-  } else {
-    inputs = get_hidden_layer_values(layerIndex - 1);
-  }
-
-  if (_threaded) {
-    std::for_each(std::execution::par, std::begin(layer), std::end(layer), [&](Neuron& neuron) {
-      neuron.set_inputs(inputs);
-    });
-  } else {
-    std::for_each(
-        std::begin(layer), std::end(layer), [&](Neuron& neuron) { neuron.set_inputs(inputs); });
-  }
-
-  std::for_each(std::execution::seq, std::begin(layer), std::end(layer), [&](Neuron& neuron) {
-    valueVector.push_back(neuron.get_output());
-  });
-
-  return valueVector;
 }
 
 auto NeuralNetwork::compute() -> void {
@@ -217,19 +183,28 @@ auto NeuralNetwork::compute() -> void {
   }
 
   ValueVector inputs;
+  _outputValues.clear();
+  _outputValues.resize(_outputLayer.size());
 
   if (_hiddenLayers.empty()) {
     inputs = get_input_values();
   } else {
-    inputs = get_hidden_layer_values(_hiddenLayers.size() - 1);
+    inputs = get_input_values();
+    ValueVector outputs;
+    outputs.reserve(_hiddenLayerNeuronCount);
+    for (size_t layerIndex = 0; layerIndex < _hiddenLayers.size(); ++layerIndex) {
+      outputs.clear();
+      for (size_t neuronIndex = 0; neuronIndex < _hiddenLayerNeuronCount; ++neuronIndex) {
+        _hiddenLayers[layerIndex][neuronIndex].set_inputs(inputs);
+        outputs.push_back(_hiddenLayers[layerIndex][neuronIndex].get_output());
+      }
+      inputs = outputs;
+    }
   }
 
-  _outputValues.clear();
-  _outputValues.reserve(_outputLayer.size());
-
-  for (Neuron& neuron : _outputLayer) {
-    neuron.set_inputs(inputs);
-    _outputValues.push_back(neuron.get_output());
+  for (size_t neuronIndex = 0; neuronIndex < _outputLayer.size(); ++neuronIndex) {
+    _outputLayer[neuronIndex].set_inputs(inputs);
+    _outputValues[neuronIndex] = _outputLayer[neuronIndex].get_output();
   }
   _ready = true;
 }
@@ -309,38 +284,6 @@ auto NeuralNetwork::set_hidden_layer(size_t idx, const Layer& layer) -> void {
   _ready = false;
 }
 
-auto NeuralNetwork::enable_threads() -> void {
-  _threaded = true;
-
-  // Enable threading for all neurons in hidden layers
-  for (auto& layer : _hiddenLayers) {
-    for (auto& neuron : layer) {
-      neuron.enable_threads();
-    }
-  }
-
-  // Enable threading for output layer neurons
-  for (auto& neuron : _outputLayer) {
-    neuron.enable_threads();
-  }
-}
-
-auto NeuralNetwork::disable_threads() -> void {
-  _threaded = false;
-
-  // Disable threading for all neurons in hidden layers
-  for (auto& layer : _hiddenLayers) {
-    for (auto& neuron : layer) {
-      neuron.disable_threads();
-    }
-  }
-
-  // Disable threading for output layer neurons
-  for (auto& neuron : _outputLayer) {
-    neuron.disable_threads();
-  }
-}
-
 auto NeuralNetwork::to_json() const -> nlohmann::json {
   nlohmann::json json;
 
@@ -348,7 +291,6 @@ auto NeuralNetwork::to_json() const -> nlohmann::json {
   json["hidden_layer_count"] = _hiddenLayers.size();
   json["hidden_layer_neuron_count"] = _hiddenLayerNeuronCount;
   json["output_neuron_count"] = _outputLayer.size();
-  json["threaded"] = _threaded;
   json["validated"] = _validated;
   json["ready"] = _ready;
 
@@ -376,7 +318,6 @@ auto NeuralNetwork::to_json() const -> nlohmann::json {
 
 NeuralNetwork::NeuralNetwork(const nlohmann::json& json) {
   _hiddenLayerNeuronCount = json.at("hidden_layer_neuron_count").get<size_t>();
-  _threaded = json.at("threaded").get<bool>();
   _validated = json.at("validated").get<bool>();
   _ready = json.at("ready").get<bool>();
 

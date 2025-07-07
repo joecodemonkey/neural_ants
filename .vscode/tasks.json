@@ -15,6 +15,24 @@
             "problemMatcher": []
         },
         {
+            "label": "CMake Configure Debug",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-B",
+                "build",
+                "-S",
+                "."
+            ],
+            "group": "build",
+            "options": {
+                "env": {
+                    "NEURAL_ANTS_DEBUG": "1"
+                }
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "CMake Build",
             "type": "shell",
             "command": "cmake",
@@ -27,6 +45,24 @@
             "group": "build",
             "dependsOn": [
                 "CMake Configure"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CMake Build Debug",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build",
+                "-j",
+                "$(nproc)"
+            ],
+            "group": "build",
+            "dependsOn": [
+                "CMake Configure Debug"
             ],
             "problemMatcher": [
                 "$gcc"

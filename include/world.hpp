@@ -1,29 +1,25 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
+#include <raylib.h>
 
-#include "population.hpp"
-#include "raylib.h"
-#include "resources.hpp"
+#include <nlohmann/json.hpp>
+#include <population.hpp>
+#include <resources.hpp>
+#include <texture_cache.hpp>
 
 class World {
  public:
   World();
   World(const nlohmann::json& j);
 
-  // Copy constructor
   World(const World& other);
 
-  // Move constructor
   World(World&& other) noexcept;
 
-  // Copy assignment operator
   World& operator=(const World& other);
 
-  // Move assignment operator
   World& operator=(World&& other) noexcept;
 
-  // Equality operator
   bool operator==(const World& other) const;
 
   [[nodiscard]] auto get_population() const -> const Population&;
@@ -47,6 +43,9 @@ class World {
 
   auto to_json() const -> nlohmann::json;
 
+  auto set_texture_cache(std::shared_ptr<TextureCache> cache) -> void;
+  auto get_texture_cache() -> std::shared_ptr<TextureCache>&;
+
  protected:
   const Rectangle DEFAULT_BOUNDS = {0.0f, 0.0f, 1000.0f, 1000.0f};
   const float DEFAULT_SPAWN_MARGIN = 0.20F;
@@ -57,5 +56,6 @@ class World {
   Population _population;
   Rectangle _bounds;
   Rectangle _spawnBounds;
+  std::shared_ptr<TextureCache> _textureCache;
   float _spawnMargin;
 };
