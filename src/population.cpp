@@ -2,6 +2,8 @@
 
 #include <raylib.h>
 #include <raymath.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 #include <algorithm>
 #include <ant.hpp>
@@ -64,7 +66,6 @@ auto Population::get_size() const -> int {
   return _size;
 }
 
-
 auto Population::reproduce() -> void {
   while (_ants.size() < _size) {
     _ants.push_back(create_ant());
@@ -105,23 +106,31 @@ auto Population::create_ant() -> Ant {
 }
 
 auto Population::update(float time) -> void {
-  for (Ant& ant : _ants) {
-    if (_world.out_of_bounds(ant.get_position())) {
-      ant.set_dead(true);
-    }
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, _ants.size()),
+                    [&](const tbb::blocked_range<size_t>& range) {
+                      for (size_t i = range.begin(); i != range.end(); ++i) {
+                        Ant& ant = _ants[i];
 
+                        if (_world.out_of_bounds(ant.get_position())) {
+                          ant.set_dead(true);
+                        }
+
+                        if (!ant.is_dead()) {
+                          ant.update(time);
+                        }
+                      }
+                    });
+
+  for (Ant& ant : _ants) {
     if (ant.is_dead()) {
       auto genome = ant.get_genome();
       genome.set_fitness(ant.get_life_span());
       _fitnessData.add_data(genome.get_fitness());
       _pangenome.push_back(genome);
       ant = create_ant();
-    } else {
-      ant.update(time);
     }
   }
 
-  // ensure population size is maintained
   reproduce();
 }
 
