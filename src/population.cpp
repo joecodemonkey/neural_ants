@@ -92,13 +92,14 @@ auto Population::create_ant() -> Ant {
     _pangenome.pop_back();  // Remove second worst
 
     Genome child = parentA.breed_with(parentB);
+    child.set_fitness(0.0F);
     Ant ant(_world, child);
     ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
     return ant;
   }
   Genome genome;
-  genome.set_fitness(0.0F);
   genome.randomize();
+  genome.set_fitness(0.0F);
   Ant ant(_world, genome);
   ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
   return ant;
@@ -122,11 +123,22 @@ auto Population::update(float time) -> void {
 
   for (Ant& ant : _ants) {
     if (ant.is_dead()) {
-      auto genome = ant.get_genome();
-      genome.set_fitness(ant.get_life_span());
-      _fitnessData.add_data(genome.get_fitness());
-      _pangenome.push_back(genome);
-      ant = create_ant();
+      // Add current life span to cumulative total
+      ant.set_cumulative_life_span(ant.get_cumulative_life_span() + ant.get_life_span());
+
+      if (ant.get_remaining_lives() > 0) {
+        // Ant has remaining lives - respawn for new life
+        ant.set_remaining_lives(ant.get_remaining_lives() - 1);
+        ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
+      } else {
+        // No remaining lives - calculate mean fitness and create new ant
+        double mean_life_span = ant.get_cumulative_life_span() / Ant::ANT_LIVES;
+        auto genome = ant.get_genome();
+        genome.set_fitness(mean_life_span);
+        _fitnessData.add_data(genome.get_fitness());
+        _pangenome.push_back(genome);
+        ant = create_ant();
+      }
     }
   }
 

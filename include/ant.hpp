@@ -12,6 +12,7 @@ class World;
 class Ant {
  public:
   static constexpr float MAX_VELOCITY = 30.0f;
+  static constexpr int ANT_LIVES = 10;
 
   Ant(World& world, const Genome& genome);
   Ant(const nlohmann::json& json, World& world);
@@ -23,7 +24,6 @@ class Ant {
   Ant(const Ant& other);
 
   ~Ant();
-
 
   auto update(float time) -> void;
 
@@ -40,6 +40,12 @@ class Ant {
 
   [[nodiscard]] auto get_life_span() const -> float;
   auto set_life_span(float life_span) -> void;
+
+  [[nodiscard]] auto get_remaining_lives() const -> int;
+  auto set_remaining_lives(int remaining_lives) -> void;
+
+  [[nodiscard]] auto get_cumulative_life_span() const -> double;
+  auto set_cumulative_life_span(double cumulative_life_span) -> void;
 
   [[nodiscard]] auto get_position() const -> const Vector2&;
   auto set_position(const Vector2& position) -> void;
@@ -80,7 +86,9 @@ class Ant {
   float _textureWidth = 16.0F;
   float _textureHeight = 16.0F;
   float _energy = STARTING_ENERGY;
-  float _lifeSpan = 0.0F;  // time in seconds ant has been alive (measure of fitness)
+  float _lifeSpan = 0.0F;            // time in seconds ant has been alive (measure of fitness)
+  int _remainingLives = ANT_LIVES;   // number of lives remaining
+  double _cumulativeLifeSpan = 0.0;  // sum of all life spans from all lives
 
   // Update methods
   auto update_energy(float time) -> void;
