@@ -113,9 +113,7 @@ TEST_CASE("Population reproduction logic", "[population]") {
 
     Ant ant = population.create_ant();
 
-    // Should have removed 4 genomes (2 parents taken, 2 least fit removed)
-    // Child is not added back to pangenome, so net reduction of 4
-    REQUIRE(population._pangenome.size() == initial_size - 4);
+    REQUIRE(population._pangenome.size() == initial_size - 2);
     REQUIRE_FALSE(ant.is_dead());
   }
 
@@ -141,8 +139,7 @@ TEST_CASE("Population reproduction logic", "[population]") {
 
     Ant ant = population.create_ant();
 
-    // Verify ant was created and pangenome was modified
     REQUIRE_FALSE(ant.is_dead());
-    REQUIRE(population._pangenome.size() == initial_size - 4);
+    REQUIRE(population._pangenome.size() == initial_size - 2);
   }
 }

@@ -83,15 +83,14 @@ auto Population::create_ant() -> Ant {
       return a.get_fitness() > b.get_fitness();
     });
 
-    Genome parentA = _pangenome.back();
-    _pangenome.pop_back();
-    Genome parentB = _pangenome.back();
-    _pangenome.pop_back();
-    std::sort(_pangenome.begin(), _pangenome.end(), [](const Genome& a, const Genome& b) {
-      return a.get_fitness() > b.get_fitness();
-    });
-    _pangenome.pop_back();  // drop 1 less fit
-    _pangenome.pop_back();  // drop 1 less fit
+    // Select BEST genomes as parents (front of sorted vector, not back!)
+    Genome parentA = _pangenome[0];  // Best genome
+    Genome parentB = _pangenome[1];  // Second best genome
+
+    // Remove the worst genomes to keep pangenome size manageable
+    _pangenome.pop_back();  // Remove worst
+    _pangenome.pop_back();  // Remove second worst
+
     Genome child = parentA.breed_with(parentB);
     Ant ant(_world, child);
     ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
