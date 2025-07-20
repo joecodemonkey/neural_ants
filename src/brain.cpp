@@ -29,10 +29,28 @@ auto Brain::update(float time, Vector2 position) -> Vector2 {
   // Only update the network inputs if the surroundings have changed
   if (_near.changed() || _far.changed()) {
     const auto& near = _near.get_encoded_surroundings();
-
     const auto& far = _far.get_encoded_surroundings();
-    _surroundings_encoded.resize(_near.get_encoded_surroundings().size() +
-                                 _far.get_encoded_surroundings().size());
+
+    // Sanity checks for corrupted sizes
+    size_t nearSize = near.size();
+    size_t farSize = far.size();
+    const size_t MAX_REASONABLE_SIZE = 1000000;  // 1M elements max
+    if (nearSize > MAX_REASONABLE_SIZE) {
+      throw std::runtime_error("Near surroundings size is suspiciously large: " +
+                               std::to_string(nearSize) + " (expected ~25)");
+    }
+    if (farSize > MAX_REASONABLE_SIZE) {
+      throw std::runtime_error("Far surroundings size is suspiciously large: " +
+                               std::to_string(farSize) + " (expected ~25)");
+    }
+
+    // Check for overflow in size addition
+    if (nearSize > SIZE_MAX - farSize) {
+      throw std::overflow_error("Combined surroundings size would overflow");
+    }
+
+    size_t totalSize = nearSize + farSize;
+    _surroundings_encoded.resize(totalSize);
     std::ranges::copy(near, _surroundings_encoded.begin());
     std::ranges::copy(far, _surroundings_encoded.begin() + near.size());
 
@@ -61,12 +79,12 @@ auto Brain::update_surroundings(Surroundings& surr, const size_t tile_size, Vect
   rect.width = tile_size;
   rect.x = position.x;
   rect.y = position.y;
-  for (float x = 0; x < surr.get_width(); ++x) {
-    float x_rel = x - center;
+  for (size_t x = 0; x < surr.get_width(); ++x) {
+    float x_rel = static_cast<float>(x) - static_cast<float>(center);
 
-    for (float y = 0; y < surr.get_height(); ++y) {
+    for (size_t y = 0; y < surr.get_height(); ++y) {
       // calculate the aabb for this tile
-      float y_rel = y - center;
+      float y_rel = static_cast<float>(y) - static_cast<float>(center);
       rect.x = position.x + x_rel * tile_size;
       rect.y = position.y + y_rel * tile_size;
 

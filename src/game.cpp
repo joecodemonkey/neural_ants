@@ -12,8 +12,8 @@
 
 Game::Game() : _ui(*this), _input(*this), _updateSpeed(1LL) {
   _camera = {.offset = Vector2Zero(), .target = Vector2Zero(), .rotation = 0.0F, .zoom = 1.0f};
-  _world.get_population().set_size(50);
-  _world.get_resources().set_food_count(100);
+  _world.get_population().set_size(100);
+  _world.get_resources().set_food_count(200);
 }
 
 auto Game::run() -> void {

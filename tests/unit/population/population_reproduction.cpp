@@ -1,6 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "genome.hpp"
+#include "pangenome.hpp"
 #include "population.hpp"
 #include "world.hpp"
 
@@ -13,7 +14,6 @@ class PopulationTestAccess : public Population {
   using Population::_pangenome;
   using Population::create_ant;
   using Population::reproduce;
-  using Population::TARGET_PANGENOME_SIZE;
 };
 
 TEST_CASE("Population reproduction logic", "[population]") {
@@ -83,14 +83,14 @@ TEST_CASE("Population reproduction logic", "[population]") {
   SECTION("Create ant with small pangenome uses random genome") {
     PopulationTestAccess population(world);
 
-    // Add some genomes but stay under TARGET_PANGENOME_SIZE
+    // Add some genomes but stay under MAX_PANGENOME_SIZE
     for (int i = 0; i < 10; ++i) {
       Genome genome = create_minimal_genome();
       genome.set_fitness(static_cast<double>(i));
-      population._pangenome.push_back(genome);
+      population._pangenome.add(std::move(genome));
     }
 
-    REQUIRE(population._pangenome.size() < PopulationTestAccess::TARGET_PANGENOME_SIZE);
+    REQUIRE(population._pangenome.size() < Pangenome::MAX_PANGENOME_SIZE);
 
     Ant ant = population.create_ant();
 
@@ -100,20 +100,19 @@ TEST_CASE("Population reproduction logic", "[population]") {
   SECTION("Create ant with large pangenome uses breeding") {
     PopulationTestAccess population(world);
 
-    // Fill pangenome beyond TARGET_PANGENOME_SIZE
-    for (size_t i = 0; i <= PopulationTestAccess::TARGET_PANGENOME_SIZE; ++i) {
+    // Fill pangenome to MAX_PANGENOME_SIZE to trigger breeding
+    for (size_t i = 0; i < Pangenome::MAX_PANGENOME_SIZE; ++i) {
       Genome genome = create_minimal_genome();
       genome.set_fitness(static_cast<double>(i));
-      population._pangenome.push_back(genome);
+      population._pangenome.add(std::move(genome));
     }
 
-    REQUIRE(population._pangenome.size() > PopulationTestAccess::TARGET_PANGENOME_SIZE);
-
-    size_t initial_size = population._pangenome.size();
+    REQUIRE(population._pangenome.size() == Pangenome::MAX_PANGENOME_SIZE);
 
     Ant ant = population.create_ant();
 
-    REQUIRE(population._pangenome.size() == initial_size - 2);
+    // The pangenome should still be at MAX_PANGENOME_SIZE (it doesn't shrink during breeding)
+    REQUIRE(population._pangenome.size() == Pangenome::MAX_PANGENOME_SIZE);
     REQUIRE_FALSE(ant.is_dead());
   }
 
@@ -125,21 +124,21 @@ TEST_CASE("Population reproduction logic", "[population]") {
     for (double fitness : fitness_values) {
       Genome genome = create_minimal_genome();
       genome.set_fitness(fitness);
-      population._pangenome.push_back(genome);
+      population._pangenome.add(std::move(genome));
     }
 
-    // Add more genomes to exceed threshold
-    for (size_t i = 0; i <= PopulationTestAccess::TARGET_PANGENOME_SIZE; ++i) {
+    // Add more genomes to reach threshold
+    for (size_t i = fitness_values.size(); i < Pangenome::MAX_PANGENOME_SIZE; ++i) {
       Genome genome = create_minimal_genome();
       genome.set_fitness(0.1);  // Low fitness
-      population._pangenome.push_back(genome);
+      population._pangenome.add(std::move(genome));
     }
 
-    size_t initial_size = population._pangenome.size();
+    REQUIRE(population._pangenome.size() == Pangenome::MAX_PANGENOME_SIZE);
 
     Ant ant = population.create_ant();
 
     REQUIRE_FALSE(ant.is_dead());
-    REQUIRE(population._pangenome.size() == initial_size - 2);
+    REQUIRE(population._pangenome.size() == Pangenome::MAX_PANGENOME_SIZE);
   }
 }

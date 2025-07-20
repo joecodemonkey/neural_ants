@@ -12,6 +12,8 @@
 #include <vector>
 #include <world.hpp>
 
+#include "pangenome.hpp"
+
 Population::Population(World& world) : _world(world), _size(DEFAULT_POPULATION_SIZE) {}
 
 Population::Population(const nlohmann::json& j, World& world) : _world(world) {
@@ -19,12 +21,10 @@ Population::Population(const nlohmann::json& j, World& world) : _world(world) {
   _ants.clear();
   for (const auto& ant_json : j.at("ants")) {
     auto ant = Ant(ant_json, world);
+    _ants.push_back(std::move(ant));
   }
 
-  _pangenome.clear();
-  for (const auto& genome_json : j.at("pangenome")) {
-    _pangenome.push_back(Genome(genome_json));
-  }
+  _pangenome = Pangenome(j.at("pangenome"));
 }
 
 Population::Population(const Population& other)
@@ -78,29 +78,24 @@ auto Population::reproduce() -> void {
 }
 
 auto Population::create_ant() -> Ant {
-  if (_pangenome.size() > TARGET_PANGENOME_SIZE) {
-    std::sort(_pangenome.begin(), _pangenome.end(), [](const Genome& a, const Genome& b) {
-      return a.get_fitness() > b.get_fitness();
-    });
-
-    // Select BEST genomes as parents (front of sorted vector, not back!)
-    Genome parentA = _pangenome[0];  // Best genome
-    Genome parentB = _pangenome[1];  // Second best genome
-
-    // Remove the worst genomes to keep pangenome size manageable
-    _pangenome.pop_back();  // Remove worst
-    _pangenome.pop_back();  // Remove second worst
-
-    Genome child = parentA.breed_with(parentB);
-    child.set_fitness(0.0F);
-    Ant ant(_world, child);
+  if (_pangenome.size() < Pangenome::MAX_PANGENOME_SIZE) {
+    // Not enough genomes for breeding - create random ant
+    Genome genome;
+    genome.randomize();
+    genome.set_fitness(0.0F);
+    Ant ant(_world, genome);
     ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
     return ant;
   }
-  Genome genome;
-  genome.randomize();
-  genome.set_fitness(0.0F);
-  Ant ant(_world, genome);
+
+  // Use structured breeding algorithm
+  const Genome& parentA = _pangenome.sample_top_cycle();  // Top 20% round-robin
+  const Genome& parentB = _pangenome.sample_random();     // Any genome
+  Genome parentACopy = parentA;  // Copy for breeding (breed_with is not const)
+  Genome child = parentACopy.breed_with(parentB);
+  child.set_fitness(0.0F);  // Reset fitness for new ant
+
+  Ant ant(_world, child);
   ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
   return ant;
 }
@@ -111,9 +106,9 @@ auto Population::update(float time) -> void {
                       for (size_t i = range.begin(); i != range.end(); ++i) {
                         Ant& ant = _ants[i];
 
-                        if (_world.out_of_bounds(ant.get_position())) {
-                          ant.set_dead(true);
-                        }
+    //                    if (_world.out_of_bounds(ant.get_position())) {
+  //                        ant.set_dead(true);
+//                        }
 
                         if (!ant.is_dead()) {
                           ant.update(time);
@@ -136,7 +131,7 @@ auto Population::update(float time) -> void {
         auto genome = ant.get_genome();
         genome.set_fitness(mean_life_span);
         _fitnessData.add_data(genome.get_fitness());
-        _pangenome.push_back(genome);
+        _pangenome.add(std::move(genome));
         ant = create_ant();
       }
     }
@@ -166,11 +161,7 @@ auto Population::to_json() const -> nlohmann::json {
   }
   j["ants"] = ants_array;
 
-  nlohmann::json pangenome_array = nlohmann::json::array();
-  for (const auto& genome : _pangenome) {
-    pangenome_array.push_back(genome.to_json());
-  }
-  j["pangenome"] = pangenome_array;
+  j["pangenome"] = _pangenome.to_json();
 
   return j;
 }

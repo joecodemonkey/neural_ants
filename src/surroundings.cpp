@@ -3,6 +3,10 @@
 #include <stdexcept>
 
 auto Surroundings::set_dimensions(size_t width, size_t height) -> void {
+  if (width > 0 && height > SIZE_MAX / width) {
+    throw std::overflow_error("Width * height would overflow");
+  }
+
   // Resize the 2D vector to the specified dimensions
   _surroundingsType.resize(height);
   for (auto& row : _surroundingsType) {
@@ -17,11 +21,13 @@ auto Surroundings::set_dimensions(size_t width, size_t height) -> void {
 }
 
 auto Surroundings::set_type(size_t x, size_t y, Type type) -> void {
-  // Check bounds
-  if (y < 0 || y >= _surroundingsType.size() || x < 0 || x >= _surroundingsType[0].size()) {
+  // Check bounds (size_t is unsigned, so no need to check < 0)
+  if (_surroundingsType.empty() || y >= _surroundingsType.size() || _surroundingsType[0].empty() ||
+      x >= _surroundingsType[0].size()) {
     throw std::out_of_range("Index out of range");
   }
-  bool changed = (_surroundingsType[x][y] != type);
+
+  bool changed = (_surroundingsType[y][x] != type);
   if (!changed) {
     return;
   }
@@ -33,7 +39,18 @@ auto Surroundings::set_type(size_t x, size_t y, Type type) -> void {
 
   // Update the encoded vector with this single change
   // to avoid re-encoding the entire vector
-  _surroundingsEncoded[y * get_width() + x] = encode_type(type);
+  // Add bounds check to prevent overflow in multiplication
+  size_t width = get_width();
+  if (y > SIZE_MAX / width || y * width > SIZE_MAX - x) {
+    throw std::overflow_error("Index calculation would overflow");
+  }
+
+  size_t index = y * width + x;
+  if (index >= _surroundingsEncoded.size()) {
+    throw std::out_of_range("Calculated index out of range");
+  }
+
+  _surroundingsEncoded[index] = encode_type(type);
 }
 
 auto Surroundings::get_dimensions() const -> Vector2 {
@@ -45,8 +62,15 @@ auto Surroundings::get_dimensions() const -> Vector2 {
 }
 
 auto Surroundings::update_encoded_surroundings() -> void {
+  // Check for overflow in width * height calculation
+  size_t width = get_width();
+  size_t height = get_height();
+  if (width > 0 && height > SIZE_MAX / width) {
+    throw std::overflow_error("Width * height would overflow in update_encoded_surroundings");
+  }
+
   // Resize the encoded vector to match the total number of cells
-  _surroundingsEncoded.resize(get_width() * get_height());
+  _surroundingsEncoded.resize(width * height);
 
   // Encode the surroundings
   size_t index = 0;
