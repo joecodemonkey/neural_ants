@@ -29,6 +29,10 @@ class Genome {
   auto get_fitness() const -> double;
   auto set_fitness(double fitness) -> void;
 
+  auto get_children_count() const -> size_t;
+  auto set_children_count(size_t count) -> void;
+  auto increment_children_count() -> void;
+
   auto to_json() const -> nlohmann::json;
 
  protected:
@@ -44,5 +48,6 @@ class Genome {
   NeuralNetwork _network;
   double _mutationRate = 0.1F;
   double _fitness = 0.0F;
+  size_t _childrenCount = 0;
   RandomGenerator _rng;
 };

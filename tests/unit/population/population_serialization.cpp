@@ -18,7 +18,7 @@ TEST_CASE("Population JSON serialization", "[population]") {
     REQUIRE(j.contains("ants"));
     REQUIRE(j["ants"].is_array());
     REQUIRE(j.contains("pangenome"));
-    REQUIRE(j["pangenome"].is_array());
+    REQUIRE(j["pangenome"].is_object());
   }
 
   SECTION("JSON round trip with size") {
@@ -50,14 +50,16 @@ TEST_CASE("Population JSON serialization", "[population]") {
     REQUIRE(j["size"] == 0);
     REQUIRE(j["ants"].is_array());
     REQUIRE(j["ants"].empty());
-    REQUIRE(j["pangenome"].is_array());
+    REQUIRE(j["pangenome"].is_object());
   }
 
   SECTION("JSON constructor with valid data") {
     nlohmann::json j;
     j["size"] = 5;
     j["ants"] = nlohmann::json::array();
-    j["pangenome"] = nlohmann::json::array();
+    j["pangenome"] = nlohmann::json::object();
+    j["pangenome"]["genomes"] = nlohmann::json::array();
+    j["pangenome"]["top_cycle_index"] = 0;
 
     REQUIRE_NOTHROW(Population(j, world));
 
@@ -77,7 +79,9 @@ TEST_CASE("Population JSON serialization", "[population]") {
     nlohmann::json j;
     j["size"] = "invalid";  // Should be int
     j["ants"] = nlohmann::json::array();
-    j["pangenome"] = nlohmann::json::array();
+    j["pangenome"] = nlohmann::json::object();
+    j["pangenome"]["genomes"] = nlohmann::json::array();
+    j["pangenome"]["top_cycle_index"] = 0;
 
     REQUIRE_THROWS(Population(j, world));
   }

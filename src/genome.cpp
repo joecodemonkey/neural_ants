@@ -4,23 +4,29 @@
 #include "neuron.hpp"
 
 Genome::Genome(const Genome& other)
-    : _network(other._network), _mutationRate(other._mutationRate), _fitness(other._fitness) {}
+    : _network(other._network),
+      _mutationRate(other._mutationRate),
+      _fitness(other._fitness),
+      _childrenCount(other._childrenCount) {}
 
 Genome::Genome(Genome&& other) noexcept
     : _network(std::move(other._network)),
       _mutationRate(other._mutationRate),
-      _fitness(other._fitness) {}
+      _fitness(other._fitness),
+      _childrenCount(other._childrenCount) {}
 
 Genome::Genome(const nlohmann::json& json)
     : _network(json.at("network")),
       _mutationRate(json.at("mutation_rate").get<double>()),
-      _fitness(json.at("fitness").get<double>()) {}
+      _fitness(json.at("fitness").get<double>()),
+      _childrenCount(json.at("children_count").get<size_t>()) {}
 
 auto Genome::operator=(const Genome& other) -> Genome& {
   if (this != &other) {
     _network = other._network;
     _mutationRate = other._mutationRate;
     _fitness = other._fitness;
+    _childrenCount = other._childrenCount;
   }
   return *this;
 }
@@ -30,13 +36,14 @@ auto Genome::operator=(Genome&& other) noexcept -> Genome& {
     _network = std::move(other._network);
     _mutationRate = other._mutationRate;
     _fitness = other._fitness;
+    _childrenCount = other._childrenCount;
   }
   return *this;
 }
 
 auto Genome::operator==(const Genome& other) const -> bool {
   return _network == other._network && _mutationRate == other._mutationRate &&
-         _fitness == other._fitness;
+         _fitness == other._fitness && _childrenCount == other._childrenCount;
 }
 
 auto Genome::get_network() const -> const NeuralNetwork& {
@@ -137,10 +144,23 @@ auto Genome::set_fitness(double fitness) -> void {
   _fitness = fitness;
 }
 
+auto Genome::get_children_count() const -> size_t {
+  return _childrenCount;
+}
+
+auto Genome::set_children_count(size_t count) -> void {
+  _childrenCount = count;
+}
+
+auto Genome::increment_children_count() -> void {
+  _childrenCount++;
+}
+
 auto Genome::to_json() const -> nlohmann::json {
   nlohmann::json j;
   j["network"] = _network.to_json();
   j["mutation_rate"] = _mutationRate;
   j["fitness"] = _fitness;
+  j["children_count"] = _childrenCount;
   return j;
 }

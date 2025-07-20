@@ -2,7 +2,6 @@
 #include <chrono>
 #include <expected>
 #include <filesystem>
-#include <format>
 #include <fstream>
 #include <util/file.hpp>
 
@@ -32,7 +31,9 @@ auto Util::File::get_files_with_time(const std::string& directory, const std::st
   }
 }
 auto Util::File::get_time_string(const std::filesystem::file_time_type& time) -> std::string {
-  auto sysTime = std::chrono::clock_cast<std::chrono::system_clock>(time);
+  // Convert file_time to system_clock time using duration arithmetic
+  auto sysTime = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+      time - std::filesystem::file_time_type::clock::now() + std::chrono::system_clock::now());
 
   // Convert to time_t
   auto timeT = std::chrono::system_clock::to_time_t(sysTime);

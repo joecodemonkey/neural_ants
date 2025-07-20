@@ -40,7 +40,7 @@ auto AntRenderer::load_ant_texture() -> bool {
   if (!_textureCache) {
     return false;
   }
-  
+
   if (!_textureCache->has_texture("ant")) {
     return false;
   }
