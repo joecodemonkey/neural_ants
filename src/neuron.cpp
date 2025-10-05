@@ -106,7 +106,7 @@ Neuron::Neuron(const nlohmann::json& json) {
 
 auto Neuron::randomize(RandomGenerator& rng) -> void {
   for (auto& weight : _weights) {
-    weight = static_cast<Value>(rng.uniform(-1.0, 1.0));
+    weight = static_cast<Value>(rng.uniform(-3.0, 3.0));
   }
 
   _bias = static_cast<Value>(rng.uniform(-1.0, 1.0));
