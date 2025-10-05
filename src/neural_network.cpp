@@ -116,10 +116,6 @@ auto NeuralNetwork::get_hidden_layer(size_t idx) const -> const Layer& {
 }
 
 auto NeuralNetwork::get_hidden_layer_weight_count(size_t layerIndex) -> size_t {
-  if (layerIndex == 0) {
-    return _inputsValues.size();
-  }
-
   return _hiddenLayerNeuronCount;
 }
 
