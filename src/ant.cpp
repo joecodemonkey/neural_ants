@@ -12,7 +12,9 @@
 #include <world.hpp>
 
 Ant::Ant(World& world, const Genome& genome)
-    : _world(world), _brain(world, genome.get_network()), _genome(genome) {}
+    : _world(world), _brain(world, genome.get_network()), _genome(genome) {
+  update_radius();
+}
 
 auto Ant::operator=(const Ant& other) -> Ant& {
   if (this != &other) {
