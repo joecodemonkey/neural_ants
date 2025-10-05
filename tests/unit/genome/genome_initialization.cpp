@@ -13,10 +13,10 @@ TEST_CASE("Genome initialization", "[genome]") {
     REQUIRE(genome.get_fitness() == 0.0F);
 
     const auto& network = genome.get_network();
-    REQUIRE(network.get_input_count() == 50);                // Default input count
+    REQUIRE(network.get_input_count() == 100);                // Default input count
     REQUIRE(network.get_output_neuron_count() == 2);         // Default output count
     REQUIRE(network.get_hidden_layer_count() == 3);          // Default hidden layer count
-    REQUIRE(network.get_hidden_layer_neuron_count() == 50);  // Default neurons per layer
+    REQUIRE(network.get_hidden_layer_neuron_count() == 100);  // Default neurons per layer
   }
 
   SECTION("Copy constructor") {
@@ -49,10 +49,10 @@ TEST_CASE("Genome initialization", "[genome]") {
 
     // Verify neural network was moved
     const auto& moved_network = moved.get_network();
-    REQUIRE(moved_network.get_input_count() == 50);
+    REQUIRE(moved_network.get_input_count() == 100);
     REQUIRE(moved_network.get_output_neuron_count() == 2);
     REQUIRE(moved_network.get_hidden_layer_count() == 3);
-    REQUIRE(moved_network.get_hidden_layer_neuron_count() == 50);
+    REQUIRE(moved_network.get_hidden_layer_neuron_count() == 100);
   }
 
   SECTION("Randomize") {
@@ -61,9 +61,9 @@ TEST_CASE("Genome initialization", "[genome]") {
 
     // Verify neural network was randomized by checking its structure
     const auto& network = genome.get_network();
-    REQUIRE(network.get_input_count() == 50);
+    REQUIRE(network.get_input_count() == 100);
     REQUIRE(network.get_output_neuron_count() == 2);
     REQUIRE(network.get_hidden_layer_count() == 3);
-    REQUIRE(network.get_hidden_layer_neuron_count() == 50);
+    REQUIRE(network.get_hidden_layer_neuron_count() == 100);
   }
 }

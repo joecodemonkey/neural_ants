@@ -40,5 +40,5 @@ class Resources {
   size_t _food_count;
   std::vector<Food> _food;
 
-  const size_t DEFAULT_COUNT = 100;
+  const size_t DEFAULT_COUNT = 200;
 };

@@ -22,6 +22,8 @@ auto Ant::operator=(const Ant& other) -> Ant& {
     _dead = other._dead;
     _energy = other._energy;
     _lifeSpan = other._lifeSpan;
+    _remainingLives = other._remainingLives;
+    _cumulativeLifeSpan = other._cumulativeLifeSpan;
     _radius = other._radius;
     _bounds = other._bounds;
     _textureWidth = other._textureWidth;
@@ -38,7 +40,9 @@ auto Ant::operator=(const Ant& other) -> Ant& {
 auto Ant::operator==(const Ant& other) const -> bool {
   return Vector2Equals(_position, other._position) && Vector2Equals(_velocity, other._velocity) &&
          _dead == other._dead && _energy == other._energy && _lifeSpan == other._lifeSpan &&
-         _radius == other._radius && _bounds.x == other._bounds.x && _bounds.y == other._bounds.y &&
+         _remainingLives == other._remainingLives &&
+         _cumulativeLifeSpan == other._cumulativeLifeSpan && _radius == other._radius &&
+         _bounds.x == other._bounds.x && _bounds.y == other._bounds.y &&
          _bounds.width == other._bounds.width && _bounds.height == other._bounds.height &&
          _textureWidth == other._textureWidth && _textureHeight == other._textureHeight &&
          _frozen == other._frozen && _genome == other._genome;
@@ -53,12 +57,13 @@ Ant::Ant(const Ant& other)
   _dead = other._dead;
   _energy = other._energy;
   _lifeSpan = other._lifeSpan;
+  _remainingLives = other._remainingLives;
+  _cumulativeLifeSpan = other._cumulativeLifeSpan;
   _radius = other._radius;
   _bounds = other._bounds;
   _textureWidth = other._textureWidth;
   _textureHeight = other._textureHeight;
 }
-
 
 [[nodiscard]] auto Ant::is_dead() const -> bool {
   return _dead;
@@ -82,6 +87,22 @@ auto Ant::get_life_span() const -> float {
 
 auto Ant::set_life_span(float life_span) -> void {
   _lifeSpan = life_span;
+}
+
+auto Ant::get_remaining_lives() const -> int {
+  return _remainingLives;
+}
+
+auto Ant::set_remaining_lives(int remainingLives) -> void {
+  _remainingLives = remainingLives;
+}
+
+auto Ant::get_cumulative_life_span() const -> double {
+  return _cumulativeLifeSpan;
+}
+
+auto Ant::set_cumulative_life_span(double cumulativeLifeSpan) -> void {
+  _cumulativeLifeSpan = cumulativeLifeSpan;
 }
 
 auto Ant::get_position() const -> const Vector2& {
@@ -125,7 +146,6 @@ auto Ant::update_energy(float time) -> void {
   }
 }
 
-
 auto Ant::reset(const Vector2& position) -> void {
   float x = GetRandomValue(-100, 100);
   float y = GetRandomValue(-100, 100);
@@ -135,7 +155,6 @@ auto Ant::reset(const Vector2& position) -> void {
   _energy = STARTING_ENERGY;
   _dead = false;
   _lifeSpan = 0.0F;
-  _genome.set_fitness(0.0F);
 }
 
 auto Ant::get_bounds() const -> const Rectangle& {
@@ -188,6 +207,8 @@ auto Ant::to_json() const -> nlohmann::json {
   j["texture_height"] = _textureHeight;
   j["energy"] = _energy;
   j["life_span"] = _lifeSpan;
+  j["remaining_lives"] = _remainingLives;
+  j["cumulative_life_span"] = _cumulativeLifeSpan;
   j["genome"] = _genome.to_json();
   return j;
 }
@@ -205,6 +226,8 @@ Ant::Ant(const nlohmann::json& json, World& world)
   _textureHeight = json.at("texture_height").get<float>();
   _energy = json.at("energy").get<float>();
   _lifeSpan = json.at("life_span").get<float>();
+  _remainingLives = json.at("remaining_lives").get<int>();
+  _cumulativeLifeSpan = json.at("cumulative_life_span").get<double>();
 }
 
 auto Ant::set_texture_dimensions(float width, float height) -> void {

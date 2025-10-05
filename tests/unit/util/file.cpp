@@ -1,5 +1,6 @@
 #include "util/file.hpp"
 
+#include <algorithm>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 #include <filesystem>
@@ -305,7 +306,10 @@ TEST_CASE("File Utility Functions", "[file]") {
       // Create a specific time point
       auto time_point =
           std::chrono::system_clock::from_time_t(1640995200);  // 2022-01-01 00:00:00 UTC
-      auto file_time = std::chrono::clock_cast<std::filesystem::file_time_type::clock>(time_point);
+      // Convert to file_time using duration arithmetic
+      auto file_time = std::filesystem::file_time_type(
+          time_point.time_since_epoch() - std::chrono::system_clock::now().time_since_epoch() + 
+          std::filesystem::file_time_type::clock::now().time_since_epoch());
 
       auto time_str = Util::File::get_time_string(file_time);
 

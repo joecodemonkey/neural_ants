@@ -1,12 +1,21 @@
 cmake_minimum_required(VERSION 3.10)
+
+# Prefer clang if available
+find_program(CLANG_CXX_COMPILER clang++)
+find_program(CLANG_C_COMPILER clang)
+
+if(CLANG_CXX_COMPILER AND CLANG_C_COMPILER AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_COMPILER ${CLANG_CXX_COMPILER})
+    set(CMAKE_C_COMPILER ${CLANG_C_COMPILER})
+    message(STATUS "Using clang compilers with LLVM libc++: ${CLANG_C_COMPILER} and ${CLANG_CXX_COMPILER}")
+endif()
+
 project(neural_ants LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Enable parallel algorithms
 
 # Enable threading
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
@@ -19,8 +28,8 @@ if(DEFINED ENV{NEURAL_ANTS_DEBUG})
     message(STATUS "Debug build enabled via NEURAL_ANTS_DEBUG environment variable")
 else()
     set(CMAKE_BUILD_TYPE Release)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native -DNDEBUG -Wno-stringop-overflow")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native -DNDEBUG -Wno-stringop-overflow")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native -DNDEBUG")
     message(STATUS "Release build with -O3 optimization")
 endif()
 
@@ -47,7 +56,8 @@ FetchContent_Declare(
 FetchContent_Declare(
         ImGui
         GIT_REPOSITORY https://github.com/ocornut/imgui
-        GIT_TAG v1.91.9b
+	#        GIT_TAG v1.91.9b
+	GIT_TAG v1.92.1
 )
 
 FetchContent_Declare(
@@ -84,6 +94,15 @@ FetchContent_Declare(
 set(TBB_TEST OFF CACHE BOOL "" FORCE)
 set(TBB_EXAMPLES OFF CACHE BOOL "" FORCE)
 
+# Configure libc++ and libcxxabi build
+set(LIBCXX_ENABLE_SHARED OFF CACHE BOOL "" FORCE)
+set(LIBCXX_ENABLE_STATIC ON CACHE BOOL "" FORCE)
+set(LIBCXX_ENABLE_EXPERIMENTAL_LIBRARY OFF CACHE BOOL "" FORCE)
+set(LIBCXX_CXX_ABI libcxxabi CACHE STRING "" FORCE)
+set(LIBCXX_ENABLE_EXCEPTIONS ON CACHE BOOL "" FORCE)
+set(LIBCXX_ENABLE_RTTI ON CACHE BOOL "" FORCE)
+set(LIBCXXABI_ENABLE_SHARED OFF CACHE BOOL "" FORCE)
+set(LIBCXXABI_ENABLE_STATIC ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(FMT_CXX)
 FetchContent_MakeAvailable(raylib)
@@ -94,6 +113,13 @@ FetchContent_MakeAvailable(rlImGui)
 FetchContent_MakeAvailable(oneTBB)
 FetchContent_MakeAvailable(nlohmann_json)
 FetchContent_MakeAvailable(xoshiro_cpp)
+
+# Configure libc++ paths after FetchContent
+# Commenting out libc++ usage to fix linker issues
+# if(CLANG_CXX_COMPILER AND CLANG_C_COMPILER)
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -D_LIBCPP_DISABLE_AVAILABILITY")
+#     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+# endif()
 
 # Grab the headers and sources for IMGUI
 file(GLOB IMGUI_SOURCES "${imgui_SOURCE_DIR}/*.cpp")
@@ -143,6 +169,7 @@ set(CXX_SOURCES
     src/ant.cpp
     src/ant_renderer.cpp
     src/population.cpp
+    src/pangenome.cpp
     src/resources.cpp
     src/neuron.cpp
     src/neural_network.cpp

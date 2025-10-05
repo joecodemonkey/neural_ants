@@ -6,6 +6,7 @@
 #include <population.hpp>
 #include <resources.hpp>
 #include <texture_cache.hpp>
+#include <surroundings.hpp>
 
 class World {
  public:

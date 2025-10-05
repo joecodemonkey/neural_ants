@@ -9,6 +9,8 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 
+#include "pangenome.hpp"
+
 // Forward declaration
 class World;
 
@@ -51,9 +53,7 @@ class Population {
   const int DEFAULT_POPULATION_SIZE = 1;
   int _size;
 
-  static constexpr size_t TARGET_PANGENOME_SIZE = 100;
-
-  std::vector<Genome> _pangenome;
+  Pangenome _pangenome;
 
   FitnessData _fitnessData;
 };

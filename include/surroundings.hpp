@@ -1,9 +1,10 @@
 #pragma once
 #include <raylib.h>
 
+#include <cstddef>  // For size_t
 #include <vector>
 
-#include "neuron.hpp"
+#include <neuron.hpp>
 
 /*  Surroundings is a 2D grid of types that are encoded.
     The types are:
@@ -19,16 +20,14 @@
 
 class Surroundings {
  public:
-  typedef enum Type { FOOD, EMPTY, WALL } Type;
+
+  typedef enum Type { FOOD=0, EMPTY, WALL } Type;
+  typedef unsigned char CountType;
 
   Surroundings() = default;
-  // copy constructor
   Surroundings(const Surroundings& other) = default;
-  // move constructor
   Surroundings(Surroundings&& other) = delete;
-  // copy assignment operator
   auto operator=(const Surroundings& other) -> Surroundings& = delete;
-  // move assignment operator
   auto operator=(Surroundings&& other) -> Surroundings& = delete;
 
   auto set_dimensions(size_t width, size_t height) -> void;

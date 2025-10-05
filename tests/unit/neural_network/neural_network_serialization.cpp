@@ -12,7 +12,7 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
 
     network.set_input_count(5);
     network.set_hidden_layer_count(3);
-    network.set_hidden_layer_neuron_count(50);
+    network.set_hidden_layer_neuron_count(100);
     network.set_output_neuron_count(2);
     // Set some input values and compute to populate output values
     NeuralNetwork::ValueVector inputs = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
@@ -36,7 +36,7 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     // Test values
     REQUIRE(json["input_count"] == 5);
     REQUIRE(json["hidden_layer_count"] == 3);
-    REQUIRE(json["hidden_layer_neuron_count"] == 50);
+    REQUIRE(json["hidden_layer_neuron_count"] == 100);
     REQUIRE(json["output_neuron_count"] == 2);
     REQUIRE(json["validated"] == true);
     REQUIRE(json["ready"] == true);
@@ -55,8 +55,8 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     // Test hidden layers structure
     REQUIRE(json["hidden_layers"].size() == 3);
     for (size_t i = 0; i < 3; ++i) {
-      REQUIRE(json["hidden_layers"][i].size() == 50);
-      for (size_t j = 0; j < 50; ++j) {
+      REQUIRE(json["hidden_layers"][i].size() == 100);
+      for (size_t j = 0; j < 100; ++j) {
         REQUIRE(json["hidden_layers"][i][j].contains("weights"));
         REQUIRE(json["hidden_layers"][i][j].contains("bias"));
       }
@@ -146,7 +146,7 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
 
     REQUIRE(json["input_count"] == 0);
     REQUIRE(json["hidden_layer_count"] == 0);
-    REQUIRE(json["hidden_layer_neuron_count"] == 50);  // Default value
+    REQUIRE(json["hidden_layer_neuron_count"] == 100);  // Default value
     REQUIRE(json["output_neuron_count"] == 0);
     REQUIRE(json["input_values"].size() == 0);
     REQUIRE(json["output_values"].size() == 0);

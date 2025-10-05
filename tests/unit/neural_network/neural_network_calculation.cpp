@@ -61,7 +61,7 @@ TEST_CASE("Neural Network Calculations", "[neural_network]") {
 
   SECTION("Consistent Calculations") {
     // Test that the same inputs produce the same outputs
-    NeuralNetwork::ValueVector inputs(50, 0.5);
+    NeuralNetwork::ValueVector inputs(100, 0.5);
     network.set_input_values(inputs);
 
     auto first_output = network.get_output_values();
@@ -75,7 +75,7 @@ TEST_CASE("Neural Network Calculations", "[neural_network]") {
 
   SECTION("Input Range Handling") {
     // Test network behavior with different input ranges
-    NeuralNetwork::ValueVector inputs(50);
+    NeuralNetwork::ValueVector inputs(100);
     for (size_t i = 0; i < inputs.size(); ++i) {
       inputs[i] = static_cast<Neuron::Value>(i) / 100.0;  // Values from 0 to 0.99
     }

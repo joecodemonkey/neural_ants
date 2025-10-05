@@ -14,7 +14,7 @@ TEST_CASE("Resources initialization and basic operations", "[resources]") {
     World world;
     Resources resources(world);
 
-    REQUIRE(resources.get_food_count() == 100);  // DEFAULT_COUNT
+    REQUIRE(resources.get_food_count() == 200);  // DEFAULT_COUNT
   }
 
   SECTION("Copy constructor") {
@@ -54,7 +54,7 @@ TEST_CASE("Resources initialization and basic operations", "[resources]") {
     World world;
     Resources resources(world);
 
-    REQUIRE(resources.get_food_count() == 100);
+    REQUIRE(resources.get_food_count() == 200);
 
     resources.set_food_count(150);
     REQUIRE(resources.get_food_count() == 150);
