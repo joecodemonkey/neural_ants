@@ -36,7 +36,7 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
     // Test values
     REQUIRE(json["input_count"] == 5);
     REQUIRE(json["hidden_layer_count"] == 3);
-    REQUIRE(json["hidden_layer_neuron_count"] == 100);
+    REQUIRE(json["hidden_layer_neuron_count"] == 100);  // Test explicitly sets 100
     REQUIRE(json["output_neuron_count"] == 2);
     REQUIRE(json["validated"] == true);
     REQUIRE(json["ready"] == true);
@@ -146,7 +146,7 @@ TEST_CASE("Neural Network Serialization", "[neural_network]") {
 
     REQUIRE(json["input_count"] == 0);
     REQUIRE(json["hidden_layer_count"] == 0);
-    REQUIRE(json["hidden_layer_neuron_count"] == 100);  // Default value
+    REQUIRE(json["hidden_layer_neuron_count"] == 16);  // Default value
     REQUIRE(json["output_neuron_count"] == 0);
     REQUIRE(json["input_values"].size() == 0);
     REQUIRE(json["output_values"].size() == 0);

@@ -55,7 +55,7 @@ TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
     REQUIRE(json["texture_height"] == 16.0f);
     REQUIRE(json["energy"] == 1000.0f);
     REQUIRE(json["life_span"] == 0.0f);
-    REQUIRE(json["radius"] == 0.0f);
+    REQUIRE(json["radius"] == Approx(11.313708305358887).margin(0.01));  // Now computed from texture dimensions
     REQUIRE(json["genome"].is_object());
   }
 

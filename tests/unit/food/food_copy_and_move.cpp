@@ -12,7 +12,7 @@ TEST_CASE("Food copy and move operations", "[food]") {
     REQUIRE(food2 == food1);
     REQUIRE(food2.get_position().x == 100.0f);
     REQUIRE(food2.get_position().y == 200.0f);
-    REQUIRE(food2.get_value() == 10.0f);
+    REQUIRE(food2.get_value() == 500.0f);
     REQUIRE(food2.is_eaten() == false);
   }
 
@@ -22,7 +22,7 @@ TEST_CASE("Food copy and move operations", "[food]") {
 
     REQUIRE(food.get_position().x == 150.0f);
     REQUIRE(food.get_position().y == 250.0f);
-    REQUIRE(food.get_value() == 10.0f);
+    REQUIRE(food.get_value() == 500.0f);
     REQUIRE(food.is_eaten() == false);
   }
 
@@ -44,7 +44,7 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment with different positions") {
-    Food food1(Vector2{10.0f, 20.0f});
+    Food food1(Vector2{500.0f, 20.0f});
     Food food2(Vector2{30.0f, 40.0f});
 
     REQUIRE_FALSE(food1 == food2);
@@ -52,7 +52,7 @@ TEST_CASE("Food copy and move operations", "[food]") {
     food2 = food1;
 
     REQUIRE(food2 == food1);
-    REQUIRE(food2.get_position().x == 10.0f);
+    REQUIRE(food2.get_position().x == 500.0f);
     REQUIRE(food2.get_position().y == 20.0f);
   }
 
@@ -101,7 +101,7 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Multiple assignments") {
-    Food food1(Vector2{10.0f, 20.0f});
+    Food food1(Vector2{500.0f, 20.0f});
     Food food2(Vector2{30.0f, 40.0f});
     Food food3(Vector2{50.0f, 60.0f});
 
@@ -109,7 +109,7 @@ TEST_CASE("Food copy and move operations", "[food]") {
 
     REQUIRE(food3 == food1);
     REQUIRE(food2 == food1);
-    REQUIRE(food3.get_position().x == 10.0f);
+    REQUIRE(food3.get_position().x == 500.0f);
     REQUIRE(food3.get_position().y == 20.0f);
   }
 

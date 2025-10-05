@@ -123,7 +123,7 @@ auto Genome::randomize() -> void {
 }
 
 auto Genome::should_mutate() -> bool {
-  return (_mutationRate < _rng.normal(0.0F, 1.0F));
+  return (_rng.uniform(0.0, 1.0) < _mutationRate);
 }
 auto Genome::mutation_amount() -> double {
   return _rng.normal(0.0F, 0.1F);

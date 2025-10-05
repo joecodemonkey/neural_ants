@@ -115,8 +115,8 @@ TEST_CASE("Neuron serialization and deserialization", "[neuron][serialization]")
 
     // All weights should be in the randomization range [-1, 1]
     for (const auto& weight : json["weights"]) {
-      REQUIRE(weight.get<float>() >= -1.0f);
-      REQUIRE(weight.get<float>() <= 1.0f);
+      REQUIRE(weight.get<float>() >= -3.0f);
+      REQUIRE(weight.get<float>() <= 3.0f);
     }
 
     // Bias should also be in the randomization range

@@ -6,11 +6,11 @@
 #include "raylib.h"
 #include "util/serialization.hpp"
 
-Food::Food() : _value(10.0f), _position(0.0f, 0.0f), _eaten(false) {
+Food::Food() : _value(500.0f), _position(0.0f, 0.0f), _eaten(false) {
   update_bounds();
 }
 
-Food::Food(const Vector2& position) : _value(10.0f), _position(position), _eaten(false) {
+Food::Food(const Vector2& position) : _value(500.0f), _position(position), _eaten(false) {
   update_bounds();
 }
 

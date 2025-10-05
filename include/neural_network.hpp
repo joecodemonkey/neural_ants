@@ -59,8 +59,8 @@ class NeuralNetwork {
   auto compute() -> void;
   auto validate() -> void;
 
-  const size_t DEFAULT_HIDDEN_LAYER_COUNT = 3;
-  const size_t DEFAULT_HIDDEN_LAYER_NEURON_COUNT = 100;
+  const size_t DEFAULT_HIDDEN_LAYER_COUNT = 2;
+  const size_t DEFAULT_HIDDEN_LAYER_NEURON_COUNT = 16;
   const size_t DEFAULT_INPUT_COUNT = 100;
   const size_t DEFAULT_OUTPUT_NEURON_COUNT = 2;
 

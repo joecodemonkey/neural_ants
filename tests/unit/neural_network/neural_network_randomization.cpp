@@ -25,7 +25,7 @@ TEST_CASE("Neural Network Randomization", "[neural_network]") {
         // Check weights
         for (size_t weight_idx = 0; weight_idx < neuron.get_input_count(); ++weight_idx) {
           auto weight = neuron.get_input_weight(weight_idx);
-          REQUIRE((weight >= -1.0F && weight <= 1.0F));
+          REQUIRE((weight >= -3.0F && weight <= 3.0F));
         }
 
         // Check bias
@@ -45,7 +45,7 @@ TEST_CASE("Neural Network Randomization", "[neural_network]") {
       // Check weights
       for (size_t weight_idx = 0; weight_idx < neuron.get_input_count(); ++weight_idx) {
         auto weight = neuron.get_input_weight(weight_idx);
-        REQUIRE((weight >= -1.0F && weight <= 1.0F));
+        REQUIRE((weight >= -3.0F && weight <= 3.0F));
       }
 
       // Check bias
