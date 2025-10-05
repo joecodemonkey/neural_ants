@@ -110,10 +110,10 @@ TEST_CASE("Food equality operator", "[food]") {
 
   SECTION("multiple food items comparison") {
     std::vector<Food> foods;
-    foods.emplace_back(Vector2{10.0f, 20.0f});
-    foods.emplace_back(Vector2{10.0f, 20.0f});
+    foods.emplace_back(Vector2{500.0f, 20.0f});
+    foods.emplace_back(Vector2{500.0f, 20.0f});
     foods.emplace_back(Vector2{30.0f, 40.0f});
-    foods.emplace_back(Vector2{10.0f, 20.0f});
+    foods.emplace_back(Vector2{500.0f, 20.0f});
 
     // First two should be equal
     REQUIRE(foods[0] == foods[1]);

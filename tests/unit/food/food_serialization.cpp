@@ -15,7 +15,7 @@ TEST_CASE("Food serialization and deserialization", "[food][serialization]") {
     REQUIRE(json.contains("eaten"));
     REQUIRE(json.contains("size"));
 
-    REQUIRE(json["value"] == 10.0f);
+    REQUIRE(json["value"] == 500.0f);
     REQUIRE(json["position"].contains("x"));
     REQUIRE(json["position"].contains("y"));
     REQUIRE(json["position"]["x"] == 0.0f);
@@ -28,7 +28,7 @@ TEST_CASE("Food serialization and deserialization", "[food][serialization]") {
     Food food(Vector2{100.0f, 200.0f});
     auto json = food.to_json();
 
-    REQUIRE(json["value"] == 10.0f);
+    REQUIRE(json["value"] == 500.0f);
     REQUIRE(json["position"]["x"] == 100.0f);
     REQUIRE(json["position"]["y"] == 200.0f);
     REQUIRE(json["eaten"] == false);

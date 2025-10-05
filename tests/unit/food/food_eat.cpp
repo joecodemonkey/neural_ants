@@ -32,7 +32,7 @@ TEST_CASE("Food eat functionality", "[food][eat]") {
 
   SECTION("Food value is correct") {
     Food food;
-    REQUIRE(food.get_value() == 10.0f);
+    REQUIRE(food.get_value() == 500.0f);
   }
 
   SECTION("Food size and radius are correct") {
@@ -98,10 +98,10 @@ TEST_CASE("Food eat functionality", "[food][eat]") {
   }
 
   SECTION("Multiple food items have independent states") {
-    Food food1(Vector2{10.0f, 20.0f});
+    Food food1(Vector2{500.0f, 20.0f});
     Food food2(Vector2{30.0f, 40.0f});
 
-    REQUIRE(food1.get_position().x == 10.0f);
+    REQUIRE(food1.get_position().x == 500.0f);
     REQUIRE(food1.get_position().y == 20.0f);
     REQUIRE(food2.get_position().x == 30.0f);
     REQUIRE(food2.get_position().y == 40.0f);

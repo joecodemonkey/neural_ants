@@ -14,7 +14,7 @@ TEST_CASE("Food initialization and basic operations", "[food]") {
 
     REQUIRE(food.get_position().x == 0.0f);
     REQUIRE(food.get_position().y == 0.0f);
-    REQUIRE(food.get_value() == 10.0f);
+    REQUIRE(food.get_value() == 500.0f);
     REQUIRE(food.get_size() == Food::DEFAULT_SIZE);
     REQUIRE(food.is_eaten() == false);
     REQUIRE(food.get_radius() == Food::DEFAULT_SIZE / 2);
@@ -26,7 +26,7 @@ TEST_CASE("Food initialization and basic operations", "[food]") {
 
     REQUIRE(food.get_position().x == 100.0f);
     REQUIRE(food.get_position().y == 200.0f);
-    REQUIRE(food.get_value() == 10.0f);
+    REQUIRE(food.get_value() == 500.0f);
     REQUIRE(food.get_size() == Food::DEFAULT_SIZE);
     REQUIRE(food.is_eaten() == false);
     REQUIRE(food.get_radius() == Food::DEFAULT_SIZE / 2);
@@ -52,12 +52,12 @@ TEST_CASE("Food initialization and basic operations", "[food]") {
   SECTION("Getting size") {
     Food food;
     REQUIRE(food.get_size() == Food::DEFAULT_SIZE);
-    REQUIRE(food.get_size() == 10.0f);
+    REQUIRE(food.get_size() == 10.0f);  // DEFAULT_SIZE is 10.0
   }
 
   SECTION("Getting value") {
     Food food;
-    REQUIRE(food.get_value() == 10.0f);
+    REQUIRE(food.get_value() == 500.0f);
   }
 
   SECTION("Getting position") {
@@ -75,11 +75,11 @@ TEST_CASE("Food initialization and basic operations", "[food]") {
   }
 
   SECTION("Reset functionality") {
-    Food food(Vector2{10.0f, 20.0f});
+    Food food(Vector2{500.0f, 20.0f});
 
     // Initially not eaten
     REQUIRE(food.is_eaten() == false);
-    REQUIRE(food.get_position().x == 10.0f);
+    REQUIRE(food.get_position().x == 500.0f);
     REQUIRE(food.get_position().y == 20.0f);
 
     // Reset to new position
@@ -105,10 +105,10 @@ TEST_CASE("Food initialization and basic operations", "[food]") {
   }
 
   SECTION("Multiple food instances") {
-    Food food1(Vector2{10.0f, 20.0f});
+    Food food1(Vector2{500.0f, 20.0f});
     Food food2(Vector2{30.0f, 40.0f});
 
-    REQUIRE(food1.get_position().x == 10.0f);
+    REQUIRE(food1.get_position().x == 500.0f);
     REQUIRE(food1.get_position().y == 20.0f);
     REQUIRE(food2.get_position().x == 30.0f);
     REQUIRE(food2.get_position().y == 40.0f);
