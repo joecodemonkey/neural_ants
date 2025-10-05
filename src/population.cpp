@@ -70,11 +70,12 @@ auto Population::reproduce() -> void {
   while (_ants.size() < _size) {
     _ants.push_back(create_ant());
   }
-
-  while (_ants.size() > _size) {
-    _ants.erase(
-        std::remove_if(_ants.begin(), _ants.end(), [](const Ant& ant) { return ant.is_dead(); }));
-  }
+  _ants.erase(
+       std::remove_if(_ants.begin(), _ants.end(), [](const Ant& ant) {
+         return ant.is_dead();
+       }),
+       _ants.end()
+   );
 }
 
 auto Population::create_ant() -> Ant {
