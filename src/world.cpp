@@ -147,9 +147,9 @@ auto World::out_of_bounds(const Vector2& position) const -> bool {
 }
 
 [[nodiscard]] auto World::spawn_position(const Vector2& dimensions) const -> Vector2 {
-  // given an object of dimensions, randomly generate a point inside of spawn_rect
-  auto x = GetRandomValue(_spawnBounds.x, _spawnBounds.x + _spawnBounds.width - dimensions.x);
-  auto y = GetRandomValue(_spawnBounds.y, _spawnBounds.y + _spawnBounds.height - dimensions.y);
+  float margin = dimensions.x;
+  auto x = GetRandomValue(_bounds.x + margin, _bounds.x + _bounds.width - dimensions.x - margin);
+  auto y = GetRandomValue(_bounds.y + margin, _bounds.y + _bounds.height - dimensions.y - margin);
   return Vector2{static_cast<float>(x), static_cast<float>(y)};
 }
 
