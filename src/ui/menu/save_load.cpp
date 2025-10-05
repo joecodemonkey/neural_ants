@@ -29,10 +29,10 @@ auto UI::Menu::SaveLoad::draw() -> void {
   ImGui::SetNextWindowPos(saveLoadWindowPosition);
   ImGui::SetNextWindowSize(saveLoadWindowDimensions);
 
-  auto loadId = _textureCache->get_texture("load").id;
-  auto deleteId = _textureCache->get_texture("delete").id;
-  auto saveId = _textureCache->get_texture("save").id;
-  auto exitId = _textureCache->get_texture("exit").id;
+  auto loadId = _textureCache->get_texture("ui_load").id;
+  auto deleteId = _textureCache->get_texture("ui_delete").id;
+  auto saveId = _textureCache->get_texture("ui_save").id;
+  auto exitId = _textureCache->get_texture("ui_exit").id;
   auto buttonDim = ImVec2(30, 30);
 
   bool saveLoadMaximized = true;

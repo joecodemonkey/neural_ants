@@ -117,19 +117,27 @@ auto Game::initialize_raylib() -> void {
 
 auto Game::load_textures() -> void {
   _textureCache = std::make_shared<TextureCache>();
-  if (!_textureCache->add_texture("close", "buttonX.png")) {
-    throw std::runtime_error("Failed to load default texture: 'buttonX.png'");
+
+  // Load UI sprites dynamically
+  if (!_textureCache->load_textures("assets/sprites/ui")) {
+    throw std::runtime_error("Failed to load UI textures");
   }
-  _textureCache->set_default("close");
-  _textureCache->add_texture("settings", "gear.png");
-  _textureCache->add_texture("save", "save.png");
-  _textureCache->add_texture("delete", "trashcan.png");
-  _textureCache->add_texture("load", "import.png");
-  _textureCache->add_texture("progress", "signal3.png");
-  _textureCache->add_texture("exit", "exitRight.png");
-  _textureCache->add_texture("fastForward", "fastForward.png");
-  _textureCache->add_texture("rewind", "rewind.png");
-  _textureCache->add_texture("ant", "ant.png");
+
+  // Set default texture (ui_close must exist)
+  if (!_textureCache->has_texture("ui_close")) {
+    throw std::runtime_error("Failed to load required texture: 'ui_close'");
+  }
+  _textureCache->set_default("ui_close");
+
+  // Load ant sprites dynamically
+  if (!_textureCache->load_textures("assets/sprites/ants")) {
+    throw std::runtime_error("Failed to load ant textures");
+  }
+
+  // Load food sprites dynamically
+  if (!_textureCache->load_textures("assets/sprites/food")) {
+    throw std::runtime_error("Failed to load food textures");
+  }
 }
 
 auto Game::save_game(const std::string& filename) const -> std::expected<void, std::string> {

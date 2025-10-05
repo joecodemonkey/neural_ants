@@ -41,11 +41,11 @@ auto AntRenderer::load_ant_texture() -> bool {
     return false;
   }
 
-  if (!_textureCache->has_texture("ant")) {
+  if (!_textureCache->has_texture("ants_black_ant")) {
     return false;
   }
 
-  _antTexture = _textureCache->get_texture("ant");
+  _antTexture = _textureCache->get_texture("ants_black_ant");
   _textureLoaded = true;
   return true;
 }

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class TextureCache {
  public:
@@ -12,6 +13,11 @@ class TextureCache {
   auto get_texture(const std::string& name) -> Texture2D&;
   auto set_default(const std::string& name) -> bool;
   auto get_default(const std::string& name) -> Texture2D&;
+
+  // Dynamic loading - extracts prefix from folder path automatically
+  auto load_textures(const std::string& folder_path) -> bool;
+  [[nodiscard]] auto get_texture_keys(const std::string& prefix) const
+      -> std::vector<std::string>;
 
   ~TextureCache();
 

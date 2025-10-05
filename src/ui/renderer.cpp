@@ -117,7 +117,7 @@ auto UI::Renderer::draw_settings_button() -> void {
     UI::Buttons::begin_button_style();
 
     if (ImGui::ImageButton(
-            "##settings", _textureCache->get_texture("settings").id, ImVec2(50, 50))) {
+            "##settings", _textureCache->get_texture("ui_settings").id, ImVec2(50, 50))) {
       _state.maximize(State::SETTINGS);
     }
     UI::Buttons::end_button_style();
