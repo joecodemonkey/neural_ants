@@ -99,18 +99,18 @@ TEST_CASE("Resources equality operator", "[resources]") {
     Resources resources1(world);
     Resources resources2(world);
 
-    // Initially equal (both have default food count of 100)
+    // Initially equal (both have default food count of 200)
     REQUIRE(resources1 == resources2);
 
     // Modify one to a different value
-    resources1.set_food_count(200);
+    resources1.set_food_count(150);
 
     // Now different
     REQUIRE_FALSE(resources1 == resources2);
     REQUIRE_FALSE(resources2 == resources1);
 
     // Make them equal again
-    resources2.set_food_count(200);
+    resources2.set_food_count(150);
     REQUIRE(resources1 == resources2);
     REQUIRE(resources2 == resources1);
   }

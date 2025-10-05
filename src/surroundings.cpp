@@ -1,13 +1,16 @@
 #include "surroundings.hpp"
 
+#include <cmath>
 #include <stdexcept>
 
 auto Surroundings::set_dimensions(size_t width, size_t height) -> void {
-  if (width > 0 && height > SIZE_MAX / width) {
-    throw std::overflow_error("Width * height would overflow");
+  if (width == 0 || height == 0) {
+    throw std::invalid_argument("Width and height must be greater than 0");
+  }
+  if (height > 256 || width > 256) {
+    throw std::invalid_argument("Width * height must be less than 65536");
   }
 
-  // Resize the 2D vector to the specified dimensions
   _surroundingsType.resize(height);
   for (auto& row : _surroundingsType) {
     row.resize(width, EMPTY);  // Initialize all cells as EMPTY
@@ -79,8 +82,6 @@ auto Surroundings::update_encoded_surroundings() -> void {
       _surroundingsEncoded[index++] = encode_type(type);
     }
   }
-
-  // Reset the changed flag
   _changed = false;
 }
 

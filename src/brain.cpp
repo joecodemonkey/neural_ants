@@ -13,8 +13,7 @@
 
 Brain::Brain(World& world, const NeuralNetwork& neuralNetwork)
     : _world(world), _neuralNetwork(neuralNetwork) {
-  _near.set_dimensions(NEAR_TILES_COUNT, NEAR_TILES_COUNT);
-  _far.set_dimensions(FAR_TILES_COUNT, FAR_TILES_COUNT);
+  _surroundings.set_dimensions(TILES_COUNT, TILES_COUNT);
 }
 
 auto Brain::update(float time, Vector2 position) -> Vector2 {
@@ -22,37 +21,23 @@ auto Brain::update(float time, Vector2 position) -> Vector2 {
   if (_last_update >= UPDATE_FREQUENCY) {
     _last_update -= UPDATE_FREQUENCY;
 
-    update_surroundings(_near, NEAR_TILES_SIZE, position);
-    update_surroundings(_far, FAR_TILES_SIZE, position);
+    update_surroundings(position);
   }
 
   // Only update the network inputs if the surroundings have changed
-  if (_near.changed() || _far.changed()) {
-    const auto& near = _near.get_encoded_surroundings();
-    const auto& far = _far.get_encoded_surroundings();
+  if (_surroundings.changed()) {
+    const auto& far = _surroundings.get_encoded_surroundings();
 
     // Sanity checks for corrupted sizes
-    size_t nearSize = near.size();
     size_t farSize = far.size();
     const size_t MAX_REASONABLE_SIZE = 1000000;  // 1M elements max
-    if (nearSize > MAX_REASONABLE_SIZE) {
-      throw std::runtime_error("Near surroundings size is suspiciously large: " +
-                               std::to_string(nearSize) + " (expected ~25)");
-    }
     if (farSize > MAX_REASONABLE_SIZE) {
       throw std::runtime_error("Far surroundings size is suspiciously large: " +
-                               std::to_string(farSize) + " (expected ~25)");
+                               std::to_string(farSize) + " (expected ~100)");
     }
 
-    // Check for overflow in size addition
-    if (nearSize > SIZE_MAX - farSize) {
-      throw std::overflow_error("Combined surroundings size would overflow");
-    }
-
-    size_t totalSize = nearSize + farSize;
-    _surroundings_encoded.resize(totalSize);
-    std::ranges::copy(near, _surroundings_encoded.begin());
-    std::ranges::copy(far, _surroundings_encoded.begin() + near.size());
+    _surroundings_encoded.resize(farSize);
+    std::ranges::copy(far, _surroundings_encoded.begin());
 
     _neuralNetwork.set_input_values(_surroundings_encoded);
   }
@@ -71,29 +56,28 @@ auto Brain::update(float time, Vector2 position) -> Vector2 {
   return velocity;
 }
 
-auto Brain::update_surroundings(Surroundings& surr, const size_t tile_size, Vector2 position)
-    -> void {
-  size_t center = surr.get_height() / 2;  // center is the center x/y tile
+auto Brain::update_surroundings(Vector2 position) -> void {
+  size_t center = _surroundings.get_height() / 2;  // center is the center x/y tile
   Rectangle rect;
-  rect.height = tile_size;
-  rect.width = tile_size;
+  rect.height = TILES_SIZE;
+  rect.width = TILES_SIZE;
   rect.x = position.x;
   rect.y = position.y;
-  for (size_t x = 0; x < surr.get_width(); ++x) {
+  for (size_t x = 0; x < _surroundings.get_width(); ++x) {
     float x_rel = static_cast<float>(x) - static_cast<float>(center);
 
-    for (size_t y = 0; y < surr.get_height(); ++y) {
+    for (size_t y = 0; y < _surroundings.get_height(); ++y) {
       // calculate the aabb for this tile
       float y_rel = static_cast<float>(y) - static_cast<float>(center);
-      rect.x = position.x + x_rel * tile_size;
-      rect.y = position.y + y_rel * tile_size;
+      rect.x = position.x + x_rel * TILES_SIZE;
+      rect.y = position.y + y_rel * TILES_SIZE;
 
       if (!IsRectContained(rect, _world.get_bounds())) {
-        surr.set_type(x, y, Surroundings::WALL);
+        _surroundings.set_type(x, y, Surroundings::WALL);
       } else if (_world.get_resources().food_in_rect(rect)) {
-        surr.set_type(x, y, Surroundings::FOOD);
+        _surroundings.set_type(x, y, Surroundings::FOOD);
       } else {
-        surr.set_type(x, y, Surroundings::EMPTY);
+        _surroundings.set_type(x, y, Surroundings::EMPTY);
       }
     }
   }

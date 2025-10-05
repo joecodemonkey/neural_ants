@@ -15,7 +15,7 @@ TEST_CASE("Resources serialization and deserialization", "[resources][serializat
     REQUIRE(json.contains("food_count"));
     REQUIRE(json.contains("food"));
 
-    REQUIRE(json["food_count"] == 100);  // DEFAULT_COUNT
+    REQUIRE(json["food_count"] == 200);  // DEFAULT_COUNT
     REQUIRE(json["food"].is_array());
     REQUIRE(json["food"].size() == 0);  // Initially no food items
   }

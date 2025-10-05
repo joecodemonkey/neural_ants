@@ -8,16 +8,16 @@ TEST_CASE("Neural Network Initialization", "[neural_network]") {
 
   SECTION("Default Constructor") {
     // Test default values
-    REQUIRE(network.get_input_count() == 50);
+    REQUIRE(network.get_input_count() == 100);
     REQUIRE(network.get_hidden_layer_count() == 3);
-    REQUIRE(network.get_hidden_layer_neuron_count() == 50);
+    REQUIRE(network.get_hidden_layer_neuron_count() == 100);
     REQUIRE(network.get_output_neuron_count() == 2);
   }
 
   SECTION("Input Values Initialization") {
     // Test input values initialization
     const auto& input_values = network.get_input_values();
-    REQUIRE(input_values.size() == 50);
+    REQUIRE(input_values.size() == 100);
 
     // All input values should be initialized to 0
     for (const auto& value : input_values) {
@@ -32,7 +32,7 @@ TEST_CASE("Neural Network Initialization", "[neural_network]") {
     // Check each hidden layer
     for (size_t i = 0; i < 3; ++i) {
       const auto& layer = network.get_hidden_layer(i);
-      REQUIRE(layer.size() == 50);
+      REQUIRE(layer.size() == 100);
     }
   }
 

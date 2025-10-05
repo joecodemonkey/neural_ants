@@ -60,8 +60,8 @@ class NeuralNetwork {
   auto validate() -> void;
 
   const size_t DEFAULT_HIDDEN_LAYER_COUNT = 3;
-  const size_t DEFAULT_HIDDEN_LAYER_NEURON_COUNT = 50;
-  const size_t DEFAULT_INPUT_COUNT = 50;
+  const size_t DEFAULT_HIDDEN_LAYER_NEURON_COUNT = 100;
+  const size_t DEFAULT_INPUT_COUNT = 100;
   const size_t DEFAULT_OUTPUT_NEURON_COUNT = 2;
 
   std::vector<Layer> _hiddenLayers;
