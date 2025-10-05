@@ -107,9 +107,9 @@ auto Population::update(float time) -> void {
                       for (size_t i = range.begin(); i != range.end(); ++i) {
                         Ant& ant = _ants[i];
 
-    //                    if (_world.out_of_bounds(ant.get_position())) {
-  //                        ant.set_dead(true);
-//                        }
+                        if (_world.out_of_bounds(ant.get_position())) {
+                          ant.set_dead(true);
+                        }
 
                         if (!ant.is_dead()) {
                           ant.update(time);
