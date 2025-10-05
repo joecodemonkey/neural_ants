@@ -11,7 +11,7 @@ class Pangenome {
  public:
   static constexpr size_t MAX_PANGENOME_SIZE = 100;
   static constexpr size_t TOP_PERCENT_SIZE = 20;  // Top 20%
-  static constexpr size_t MAX_CHILDREN_COUNT = 5;
+  static constexpr size_t MAX_CHILDREN_COUNT = 20;
 
   Pangenome() = default;
   Pangenome(const nlohmann::json& json);
