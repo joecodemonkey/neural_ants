@@ -13,7 +13,7 @@
 Game::Game() : _ui(*this), _input(*this), _updateSpeed(1LL) {
   _camera = {.offset = Vector2Zero(), .target = Vector2Zero(), .rotation = 0.0F, .zoom = 1.0f};
   _world.get_population().set_size(100);
-  _world.get_resources().set_food_count(200);
+  _world.get_resources().set_food_count(50);  // Reduced from 200 for stronger selection pressure
 }
 
 auto Game::run() -> void {
@@ -38,9 +38,9 @@ auto Game::run() -> void {
     BeginMode2D(_camera);
 
     if (!_ui.paused()) {
+      _input.update(time);  // Move outside loop - only once per frame
       for (auto count = 0; count < _updateSpeed; ++count) {
-        _input.update(time);
-        _world.update(time);
+        _world.update(time);  // Only world simulation repeats
       }
     }
 
