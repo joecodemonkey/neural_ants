@@ -52,7 +52,6 @@ class World {
   const float DEFAULT_SPAWN_MARGIN = 0.20F;
 
   auto update_spawn_rect() -> void;
-
   Resources _resources;
   Population _population;
   Rectangle _bounds;

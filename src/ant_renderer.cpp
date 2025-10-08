@@ -1,5 +1,7 @@
 #include "ant_renderer.hpp"
 
+#include <stdexcept>
+
 #include <fmt/core.h>
 #include <raylib.h>
 #include <raylibdrawex.h>
@@ -16,7 +18,6 @@ AntRenderer::~AntRenderer() = default;
 
 auto AntRenderer::set_texture_cache(TextureCache* textureCache) -> void {
   _textureCache = textureCache;
-  _textureLoaded = false;
 }
 
 auto AntRenderer::set_scale(float scale) -> void {
@@ -24,35 +25,12 @@ auto AntRenderer::set_scale(float scale) -> void {
 }
 
 auto AntRenderer::draw(Population& population) -> void {
-  if (!_textureLoaded) {
-    if (load_ant_texture()) {
-      population.set_texture_dimensions(_antTexture.width, _antTexture.height);
-    }
-  }
-
   auto& ants = population.get_ants();
   for (const auto& ant : ants) {
     draw_ant(ant);
   }
 }
 
-auto AntRenderer::load_ant_texture() -> bool {
-  if (!_textureCache) {
-    return false;
-  }
-
-  if (!_textureCache->has_texture("ants_black_ant")) {
-    return false;
-  }
-
-  _antTexture = _textureCache->get_texture("ants_black_ant");
-  _textureLoaded = true;
-  return true;
-}
-
-auto AntRenderer::is_texture_valid() const -> bool {
-  return _textureLoaded && IsTextureValid(_antTexture);
-}
 
 auto AntRenderer::draw_ant(const Ant& ant) -> void {
   if (ant.is_dead()) {
@@ -67,9 +45,16 @@ auto AntRenderer::draw_ant(const Ant& ant) -> void {
 }
 
 auto AntRenderer::draw_body(const Ant& ant) -> void {
-  if (is_texture_valid()) {
-    const auto& bounds = ant.get_bounds();
-    DrawTextureEx(_antTexture, {bounds.x, bounds.y}, get_rotation(ant), 1.0F, WHITE);
+  if (_textureCache) {
+    const Texture2D& texture = _textureCache->get_texture(ant.get_texture_index());
+    const auto& position = ant.get_position();
+
+    // TODO: Cleanup magic numbers
+    const Rectangle source = {0, 0, 16.0F, 16.0F};
+    const Rectangle dest = {position.x, position.y, 16.0F, 16.0F};
+    const Vector2 origin = {8.0F, 8.0F};  // Center of 16x16 texture
+
+    DrawTexturePro(texture, source, dest, origin, get_rotation(ant), WHITE);
   }
 }
 

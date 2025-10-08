@@ -102,18 +102,6 @@ TEST_CASE("Ant equality operator", "[ant]") {
     REQUIRE_FALSE(ant2 == ant1);
   }
 
-  SECTION("Ants with different texture dimensions are not equal") {
-    Genome genome = create_minimal_genome();
-    Ant ant1(world, genome);
-    Ant ant2(world, genome);
-
-    ant1.set_texture_dimensions(20.0f, 20.0f);
-    ant2.set_texture_dimensions(25.0f, 25.0f);
-
-    REQUIRE_FALSE(ant1 == ant2);
-    REQUIRE_FALSE(ant2 == ant1);
-  }
-
   SECTION("Ants with different dead states are not equal") {
     Genome genome = create_minimal_genome();
     Ant ant1(world, genome);

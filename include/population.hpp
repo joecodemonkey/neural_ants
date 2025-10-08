@@ -1,4 +1,4 @@
-#pragma once
+  #pragma once
 
 #include <raylib.h>
 
@@ -41,7 +41,6 @@ class Population {
   auto get_fitness_data() const -> const FitnessData&;
 
   auto get_ants() -> std::vector<Ant>&;
-  auto set_texture_dimensions(float width, float height) -> void;
 
  protected:
   auto reproduce() -> void;

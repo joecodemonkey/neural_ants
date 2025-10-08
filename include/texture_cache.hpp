@@ -2,8 +2,8 @@
 
 #include <raylib.h>
 
+#include <containers/indexed_map.hpp>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 class TextureCache {
@@ -19,6 +19,10 @@ class TextureCache {
   [[nodiscard]] auto get_texture_keys(const std::string& prefix) const
       -> std::vector<std::string>;
 
+  // Index-based access for efficient rendering
+  auto get_texture(size_t index) -> Texture2D&;
+  auto get_random_texture_index(const std::string& prefix) const -> size_t;
+
   ~TextureCache();
 
   TextureCache() = default;
@@ -26,6 +30,6 @@ class TextureCache {
   TextureCache& operator=(TextureCache const&) = delete;
 
  protected:
-  std::unordered_map<std::string, Texture2D> _textures;
+  IndexedMap<Texture2D> _textures;
   std::string _defaultTextureName;
 };

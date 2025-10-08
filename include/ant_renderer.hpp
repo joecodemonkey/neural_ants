@@ -23,12 +23,7 @@ class AntRenderer {
   static constexpr float STARTING_ENERGY = 1000.0F;
 
   TextureCache* _textureCache = nullptr;
-  Texture2D _antTexture;
   float _scale = DEFAULT_SCALE;
-  bool _textureLoaded = false;
-
-  auto load_ant_texture() -> bool;
-  auto is_texture_valid() const -> bool;
 
   auto draw_ant(const Ant& ant) -> void;
   auto draw_body(const Ant& ant) -> void;

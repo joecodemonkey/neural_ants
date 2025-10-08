@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <iostream>
 #include <ranges>
+#include <random_generator.hpp>
 #include <texture_cache.hpp>
 #include <util/file.hpp>
 
@@ -22,7 +23,7 @@ auto TextureCache::add_texture(const std::string& name, const std::string& path)
     return false;
   }
 
-  _textures[name] = texture;
+  _textures.insert(name, texture);
 
   if (_textures.size() == 1) {
     _defaultTextureName = name;
@@ -32,13 +33,12 @@ auto TextureCache::add_texture(const std::string& name, const std::string& path)
 }
 
 auto TextureCache::has_texture(const std::string& name) const -> bool {
-  return _textures.find(name) != _textures.end();
+  return _textures.contains(name);
 }
 
 auto TextureCache::get_texture(const std::string& name) -> Texture2D& {
-  auto it = _textures.find(name);
-  if (it != _textures.end()) {
-    return it->second;
+  if (_textures.contains(name)) {
+    return _textures[name];
   }
 
   if (!_defaultTextureName.empty()) {
@@ -109,7 +109,8 @@ auto TextureCache::load_textures(const std::string& folder_path) -> bool {
 auto TextureCache::get_texture_keys(const std::string& prefix) const -> std::vector<std::string> {
   std::vector<std::string> keys;
 
-  for (const auto& key : _textures | std::views::keys) {
+  for (size_t i = 0; i < _textures.size(); ++i) {
+    const std::string& key = _textures.key_at(i);
     if (key.starts_with(prefix)) {
       keys.push_back(key);
     }
@@ -118,11 +119,32 @@ auto TextureCache::get_texture_keys(const std::string& prefix) const -> std::vec
   return keys;
 }
 
+auto TextureCache::get_texture(size_t index) -> Texture2D& {
+  return _textures[index];
+}
+
+auto TextureCache::get_random_texture_index(const std::string& prefix) const -> size_t {
+  std::vector<size_t> matching_indices;
+
+  for (size_t i = 0; i < _textures.size(); ++i) {
+    if (_textures.key_at(i).starts_with(prefix)) {
+      matching_indices.push_back(i);
+    }
+  }
+
+  if (matching_indices.empty()) {
+    throw std::runtime_error("No textures found with prefix: " + prefix);
+  }
+
+  static RandomGenerator rng;
+  int random_index = rng.uniform_int(0, static_cast<int>(matching_indices.size()) - 1);
+
+  return matching_indices[random_index];
+}
+
 TextureCache::~TextureCache() {
-  for (auto& pair : _textures) {
-    std::cerr << "Unloading Texture\n";
-    /* TODO: FIX THIS */
-    // UnloadTexture(pair.second);
+  for (auto& texture : _textures) {
+    UnloadTexture(texture);
   }
   _textures.clear();
 }

@@ -26,9 +26,9 @@ class Surroundings {
 
   Surroundings() = default;
   Surroundings(const Surroundings& other) = default;
-  Surroundings(Surroundings&& other) = delete;
-  auto operator=(const Surroundings& other) -> Surroundings& = delete;
-  auto operator=(Surroundings&& other) -> Surroundings& = delete;
+  Surroundings(Surroundings&& other) = default;
+  auto operator=(const Surroundings& other) -> Surroundings& = default;
+  auto operator=(Surroundings&& other) -> Surroundings& = default;
 
   auto set_dimensions(size_t width, size_t height) -> void;
   auto set_type(size_t x, size_t y, Type type) -> void;

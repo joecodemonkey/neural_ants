@@ -3,6 +3,7 @@
 #include "neural_network.hpp"
 #include "raylib.h"
 #include "surroundings.hpp"
+#include <functional>
 
 class Resources;
 class Ant;
@@ -13,13 +14,14 @@ class Brain {
   Brain(World& world, const NeuralNetwork& neuralNetwork);
   Brain() = delete;
   Brain(const Brain& other) = default;
+  auto operator=(const Brain& other) -> Brain&;
 
   auto update(float time, Vector2 position) -> Vector2;
 
  protected:
   auto update_surroundings(Vector2 position) -> void;
 
-  World& _world;
+  std::reference_wrapper<World> _world;
 
   Surroundings _surroundings;
   NeuralNetwork _neuralNetwork;

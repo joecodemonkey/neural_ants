@@ -86,6 +86,7 @@ auto Population::create_ant() -> Ant {
     genome.set_fitness(0.0F);
     Ant ant(_world, genome);
     ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
+    ant.set_texture_index(_world.get_texture_cache()->get_random_texture_index("ants_"));
     return ant;
   }
 
@@ -98,6 +99,8 @@ auto Population::create_ant() -> Ant {
 
   Ant ant(_world, child);
   ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
+  ant.set_texture_index(_world.get_texture_cache()->get_random_texture_index("ants_"));
+
   return ant;
 }
 
@@ -177,10 +180,4 @@ auto Population::get_fitness_data() const -> const FitnessData& {
 
 auto Population::get_ants() -> std::vector<Ant>& {
   return _ants;
-}
-
-auto Population::set_texture_dimensions(float width, float height) -> void {
-  for (auto& ant : _ants) {
-    ant.set_texture_dimensions(width, height);
-  }
 }
