@@ -11,8 +11,9 @@ Resources::Resources(World& world) : _world(world) {
 Resources::Resources(const nlohmann::json& json, World& world) : _world(world) {
   _food_count = json.at("food_count").get<size_t>();
 
+  auto textureCache = _world.get_texture_cache().get();
   for (const auto& food_json : json.at("food")) {
-    _food.push_back(Food(food_json));
+    _food.push_back(Food(food_json, textureCache));
   }
 }
 
@@ -35,8 +36,9 @@ bool Resources::operator==(const Resources& other) const {
 
 auto Resources::update(float time) -> void {
   // Add food to the resources
+  auto textureCache = _world.get_texture_cache().get();
   while (_food.size() < _food_count)
-    _food.push_back(Food(_world.spawn_position({Food::DEFAULT_SIZE, Food::DEFAULT_SIZE})));
+    _food.push_back(Food(_world.spawn_position({Food::TEXTURE_WIDTH, Food::TEXTURE_HEIGHT}), textureCache));
 
   feed_ants(_world.get_population());
 }
@@ -50,7 +52,12 @@ auto Resources::draw() const -> void {
 auto Resources::feed_ants(Population& population) -> void {
   for (Food& food : _food) {
     if (food.is_eaten()) {
-      food.reset(_world.spawn_position({Food::DEFAULT_SIZE, Food::DEFAULT_SIZE}));
+      food.reset(_world.spawn_position({Food::TEXTURE_WIDTH, Food::TEXTURE_HEIGHT}));
+      // Randomize sprite when food respawns
+      auto textureCache = _world.get_texture_cache().get();
+      if (textureCache) {
+        food.set_texture_index(textureCache->get_random_texture_index("food_"));
+      }
     }
 
     auto ants = population.get_collisions(food.get_position(), food.get_radius());
