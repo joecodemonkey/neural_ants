@@ -16,46 +16,36 @@ AntRenderer::AntRenderer() = default;
 
 AntRenderer::~AntRenderer() = default;
 
-auto AntRenderer::set_texture_cache(TextureCache* textureCache) -> void {
-  _textureCache = textureCache;
-}
-
-auto AntRenderer::set_scale(float scale) -> void {
-  _scale = scale;
-}
-
-auto AntRenderer::draw(Population& population) -> void {
+auto AntRenderer::draw(Population& population, TextureCache& texture_cache) -> void {
   auto& ants = population.get_ants();
   for (const auto& ant : ants) {
-    draw_ant(ant);
+    draw_ant(ant, texture_cache);
   }
 }
 
 
-auto AntRenderer::draw_ant(const Ant& ant) -> void {
+auto AntRenderer::draw_ant(const Ant& ant, TextureCache& texture_cache) -> void {
   if (ant.is_dead()) {
     return;
   }
 
-  draw_body(ant);
+  draw_body(ant, texture_cache);
   draw_direction(ant);
   draw_bounding(ant);
   draw_energy(ant);
   draw_coordinates(ant);
 }
 
-auto AntRenderer::draw_body(const Ant& ant) -> void {
-  if (_textureCache) {
-    const Texture2D& texture = _textureCache->get_texture(ant.get_texture_index());
-    const auto& position = ant.get_position();
+auto AntRenderer::draw_body(const Ant& ant, TextureCache& texture_cache) -> void {
+  const Texture2D& texture = texture_cache.get_texture(ant.get_texture_index());
+  const auto& position = ant.get_position();
 
-    // TODO: Cleanup magic numbers
-    const Rectangle source = {0, 0, 16.0F, 16.0F};
-    const Rectangle dest = {position.x, position.y, 16.0F, 16.0F};
-    const Vector2 origin = {8.0F, 8.0F};  // Center of 16x16 texture
+  // TODO: Cleanup magic numbers
+  const Rectangle source = {0, 0, 16.0F, 16.0F};
+  const Rectangle dest = {position.x, position.y, 16.0F, 16.0F};
+  const Vector2 origin = {8.0F, 8.0F};  // Center of 16x16 texture
 
-    DrawTexturePro(texture, source, dest, origin, get_rotation(ant), WHITE);
-  }
+  DrawTexturePro(texture, source, dest, origin, get_rotation(ant), WHITE);
 }
 
 auto AntRenderer::draw_energy(const Ant& ant) const -> void {

@@ -30,7 +30,6 @@ auto Game::run() -> void {
       load_textures();
       _ui.add_texture_cache(_textureCache);
       _world.set_texture_cache(_textureCache);
-      _antRenderer.set_texture_cache(_textureCache.get());
 
       texturesLoaded = true;
     }
@@ -60,7 +59,7 @@ auto Game::run() -> void {
 
     ClearBackground(BLACK);
     _world.draw();
-    _antRenderer.draw(_world.get_population());
+    _antRenderer.draw(_world.get_population(), *_textureCache);
     EndMode2D();
     _ui.draw(time);
 
