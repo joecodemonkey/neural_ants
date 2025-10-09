@@ -46,6 +46,13 @@ This project depends on several third-party libraries that are automatically dow
 **URL**: https://kenney.nl/assets/game-icons  
 **Description**: Game icons used in the user interface
 
+## Food Icons
+
+**License**: Creative Commons CC0  
+**Copyright**: ARoachIFoundOnMyPillow (https://opengameart.org/users/aroachifoundonmypillow)  
+**URL**: https://opengameart.org/content/16x16-food 
+**Description**: Food icons used to make the scene more interesting
+
 ---
 
-*Note: This project uses FetchContent to automatically download these dependencies during build. The actual license files are included with each downloaded dependency in the build directory.*
+*Note: This project uses FetchContent to automatically download softare dependencies during build. The actual license files are included with each downloaded dependency in the build directory.*
