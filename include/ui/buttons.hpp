@@ -14,4 +14,4 @@ class Buttons {
   static auto begin_button_style() -> void;
   static auto end_button_style() -> void;
 };
-}  // namespace UI
+}

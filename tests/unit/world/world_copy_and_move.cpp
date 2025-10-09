@@ -1,10 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("World copy and move operations", "[world]") {
   SECTION("Copy constructor") {
-    World original;
+    TextureCache textureCache;
+    World original(textureCache);
     original.set_spawn_margin(0.15f);
     
     World copy(original);
@@ -30,8 +32,9 @@ TEST_CASE("World copy and move operations", "[world]") {
   }
 
   SECTION("Copy assignment operator") {
-    World original;
-    World assigned;
+    TextureCache textureCache;
+    World original(textureCache);
+    World assigned(textureCache);
     
     original.set_spawn_margin(0.25f);
     
@@ -42,7 +45,8 @@ TEST_CASE("World copy and move operations", "[world]") {
   }
 
   SECTION("Move constructor") {
-    World original;
+    TextureCache textureCache;
+    World original(textureCache);
     original.set_spawn_margin(0.30f);
     
     Rectangle originalBounds = original.get_bounds();
@@ -75,8 +79,9 @@ TEST_CASE("World copy and move operations", "[world]") {
   }
 
   SECTION("Move assignment operator") {
-    World original;
-    World moveAssigned;
+    TextureCache textureCache;
+    World original(textureCache);
+    World moveAssigned(textureCache);
     
     original.set_spawn_margin(0.35f);
     
@@ -99,7 +104,8 @@ TEST_CASE("World copy and move operations", "[world]") {
   }
 
   SECTION("Self assignment protection") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     world.set_spawn_margin(0.42f);
     
     World originalCopy = world;
@@ -114,7 +120,8 @@ TEST_CASE("World copy and move operations", "[world]") {
   }
 
   SECTION("Independent modification after copy") {
-    World original;
+    TextureCache textureCache;
+    World original(textureCache);
     original.set_spawn_margin(0.20f);
     
     World copy(original);

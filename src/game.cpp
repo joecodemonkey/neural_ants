@@ -8,9 +8,8 @@
 #include <util/file.hpp>
 #include <util/serialization.hpp>
 #include <world.hpp>
-#include <ant_renderer.hpp>
 
-Game::Game() : _ui(*this), _input(*this), _updateSpeed(1LL) {
+Game::Game() : _world(_textureCache), _ui(*this, _textureCache), _input(*this), _updateSpeed(1LL) {
   _camera = {.offset = Vector2Zero(), .target = Vector2Zero(), .rotation = 0.0F, .zoom = 1.0f};
   _world.get_population().set_size(100);
   _world.get_resources().set_food_count(50);  // Reduced from 200 for stronger selection pressure
@@ -28,9 +27,6 @@ auto Game::run() -> void {
     BeginDrawing();
     if (!texturesLoaded) {
       load_textures();
-      _ui.add_texture_cache(_textureCache);
-      _world.set_texture_cache(_textureCache);
-
       texturesLoaded = true;
     }
 
@@ -59,7 +55,6 @@ auto Game::run() -> void {
 
     ClearBackground(BLACK);
     _world.draw();
-    _antRenderer.draw(_world.get_population(), *_textureCache);
     EndMode2D();
     _ui.draw(time);
 
@@ -115,26 +110,24 @@ auto Game::initialize_raylib() -> void {
 }
 
 auto Game::load_textures() -> void {
-  _textureCache = std::make_shared<TextureCache>();
-
   // Load UI sprites dynamically
-  if (!_textureCache->load_textures("assets/sprites/ui")) {
+  if (!_textureCache.load_textures("assets/sprites/ui")) {
     throw std::runtime_error("Failed to load UI textures");
   }
 
   // Set default texture (ui_close must exist)
-  if (!_textureCache->has_texture("ui_close")) {
+  if (!_textureCache.has_texture("ui_close")) {
     throw std::runtime_error("Failed to load required texture: 'ui_close'");
   }
-  _textureCache->set_default("ui_close");
+  _textureCache.set_default("ui_close");
 
   // Load ant sprites dynamically
-  if (!_textureCache->load_textures("assets/sprites/ants")) {
+  if (!_textureCache.load_textures("assets/sprites/ants")) {
     throw std::runtime_error("Failed to load ant textures");
   }
 
   // Load food sprites dynamically
-  if (!_textureCache->load_textures("assets/sprites/food")) {
+  if (!_textureCache.load_textures("assets/sprites/food")) {
     throw std::runtime_error("Failed to load food textures");
   }
 }
@@ -188,8 +181,7 @@ auto Game::load_game(const std::string& filename) -> std::expected<void, std::st
     _camera = Util::camera2d_from_json(save_data.at("camera"));
     _fps = save_data.at("fps").get<int>();
     _cameraSpeed = save_data.at("camera_speed").get<float>();
-    _world = World(save_data.at("world"));
-    _world.set_texture_cache(_textureCache);
+    _world = World(save_data.at("world"), _textureCache);
 
     return {};
 
@@ -212,6 +204,6 @@ auto Game::get_world() -> World& {
   return _world;
 }
 
-auto Game::get_texture_cache() -> std::shared_ptr<TextureCache> {
+auto Game::get_texture_cache() -> TextureCache& {
   return _textureCache;
 }

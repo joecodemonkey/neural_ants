@@ -3,7 +3,7 @@
 #include <iostream>
 
 auto PopulationBenchmarkBase::reset() -> void {
-  _world = World();
+  _world = World(_textureCache);
   _population = std::make_unique<Population>(_world);
   setup_population(_populationSize);
 }

@@ -2,7 +2,8 @@
 #include <imgui.h>
 #include <raylib.h>
 
-#include <memory>
+#include <functional>
+#include <optional>
 #include <ui/menu/fitness_display.hpp>
 #include <ui/menu/save_load.hpp>
 #include <ui/menu/settings.hpp>
@@ -16,12 +17,11 @@ namespace UI {
 
 class Renderer {
  public:
-  Renderer(Game& game);
+  Renderer(Game& game, TextureCache& textureCache);
   auto draw(float deltaTime) -> void;
   auto paused() const -> bool;
   auto pause() -> void;
   auto unpause() -> void;
-  auto add_texture_cache(std::shared_ptr<TextureCache> cache) -> void;
 
  protected:
   auto setup() -> void;
@@ -39,7 +39,7 @@ class Renderer {
   UI::Menu::Settings _settingsMenu;
   UI::Menu::SaveLoad _saveLoadMenu;
   UI::Menu::FitnessDisplay _fitnessDisplay;
-  std::shared_ptr<TextureCache> _textureCache;
+  TextureCache &_textureCache;
   UI::State _state;
 };
 }  // namespace UI

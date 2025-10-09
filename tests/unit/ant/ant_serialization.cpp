@@ -3,13 +3,15 @@
 
 #include "ant.hpp"
 #include "genome.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 using Catch::Approx;
 
 TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
   // Create a mock world for testing
-  World world;
+  TextureCache textureCache;
+  World world(textureCache);
 
   // Helper function to create a minimal genome for testing
   auto create_minimal_genome = []() {

@@ -2,11 +2,13 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "resources.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("Resources equality operator", "[resources]") {
   SECTION("identical resources are equal") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources1(world);
     Resources resources2(world);
 
@@ -18,8 +20,9 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("default constructed resources are equal") {
-    World world1;
-    World world2;
+    TextureCache textureCache;
+    World world1(textureCache);
+    World world2(textureCache);
     Resources resources1(world1);
     Resources resources2(world2);
 
@@ -28,7 +31,8 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("resources with different food counts are not equal") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources1(world);
     Resources resources2(world);
 
@@ -40,7 +44,8 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("assigned resources are equal") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources1(world);
     Resources resources2(world);
 
@@ -52,7 +57,8 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("self equality") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
     resources.set_food_count(123);
 
@@ -60,7 +66,8 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("resources with zero food count") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources1(world);
     Resources resources2(world);
 
@@ -72,7 +79,8 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("resources with negative food count") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources1(world);
     Resources resources2(world);
 
@@ -84,7 +92,8 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("copy constructed resources are equal") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources original(world);
     original.set_food_count(75);
 
@@ -95,7 +104,8 @@ TEST_CASE("Resources equality operator", "[resources]") {
   }
 
   SECTION("resources after modification") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources1(world);
     Resources resources2(world);
 

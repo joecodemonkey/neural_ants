@@ -3,6 +3,7 @@
 #include "genome.hpp"
 #include "pangenome.hpp"
 #include "population.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 // Test class to access protected members
@@ -17,7 +18,8 @@ class PopulationTestAccess : public Population {
 };
 
 TEST_CASE("Population reproduction logic", "[population]") {
-  World world;
+  TextureCache textureCache;
+  World world(textureCache);
 
   // Helper function to create a minimal genome for testing
   auto create_minimal_genome = []() {

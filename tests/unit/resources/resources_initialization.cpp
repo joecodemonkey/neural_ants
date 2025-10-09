@@ -5,20 +5,23 @@
 
 #include "raylib.h"
 #include "resources.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 using Catch::Approx;
 
 TEST_CASE("Resources initialization and basic operations", "[resources]") {
   SECTION("Default initialization") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
 
     REQUIRE(resources.get_food_count() == 200);  // DEFAULT_COUNT
   }
 
   SECTION("Copy constructor") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources original(world);
     original.set_food_count(75);
 
@@ -29,7 +32,8 @@ TEST_CASE("Resources initialization and basic operations", "[resources]") {
   }
 
   SECTION("Assignment operator") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources original(world);
     original.set_food_count(60);
 
@@ -41,7 +45,8 @@ TEST_CASE("Resources initialization and basic operations", "[resources]") {
   }
 
   SECTION("Self assignment") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
     resources.set_food_count(80);
 
@@ -51,7 +56,8 @@ TEST_CASE("Resources initialization and basic operations", "[resources]") {
   }
 
   SECTION("Setting and getting food count") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
 
     REQUIRE(resources.get_food_count() == 200);
@@ -67,7 +73,8 @@ TEST_CASE("Resources initialization and basic operations", "[resources]") {
   }
 
   SECTION("Food count edge cases") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
 
     // Test negative values (should work as int)

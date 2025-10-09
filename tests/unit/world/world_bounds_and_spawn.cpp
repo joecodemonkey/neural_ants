@@ -1,10 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("World bounds and spawn logic", "[world]") {
   SECTION("Out of bounds detection") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
 
     // Points inside bounds
     REQUIRE_FALSE(world.out_of_bounds({100.0f, 100.0f}));
@@ -25,7 +27,8 @@ TEST_CASE("World bounds and spawn logic", "[world]") {
   }
 
   SECTION("Spawn position generates valid positions") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Rectangle spawnBounds = world.get_spawn_bounds();
 
     Vector2 dimensions = {10.0f, 10.0f};
@@ -41,21 +44,24 @@ TEST_CASE("World bounds and spawn logic", "[world]") {
   }
 
   SECTION("Spawn position with zero dimensions") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
 
     Vector2 dimensions = {0.0f, 0.0f};
     REQUIRE_NOTHROW(world.spawn_position(dimensions));
   }
 
   SECTION("Spawn position with large dimensions") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
 
     Vector2 dimensions = {100.0f, 100.0f};
     REQUIRE_NOTHROW(world.spawn_position(dimensions));
   }
 
   SECTION("Spawn position with maximum dimensions") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Rectangle spawnBounds = world.get_spawn_bounds();
 
     // Dimensions that exactly fill spawn bounds
@@ -64,7 +70,8 @@ TEST_CASE("World bounds and spawn logic", "[world]") {
   }
 
   SECTION("Spawn bounds calculation with different margins") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
 
     // Test various margin values
     std::vector<float> margins = {0.0f, 0.1f, 0.25f, 0.4f};
@@ -85,7 +92,8 @@ TEST_CASE("World bounds and spawn logic", "[world]") {
   }
 
   SECTION("Update functionality") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
 
     // Should not throw when updating
     REQUIRE_NOTHROW(world.update(0.0f));

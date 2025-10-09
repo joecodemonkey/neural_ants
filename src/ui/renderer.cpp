@@ -12,22 +12,20 @@
 #include "ui/buttons.hpp"
 #include "ui/state.hpp"
 
-UI::Renderer::Renderer(Game& game)
+UI::Renderer::Renderer(Game& game, TextureCache& textureCache)
     : _game(game),
       _setup(false),
       _paused(false),
-      _settingsMenu(_state, game),
-      _saveLoadMenu(_state, game),
-      _fitnessDisplay() {}
+      _settingsMenu(_state, game, textureCache),
+      _saveLoadMenu(_state, game, textureCache),
+      _fitnessDisplay(),
+      _textureCache(textureCache) {}
 
 auto UI::Renderer::setup() -> void {
   if (_setup) {
     return;
   }
   rlImGuiSetup(false);
-
-  _settingsMenu.add_texture_cache(_textureCache);
-  _saveLoadMenu.add_texture_cache(_textureCache);
   _setup = true;
 
   ImGuiStyle& style = ImGui::GetStyle();
@@ -117,16 +115,12 @@ auto UI::Renderer::draw_settings_button() -> void {
     UI::Buttons::begin_button_style();
 
     if (ImGui::ImageButton(
-            "##settings", _textureCache->get_texture("ui_settings").id, ImVec2(50, 50))) {
+            "##settings", _textureCache.get_texture("ui_settings").id, ImVec2(50, 50))) {
       _state.maximize(State::SETTINGS);
     }
     UI::Buttons::end_button_style();
   }
   ImGui::End();
-}
-
-auto UI::Renderer::add_texture_cache(std::shared_ptr<TextureCache> cache) -> void {
-  _textureCache = cache;
 }
 
 auto UI::Renderer::paused() const -> bool {

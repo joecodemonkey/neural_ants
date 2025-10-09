@@ -1,10 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "population.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("Population equality operator", "[population]") {
-  World world;
+  TextureCache textureCache;
+  World world(textureCache);
 
   SECTION("Identical populations are equal") {
     Population pop1(world);

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <memory>
+#include <functional>
+#include <optional>
 #include <texture_cache.hpp>
 #include <ui/state.hpp>
 
@@ -10,14 +11,13 @@ namespace UI {
 namespace Menu {
 class Settings {
  public:
-  Settings(UI::State& state, Game& game);
+  Settings(UI::State& state, Game& game, TextureCache& textureCache);
   auto draw() -> void;
-  auto add_texture_cache(std::shared_ptr<TextureCache> cache) -> void;
 
  protected:
-  std::shared_ptr<TextureCache> _textureCache;
+  TextureCache &_textureCache;
   UI::State& _state;
   Game& _game;
 };
-}  // namespace Menu
-}  // namespace UI
+}
+}

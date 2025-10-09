@@ -1,10 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "population.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("Population copy and move operations", "[population]") {
-  World world;
+  TextureCache textureCache;
+  World world(textureCache);
 
   SECTION("Copy constructor") {
     Population original(world);

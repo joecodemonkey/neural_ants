@@ -1,10 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("World initialization", "[world]") {
   SECTION("Default constructor") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     
     // Check default bounds
     Rectangle bounds = world.get_bounds();
@@ -30,7 +32,8 @@ TEST_CASE("World initialization", "[world]") {
   }
 
   SECTION("Spawn margin setter updates spawn bounds") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     
     world.set_spawn_margin(0.10f);
     REQUIRE(world.get_spawn_margin() == 0.10f);
@@ -46,7 +49,8 @@ TEST_CASE("World initialization", "[world]") {
   }
 
   SECTION("Zero spawn margin") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     
     world.set_spawn_margin(0.0f);
     REQUIRE(world.get_spawn_margin() == 0.0f);
@@ -61,7 +65,8 @@ TEST_CASE("World initialization", "[world]") {
   }
 
   SECTION("Large spawn margin") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     
     world.set_spawn_margin(0.45f);  // 45% margin each side = 90% total
     REQUIRE(world.get_spawn_margin() == 0.45f);

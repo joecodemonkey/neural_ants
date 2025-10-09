@@ -163,11 +163,10 @@ set(CXX_SOURCES
     src/util/serialization.cpp
     src/texture_cache.cpp
     src/main.cpp
-    src/game.cpp 
+    src/game.cpp
     src/input.cpp
     src/world.cpp
     src/ant.cpp
-    src/ant_renderer.cpp
     src/population.cpp
     src/pangenome.cpp
     src/resources.cpp

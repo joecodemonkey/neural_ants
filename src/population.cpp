@@ -86,7 +86,7 @@ auto Population::create_ant() -> Ant {
     genome.set_fitness(0.0F);
     Ant ant(_world, genome);
     ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
-    ant.set_texture_index(_world.get_texture_cache()->get_random_texture_index("ants_"));
+    ant.set_texture_index(_world.get_texture_cache().get_random_texture_index("ants_"));
     return ant;
   }
 
@@ -99,7 +99,7 @@ auto Population::create_ant() -> Ant {
 
   Ant ant(_world, child);
   ant.reset(_world.spawn_position({ant.get_bounds().width, ant.get_bounds().height}));
-  ant.set_texture_index(_world.get_texture_cache()->get_random_texture_index("ants_"));
+  ant.set_texture_index(_world.get_texture_cache().get_random_texture_index("ants_"));
 
   return ant;
 }

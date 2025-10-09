@@ -2,10 +2,12 @@
 
 #include "genome.hpp"
 #include "population.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("Population update functionality", "[population]") {
-  World world;
+  TextureCache textureCache;
+  World world(textureCache);
 
   // Helper function to create a minimal genome for testing
   auto create_minimal_genome = []() {

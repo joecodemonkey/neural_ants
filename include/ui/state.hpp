@@ -17,4 +17,4 @@ class State {
  protected:
   std::unordered_set<Component> _maximzedComponents;
 };
-}  // namespace UI
+}

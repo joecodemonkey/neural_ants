@@ -9,7 +9,6 @@
 #include <texture_cache.hpp>
 #include <ui/renderer.hpp>
 #include <world.hpp>
-#include <ant_renderer.hpp>
 
 class Game {
  public:
@@ -25,7 +24,7 @@ class Game {
   auto set_target_fps(int fps) -> void;
   auto get_update_speed() const -> long long;
   auto set_update_speed(long long speed) -> void;
-  auto get_texture_cache() -> std::shared_ptr<TextureCache>;
+  auto get_texture_cache() -> TextureCache&;
 
   auto save_game(const std::string& filename) const -> std::expected<void, std::string>;
   auto load_game(const std::string& filename) -> std::expected<void, std::string>;
@@ -37,6 +36,7 @@ class Game {
   auto no_render_run() -> void;
   const float DEFAULT_FPS = 60;
   Camera2D _camera;
+  TextureCache _textureCache;
   World _world;
   Input _input;
   float _cameraSpeed;
@@ -45,6 +45,4 @@ class Game {
   float _lastSpeedAdjustmentTime = 0.0f;
   bool _raylibInitialized = false;
   UI::Renderer _ui;
-  std::shared_ptr<TextureCache> _textureCache;
-  AntRenderer _antRenderer;
 };

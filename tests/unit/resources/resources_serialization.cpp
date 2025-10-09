@@ -2,13 +2,15 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "resources.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 using Catch::Approx;
 
 TEST_CASE("Resources serialization and deserialization", "[resources][serialization]") {
   SECTION("Default resources serialization") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
     auto json = resources.to_json();
 
@@ -21,7 +23,8 @@ TEST_CASE("Resources serialization and deserialization", "[resources][serializat
   }
 
   SECTION("Resources with custom food count serialization") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
     resources.set_food_count(75);
 
@@ -32,7 +35,8 @@ TEST_CASE("Resources serialization and deserialization", "[resources][serializat
   }
 
   SECTION("Round-trip serialization and deserialization") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources original(world);
     original.set_food_count(60);
 
@@ -44,7 +48,8 @@ TEST_CASE("Resources serialization and deserialization", "[resources][serializat
   }
 
   SECTION("Edge case: zero food count") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
     resources.set_food_count(0);
 
@@ -58,7 +63,8 @@ TEST_CASE("Resources serialization and deserialization", "[resources][serializat
   }
 
   SECTION("Edge case: negative food count") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
     resources.set_food_count(-10);
 
@@ -72,7 +78,8 @@ TEST_CASE("Resources serialization and deserialization", "[resources][serializat
   }
 
   SECTION("Serialization structure validation") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     Resources resources(world);
     auto json = resources.to_json();
 
