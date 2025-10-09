@@ -2,7 +2,9 @@
 
 #include <raylib.h>
 
+#include <functional>
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <population.hpp>
 #include <resources.hpp>
 #include <texture_cache.hpp>
@@ -10,8 +12,8 @@
 
 class World {
  public:
-  World();
-  World(const nlohmann::json& j);
+  World(TextureCache& textureCache);
+  World(const nlohmann::json& j, TextureCache& textureCache);
 
   World(const World& other);
 
@@ -44,19 +46,17 @@ class World {
 
   auto to_json() const -> nlohmann::json;
 
-  auto set_texture_cache(std::shared_ptr<TextureCache> cache) -> void;
-  auto get_texture_cache() -> std::shared_ptr<TextureCache>&;
+  auto get_texture_cache() -> TextureCache&;
 
  protected:
   const Rectangle DEFAULT_BOUNDS = {0.0f, 0.0f, 1000.0f, 1000.0f};
   const float DEFAULT_SPAWN_MARGIN = 0.20F;
 
   auto update_spawn_rect() -> void;
-
   Resources _resources;
   Population _population;
   Rectangle _bounds;
   Rectangle _spawnBounds;
-  std::shared_ptr<TextureCache> _textureCache;
+  TextureCache& _textureCache;
   float _spawnMargin;
 };

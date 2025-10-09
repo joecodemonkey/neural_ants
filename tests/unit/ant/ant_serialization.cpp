@@ -3,13 +3,15 @@
 
 #include "ant.hpp"
 #include "genome.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 using Catch::Approx;
 
 TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
   // Create a mock world for testing
-  World world;
+  TextureCache textureCache;
+  World world(textureCache);
 
   // Helper function to create a minimal genome for testing
   auto create_minimal_genome = []() {
@@ -65,7 +67,6 @@ TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
 
     ant.set_position({15.5f, 25.3f});
     ant.set_energy(750.0f);
-    ant.set_texture_dimensions(25.0f, 30.0f);
     ant.set_dead(false);
 
     auto json = ant.to_json();
@@ -76,8 +77,8 @@ TEST_CASE("Ant serialization and deserialization", "[ant][serialization]") {
 
     // Test other properties
     REQUIRE(json["energy"] == 750.0f);
-    REQUIRE(json["texture_width"] == 25.0f);
-    REQUIRE(json["texture_height"] == 30.0f);
+    REQUIRE(json["texture_width"] == 16.0f);
+    REQUIRE(json["texture_height"] == 16.0f);
     REQUIRE(json["dead"] == false);
     REQUIRE(json["life_span"] == 0.0f);
 

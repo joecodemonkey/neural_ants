@@ -1,11 +1,13 @@
 #include <catch2/catch_test_macros.hpp>
 #include <nlohmann/json.hpp>
 
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("World JSON serialization", "[world]") {
   SECTION("Basic to_json functionality") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     world.set_spawn_margin(0.15f);
 
     nlohmann::json j = world.to_json();
@@ -20,13 +22,14 @@ TEST_CASE("World JSON serialization", "[world]") {
   }
 
   SECTION("JSON round trip") {
-    World original;
+    TextureCache textureCache;
+    World original(textureCache);
     original.set_spawn_margin(0.25f);
     original.get_population().set_size(7);
     original.get_resources().set_food_count(150);
 
     nlohmann::json j = original.to_json();
-    World restored(j);
+    World restored(j, textureCache);
 
     REQUIRE(restored == original);
     REQUIRE(restored.get_spawn_margin() == 0.25f);
@@ -35,6 +38,7 @@ TEST_CASE("World JSON serialization", "[world]") {
   }
 
   SECTION("JSON constructor with valid data") {
+    TextureCache textureCache;
     nlohmann::json j;
     j["bounds"] = {{"x", 0.0f}, {"y", 0.0f}, {"width", 1000.0f}, {"height", 1000.0f}};
     j["spawn_bounds"] = {{"x", 200.0f}, {"y", 200.0f}, {"width", 600.0f}, {"height", 600.0f}};
@@ -45,21 +49,23 @@ TEST_CASE("World JSON serialization", "[world]") {
         {"ants", nlohmann::json::array()},
         {"pangenome", {{"genomes", nlohmann::json::array()}, {"top_cycle_index", 0}}}};
 
-    REQUIRE_NOTHROW(World(j));
+    REQUIRE_NOTHROW(World(j, textureCache));
 
-    World world(j);
+    World world(j, textureCache);
     REQUIRE(world.get_spawn_margin() == 0.20f);
   }
 
   SECTION("JSON constructor with missing fields") {
+    TextureCache textureCache;
     nlohmann::json j;
     j["bounds"] = {{"x", 0.0f}, {"y", 0.0f}, {"width", 1000.0f}, {"height", 1000.0f}};
     // Missing spawn_bounds, spawn_margin, resources, population
 
-    REQUIRE_THROWS(World(j));
+    REQUIRE_THROWS(World(j, textureCache));
   }
 
   SECTION("JSON constructor with invalid spawn margin") {
+    TextureCache textureCache;
     nlohmann::json j;
     j["bounds"] = {{"x", 0.0f}, {"y", 0.0f}, {"width", 1000.0f}, {"height", 1000.0f}};
     j["spawn_bounds"] = {{"x", 200.0f}, {"y", 200.0f}, {"width", 600.0f}, {"height", 600.0f}};
@@ -70,11 +76,12 @@ TEST_CASE("World JSON serialization", "[world]") {
         {"ants", nlohmann::json::array()},
         {"pangenome", {{"genomes", nlohmann::json::array()}, {"top_cycle_index", 0}}}};
 
-    REQUIRE_THROWS(World(j));
+    REQUIRE_THROWS(World(j, textureCache));
   }
 
   SECTION("Bounds serialization preserves values") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
 
     nlohmann::json j = world.to_json();
 
@@ -86,7 +93,8 @@ TEST_CASE("World JSON serialization", "[world]") {
   }
 
   SECTION("Spawn bounds serialization preserves values") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     world.set_spawn_margin(0.10f);
 
     nlohmann::json j = world.to_json();

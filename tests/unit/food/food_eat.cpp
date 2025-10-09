@@ -3,6 +3,7 @@
 
 #include "ant.hpp"
 #include "food.hpp"
+#include "food_test_helper.hpp"
 #include "genome.hpp"
 #include "world.hpp"
 
@@ -13,12 +14,12 @@ TEST_CASE("Food eat functionality", "[food][eat]") {
   // We'll need to set up the necessary dependencies
 
   SECTION("Food is not eaten initially") {
-    Food food(Vector2{100.0f, 200.0f});
+    Food food(Vector2{100.0f, 200.0f}, get_mock_texture_cache());
     REQUIRE(food.is_eaten() == false);
   }
 
   SECTION("Food can be reset after being eaten") {
-    Food food(Vector2{100.0f, 200.0f});
+    Food food(Vector2{100.0f, 200.0f}, get_mock_texture_cache());
 
     // Initially not eaten
     REQUIRE(food.is_eaten() == false);
@@ -31,75 +32,73 @@ TEST_CASE("Food eat functionality", "[food][eat]") {
   }
 
   SECTION("Food value is correct") {
-    Food food;
+    Food food(get_mock_texture_cache());
     REQUIRE(food.get_value() == 500.0f);
   }
 
   SECTION("Food size and radius are correct") {
-    Food food;
-    REQUIRE(food.get_size() == Food::DEFAULT_SIZE);
-    REQUIRE(food.get_radius() == Food::DEFAULT_SIZE / 2);
-    REQUIRE(food.get_radius() == 5.0f);
+    Food food(get_mock_texture_cache());
+    REQUIRE(food.get_radius() == Food::RADIUS);
+    REQUIRE(food.get_radius() == 8.0f);  // 16/2
   }
 
   SECTION("Food bounds are calculated correctly") {
     Vector2 position{50.0f, 75.0f};
-    Food food(position);
+    Food food(position, get_mock_texture_cache());
 
     const Rectangle& bounds = food.get_bounds();
-    REQUIRE(bounds.x == 25.0f);  // position.x / 2
-    REQUIRE(bounds.y == 37.5f);  // position.y / 2
-    REQUIRE(bounds.width == Food::DEFAULT_SIZE);
-    REQUIRE(bounds.height == Food::DEFAULT_SIZE);
+    REQUIRE(bounds.x == 42.0f);  // position.x - (16/2)
+    REQUIRE(bounds.y == 67.0f);  // position.y - (16/2)
+    REQUIRE(bounds.width == Food::TEXTURE_WIDTH);
+    REQUIRE(bounds.height == Food::TEXTURE_WIDTH);
   }
 
   SECTION("Food at different positions has different bounds") {
-    Food food1(Vector2{100.0f, 200.0f});
-    Food food2(Vector2{200.0f, 400.0f});
+    Food food1(Vector2{100.0f, 200.0f}, get_mock_texture_cache());
+    Food food2(Vector2{200.0f, 400.0f}, get_mock_texture_cache());
 
     const Rectangle& bounds1 = food1.get_bounds();
     const Rectangle& bounds2 = food2.get_bounds();
 
-    REQUIRE(bounds1.x == 50.0f);   // 100 / 2
-    REQUIRE(bounds1.y == 100.0f);  // 200 / 2
-    REQUIRE(bounds2.x == 100.0f);  // 200 / 2
-    REQUIRE(bounds2.y == 200.0f);  // 400 / 2
+    REQUIRE(bounds1.x == 92.0f);   // 100 - 8
+    REQUIRE(bounds1.y == 192.0f);  // 200 - 8
+    REQUIRE(bounds2.x == 192.0f);  // 200 - 8
+    REQUIRE(bounds2.y == 392.0f);  // 400 - 8
   }
 
   SECTION("Food position affects bounds calculation") {
-    // TODO: This seems off.  Shouldn't bounds.x be -50?
-    Food food(Vector2{0.0f, 0.0f});
+    Food food(Vector2{0.0f, 0.0f}, get_mock_texture_cache());
     const Rectangle& bounds = food.get_bounds();
 
-    REQUIRE(bounds.x == 0.0f);
-    REQUIRE(bounds.y == 0.0f);
-    REQUIRE(bounds.width == Food::DEFAULT_SIZE);
-    REQUIRE(bounds.height == Food::DEFAULT_SIZE);
+    REQUIRE(bounds.x == -8.0f);  // 0 - 8
+    REQUIRE(bounds.y == -8.0f);  // 0 - 8
+    REQUIRE(bounds.width == Food::TEXTURE_WIDTH);
+    REQUIRE(bounds.height == Food::TEXTURE_WIDTH);
   }
 
   SECTION("Food with negative position") {
-    Food food(Vector2{-100.0f, -200.0f});
+    Food food(Vector2{-100.0f, -200.0f}, get_mock_texture_cache());
     const Rectangle& bounds = food.get_bounds();
 
-    REQUIRE(bounds.x == -50.0f);   // -100 / 2
-    REQUIRE(bounds.y == -100.0f);  // -200 / 2
-    REQUIRE(bounds.width == Food::DEFAULT_SIZE);
-    REQUIRE(bounds.height == Food::DEFAULT_SIZE);
+    REQUIRE(bounds.x == -108.0f);   // -100 - 8
+    REQUIRE(bounds.y == -208.0f);  // -200 - 8
+    REQUIRE(bounds.width == Food::TEXTURE_WIDTH);
+    REQUIRE(bounds.height == Food::TEXTURE_WIDTH);
   }
 
   SECTION("Food with decimal position") {
-    Food food(Vector2{100.5f, 200.75f});
+    Food food(Vector2{100.5f, 200.75f}, get_mock_texture_cache());
     const Rectangle& bounds = food.get_bounds();
 
-    REQUIRE(bounds.x == 50.25f);    // 100.5 / 2
-    REQUIRE(bounds.y == 100.375f);  // 200.75 / 2
-    REQUIRE(bounds.width == Food::DEFAULT_SIZE);
-    REQUIRE(bounds.height == Food::DEFAULT_SIZE);
+    REQUIRE(bounds.x == 92.5f);    // 100.5 - 8
+    REQUIRE(bounds.y == 192.75f);  // 200.75 - 8
+    REQUIRE(bounds.width == Food::TEXTURE_WIDTH);
+    REQUIRE(bounds.height == Food::TEXTURE_WIDTH);
   }
 
   SECTION("Multiple food items have independent states") {
-    Food food1(Vector2{500.0f, 20.0f});
-    Food food2(Vector2{30.0f, 40.0f});
+    Food food1(Vector2{500.0f, 20.0f}, get_mock_texture_cache());
+    Food food2(Vector2{30.0f, 40.0f}, get_mock_texture_cache());
 
     REQUIRE(food1.get_position().x == 500.0f);
     REQUIRE(food1.get_position().y == 20.0f);

@@ -16,6 +16,17 @@ Brain::Brain(World& world, const NeuralNetwork& neuralNetwork)
   _surroundings.set_dimensions(TILES_COUNT, TILES_COUNT);
 }
 
+auto Brain::operator=(const Brain& other) -> Brain& {
+  if (this != &other) {
+    _world = other._world;
+    _surroundings = other._surroundings;
+    _neuralNetwork = other._neuralNetwork;
+    _surroundings_encoded = other._surroundings_encoded;
+    _last_update = other._last_update;
+  }
+  return *this;
+}
+
 auto Brain::update(float time, Vector2 position) -> Vector2 {
   _last_update += time;
   if (_last_update >= UPDATE_FREQUENCY) {
@@ -72,9 +83,9 @@ auto Brain::update_surroundings(Vector2 position) -> void {
       rect.x = position.x + x_rel * TILES_SIZE;
       rect.y = position.y + y_rel * TILES_SIZE;
 
-      if (!IsRectContained(rect, _world.get_bounds())) {
+      if (!IsRectContained(rect, _world.get().get_bounds())) {
         _surroundings.set_type(x, y, Surroundings::WALL);
-      } else if (_world.get_resources().food_in_rect(rect)) {
+      } else if (_world.get().get_resources().food_in_rect(rect)) {
         _surroundings.set_type(x, y, Surroundings::FOOD);
       } else {
         _surroundings.set_type(x, y, Surroundings::EMPTY);

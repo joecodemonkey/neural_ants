@@ -2,10 +2,12 @@
 #include <nlohmann/json.hpp>
 
 #include "population.hpp"
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("Population JSON serialization", "[population]") {
-  World world;
+  TextureCache textureCache;
+  World world(textureCache);
 
   SECTION("Basic to_json functionality") {
     Population population(world);

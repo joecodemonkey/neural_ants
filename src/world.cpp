@@ -5,13 +5,15 @@
 #include <util/serialization.hpp>
 #include <world.hpp>
 
-World::World() : _resources(*this), _population(*this) {
+World::World(TextureCache& textureCache)
+    : _resources(*this), _population(*this), _textureCache(textureCache) {
   _bounds = World::DEFAULT_BOUNDS;
   _spawnMargin = DEFAULT_SPAWN_MARGIN;
   update_spawn_rect();
 }
 
-World::World(const nlohmann::json& j) : _resources(*this), _population(*this) {
+World::World(const nlohmann::json& j, TextureCache& textureCache)
+    : _resources(*this), _population(*this), _textureCache(textureCache) {
   _bounds = Util::rectangle_from_json(j.at("bounds"));
   _spawnBounds = Util::rectangle_from_json(j.at("spawn_bounds"));
   _spawnMargin = j.at("spawn_margin").get<float>();
@@ -21,7 +23,8 @@ World::World(const nlohmann::json& j) : _resources(*this), _population(*this) {
 }
 
 // Copy constructor
-World::World(const World& other) : _resources(*this), _population(*this) {
+World::World(const World& other)
+    : _resources(*this), _population(*this), _textureCache(other._textureCache) {
   _bounds = other._bounds;
   _spawnBounds = other._spawnBounds;
   _spawnMargin = other._spawnMargin;
@@ -32,7 +35,8 @@ World::World(const World& other) : _resources(*this), _population(*this) {
 }
 
 // Move constructor
-World::World(World&& other) noexcept : _resources(*this), _population(*this) {
+World::World(World&& other) noexcept
+    : _resources(*this), _population(*this), _textureCache(other._textureCache) {
   _bounds = other._bounds;
   _spawnBounds = other._spawnBounds;
   _spawnMargin = other._spawnMargin;
@@ -140,6 +144,10 @@ auto World::update(float time) -> void {
 auto World::draw() -> void {
   DrawRectangle(_bounds.x, _bounds.y, _bounds.width, _bounds.height, WHITE);
   _resources.draw();
+  auto& ants = _population.get_ants();
+  for (const auto& ant : ants) {
+    ant.draw(_textureCache);
+  }
 }
 
 auto World::out_of_bounds(const Vector2& position) const -> bool {
@@ -165,10 +173,6 @@ auto World::to_json() const -> nlohmann::json {
   return j;
 }
 
-auto World::set_texture_cache(std::shared_ptr<TextureCache> cache) -> void {
-  _textureCache = cache;
-}
-
-auto World::get_texture_cache() -> std::shared_ptr<TextureCache>& {
+auto World::get_texture_cache() -> TextureCache& {
   return _textureCache;
 }

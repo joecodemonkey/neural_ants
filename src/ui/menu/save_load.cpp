@@ -8,7 +8,8 @@
 #include "ui/state.hpp"
 #include "util/file.hpp"
 
-UI::Menu::SaveLoad::SaveLoad(UI::State& state, Game& game) : _game(game), _state(state) {}
+UI::Menu::SaveLoad::SaveLoad(UI::State& state, Game& game, TextureCache& textureCache)
+    : _game(game), _state(state), _textureCache(textureCache) {}
 
 auto UI::Menu::SaveLoad::draw() -> void {
   if (!_state.is_maximized(State::SAVELOAD)) {
@@ -29,10 +30,10 @@ auto UI::Menu::SaveLoad::draw() -> void {
   ImGui::SetNextWindowPos(saveLoadWindowPosition);
   ImGui::SetNextWindowSize(saveLoadWindowDimensions);
 
-  auto loadId = _textureCache->get_texture("load").id;
-  auto deleteId = _textureCache->get_texture("delete").id;
-  auto saveId = _textureCache->get_texture("save").id;
-  auto exitId = _textureCache->get_texture("exit").id;
+  auto loadId = _textureCache.get_texture("ui_load").id;
+  auto deleteId = _textureCache.get_texture("ui_delete").id;
+  auto saveId = _textureCache.get_texture("ui_save").id;
+  auto exitId = _textureCache.get_texture("ui_exit").id;
   auto buttonDim = ImVec2(30, 30);
 
   bool saveLoadMaximized = true;
@@ -131,8 +132,4 @@ auto UI::Menu::SaveLoad::draw() -> void {
 
     ImGui::End();
   }
-}
-
-auto UI::Menu::SaveLoad::add_texture_cache(std::shared_ptr<TextureCache> cache) -> void {
-  _textureCache = cache;
 }

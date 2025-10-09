@@ -4,6 +4,7 @@
 #include <chrono>
 #include <memory>
 #include <population.hpp>
+#include <texture_cache.hpp>
 #include <world.hpp>
 
 #include "../benchmark_base.hpp"
@@ -11,8 +12,8 @@
 // Base class for population benchmarks
 class PopulationBenchmarkBase : public BenchmarkBase {
  public:
-  PopulationBenchmarkBase() = default;
-  PopulationBenchmarkBase(const std::string& name) : BenchmarkBase(name) {};
+  PopulationBenchmarkBase() : _world(_textureCache) {}
+  PopulationBenchmarkBase(const std::string& name) : BenchmarkBase(name), _world(_textureCache) {};
   auto reset() -> void override;
 
  public:
@@ -23,6 +24,7 @@ class PopulationBenchmarkBase : public BenchmarkBase {
   auto derived_run() -> void override;
 
   // Member variables
+  TextureCache _textureCache;
   World _world;
   std::unique_ptr<Population> _population;
   size_t _populationSize = 100;

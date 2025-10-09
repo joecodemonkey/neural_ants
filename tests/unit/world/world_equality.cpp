@@ -1,19 +1,22 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include "texture_cache.hpp"
 #include "world.hpp"
 
 TEST_CASE("World equality operator", "[world]") {
   SECTION("Default constructed worlds are equal") {
-    World world1;
-    World world2;
+    TextureCache textureCache;
+    World world1(textureCache);
+    World world2(textureCache);
 
     REQUIRE(world1 == world2);
     REQUIRE(world2 == world1);
   }
 
   SECTION("Identical configured worlds are equal") {
-    World world1;
-    World world2;
+    TextureCache textureCache;
+    World world1(textureCache);
+    World world2(textureCache);
 
     world1.set_spawn_margin(0.15f);
     world2.set_spawn_margin(0.15f);
@@ -23,7 +26,8 @@ TEST_CASE("World equality operator", "[world]") {
   }
 
   SECTION("Copied worlds are equal") {
-    World original;
+    TextureCache textureCache;
+    World original(textureCache);
     original.set_spawn_margin(0.25f);
 
     World copy(original);
@@ -33,8 +37,9 @@ TEST_CASE("World equality operator", "[world]") {
   }
 
   SECTION("Assigned worlds are equal") {
-    World original;
-    World assigned;
+    TextureCache textureCache;
+    World original(textureCache);
+    World assigned(textureCache);
 
     original.set_spawn_margin(0.30f);
     assigned = original;
@@ -44,8 +49,9 @@ TEST_CASE("World equality operator", "[world]") {
   }
 
   SECTION("Worlds with different spawn margins are not equal") {
-    World world1;
-    World world2;
+    TextureCache textureCache;
+    World world1(textureCache);
+    World world2(textureCache);
 
     world1.set_spawn_margin(0.10f);
     world2.set_spawn_margin(0.20f);
@@ -55,15 +61,17 @@ TEST_CASE("World equality operator", "[world]") {
   }
 
   SECTION("Self equality") {
-    World world;
+    TextureCache textureCache;
+    World world(textureCache);
     world.set_spawn_margin(0.35f);
 
     REQUIRE(world == world);
   }
 
   SECTION("Equality includes population state") {
-    World world1;
-    World world2;
+    TextureCache textureCache;
+    World world1(textureCache);
+    World world2(textureCache);
 
     // Initially equal
     REQUIRE(world1 == world2);
@@ -80,8 +88,9 @@ TEST_CASE("World equality operator", "[world]") {
   }
 
   SECTION("Equality includes resources state") {
-    World world1;
-    World world2;
+    TextureCache textureCache;
+    World world1(textureCache);
+    World world2(textureCache);
 
     // Initially equal
     REQUIRE(world1 == world2);

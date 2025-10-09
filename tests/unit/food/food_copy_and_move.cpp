@@ -1,11 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "food.hpp"
+#include "food_test_helper.hpp"
 
 TEST_CASE("Food copy and move operations", "[food]") {
   SECTION("Assignment operator") {
-    Food food1(Vector2{100.0f, 200.0f});
-    Food food2;
+    Food food1(Vector2{100.0f, 200.0f}, get_mock_texture_cache());
+    Food food2(get_mock_texture_cache());
 
     food2 = food1;  // Assignment operator
 
@@ -17,7 +18,7 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Self assignment") {
-    Food food(Vector2{150.0f, 250.0f});
+    Food food(Vector2{150.0f, 250.0f}, get_mock_texture_cache());
     food = food;  // Self assignment should be safe
 
     REQUIRE(food.get_position().x == 150.0f);
@@ -27,8 +28,8 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment preserves all properties") {
-    Food food1(Vector2{123.0f, 456.0f});
-    Food food2(Vector2{789.0f, 012.0f});
+    Food food1(Vector2{123.0f, 456.0f}, get_mock_texture_cache());
+    Food food2(Vector2{789.0f, 012.0f}, get_mock_texture_cache());
 
     // Verify they're different initially
     REQUIRE_FALSE(food1 == food2);
@@ -44,8 +45,8 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment with different positions") {
-    Food food1(Vector2{500.0f, 20.0f});
-    Food food2(Vector2{30.0f, 40.0f});
+    Food food1(Vector2{500.0f, 20.0f}, get_mock_texture_cache());
+    Food food2(Vector2{30.0f, 40.0f}, get_mock_texture_cache());
 
     REQUIRE_FALSE(food1 == food2);
 
@@ -57,8 +58,8 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment with negative positions") {
-    Food food1(Vector2{-100.0f, -200.0f});
-    Food food2;
+    Food food1(Vector2{-100.0f, -200.0f}, get_mock_texture_cache());
+    Food food2(get_mock_texture_cache());
 
     food2 = food1;
 
@@ -68,8 +69,8 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment with decimal positions") {
-    Food food1(Vector2{100.5f, 200.75f});
-    Food food2;
+    Food food1(Vector2{100.5f, 200.75f}, get_mock_texture_cache());
+    Food food2(get_mock_texture_cache());
 
     food2 = food1;
 
@@ -79,8 +80,8 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment with large positions") {
-    Food food1(Vector2{10000.0f, 20000.0f});
-    Food food2;
+    Food food1(Vector2{10000.0f, 20000.0f}, get_mock_texture_cache());
+    Food food2(get_mock_texture_cache());
 
     food2 = food1;
 
@@ -90,8 +91,8 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment at origin") {
-    Food food1;  // Default constructor creates food at origin
-    Food food2(Vector2{100.0f, 200.0f});
+    Food food1(get_mock_texture_cache());  // Default constructor creates food at origin
+    Food food2(Vector2{100.0f, 200.0f}, get_mock_texture_cache());
 
     food2 = food1;
 
@@ -101,9 +102,9 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Multiple assignments") {
-    Food food1(Vector2{500.0f, 20.0f});
-    Food food2(Vector2{30.0f, 40.0f});
-    Food food3(Vector2{50.0f, 60.0f});
+    Food food1(Vector2{500.0f, 20.0f}, get_mock_texture_cache());
+    Food food2(Vector2{30.0f, 40.0f}, get_mock_texture_cache());
+    Food food3(Vector2{50.0f, 60.0f}, get_mock_texture_cache());
 
     food3 = food2 = food1;  // Chain assignment
 
@@ -114,8 +115,8 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment preserves bounds") {
-    Food food1(Vector2{100.0f, 200.0f});
-    Food food2;
+    Food food1(Vector2{100.0f, 200.0f}, get_mock_texture_cache());
+    Food food2(get_mock_texture_cache());
 
     food2 = food1;
 
@@ -129,12 +130,12 @@ TEST_CASE("Food copy and move operations", "[food]") {
   }
 
   SECTION("Assignment preserves radius") {
-    Food food1(Vector2{100.0f, 200.0f});
-    Food food2;
+    Food food1(Vector2{100.0f, 200.0f}, get_mock_texture_cache());
+    Food food2(get_mock_texture_cache());
 
     food2 = food1;
 
     REQUIRE(food2.get_radius() == food1.get_radius());
-    REQUIRE(food2.get_radius() == Food::DEFAULT_SIZE / 2);
+    REQUIRE(food2.get_radius() == Food::RADIUS);
   }
 }
